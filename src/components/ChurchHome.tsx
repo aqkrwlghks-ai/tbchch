@@ -110,22 +110,10 @@ export default function ChurchHome({
       
       {/* 1. CHURCH AUDIO SOUND EFFECT BANNER (MICRO-ACTION WITH USER GREETING) */}
       <div className="bg-slate-900 border-b border-white/10 text-slate-300 text-xs py-2 px-4 shadow-sm z-40 relative">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 justify-center sm:justify-start">
+        <div className="max-w-7xl mx-auto flex items-center justify-center">
+          <div className="flex items-center gap-1.5 justify-center">
             <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>성령의 능력 안에서 복음과 섬김으로 하나님의 영광을 비추는 <strong>빛나는 교회</strong></span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={onOpenPlanning}
-              className="bg-blue-600 hover:bg-blue-700 hover:scale-105 text-white px-3 py-1 rounded-full text-[11px] font-bold shadow-md transition-all flex items-center gap-1 shrink-0"
-              id="open-proposal-btn"
-            >
-              <Sparkles className="h-3 w-3" />
-              10년차 수석 기획안 & 가이드 보기
-            </button>
-            <span className="text-slate-500 hidden md:inline">|</span>
-            <span className="text-slate-400 font-mono text-[11.5px] hidden md:inline">주일 예배 카운트다운: 11:00 AM</span>
+            <span><strong>예수님이 주인이신 빛나는 교회</strong></span>
           </div>
         </div>
       </div>
