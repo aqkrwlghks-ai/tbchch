@@ -1071,7 +1071,7 @@ export default function ChurchHome({
                 <span className="text-xs font-mono font-bold text-slate-400">성도 소식 광장</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-8">
                 {loadingGallery ? (
                   <div className="col-span-full py-20 text-center flex flex-col items-center justify-center gap-3">
                     <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -1091,7 +1091,7 @@ export default function ChurchHome({
                       {/* Folder shape accent at top */}
                       <div className="absolute top-0 left-6 w-20 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1"></div>
                       
-                      <div className="relative aspect-video overflow-hidden bg-slate-100 rounded-t-2xl">
+                      <div className="relative aspect-[3/2] overflow-hidden bg-slate-100 rounded-t-3xl">
                         <img 
                           src={cat.coverUrl} 
                           alt={cat.name}
