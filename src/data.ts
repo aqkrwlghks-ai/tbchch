@@ -3,15 +3,15 @@ import { MenuItem, SloganOption, WorshipSchedule, SermonItem, NewsItem, GalleryI
 // 1. GNB 트리 구조 기획 (중복/노후 메뉴 완벽 통합 및 구조 개선)
 export const gnbMenuData: MenuItem[] = [
   {
-    name: '처음오셨나요',
+    name: '환영합니다',
     id: 'welcome',
     link: '#welcome-section',
     subMenu: [
-      { name: '환영인사 및 목사님 소개', link: '#pastor-welcome', id: 'pastor-welcome' },
-      { name: '새가족 등록 및 안내', link: '#new-family', id: 'new-family' },
-      { name: '예배 시간 안내', link: '#schedule-section', id: 'worship-time' },
-      { name: '빛나는교회 비전', link: '#vision-guide', id: 'church-vision' },
-      { name: '교회 오시는 길', link: '#footer-map', id: 'church-map' }
+      { name: '인사말', link: '#pastor-welcome', id: 'pastor-welcome' },
+      { name: '교회소개', link: '#new-family', id: 'new-family' },
+      { name: '예배안내', link: '#schedule-section', id: 'worship-time' },
+      { name: '핵심가치', link: '#vision-guide', id: 'church-vision' },
+      { name: '찾아오시는길', link: '#footer-map', id: 'church-map' }
     ]
   },
   {
