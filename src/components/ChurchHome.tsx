@@ -288,13 +288,15 @@ export default function ChurchHome({
           {bgSliderImages.map((img, idx) => (
             <div
               key={idx}
-              className={`absolute inset-0 transition-opacity duration-1000 ease-out bg-cover bg-center ${
-                currentSlide === idx ? 'opacity-35 scale-105' : 'opacity-0 scale-100'
+              className={`absolute inset-0 transition-opacity duration-1000 ease-out bg-cover ${
+                idx === 0 ? 'bg-[30%_center]' : 'bg-center'
+              } ${
+                currentSlide === idx ? (idx === 0 ? 'opacity-75 scale-105' : 'opacity-45 scale-105') : 'opacity-0 scale-100'
               }`}
               style={{ backgroundImage: `url('${img}')` }}
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/60 via-slate-950/80 to-slate-950/95" />
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-slate-950/65 to-slate-950/85" />
         </div>
 
         {/* Top-Right/Left slider control arrow mocks */}
