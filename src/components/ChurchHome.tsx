@@ -74,6 +74,7 @@ export default function ChurchHome({
   // Custom dialogs/forms
   const [newFamilyFormOpen, setNewFamilyFormOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
 
   // 구글 드라이브 연동용 갤러리 상태 및 로딩 상태
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(galleryPhotos);
@@ -1014,7 +1015,10 @@ export default function ChurchHome({
                   galleryItems.slice(0, 6).map((photo) => (
                     <button
                       key={photo.id}
-                      onClick={() => setSelectedActivity(photo)}
+                      onClick={() => {
+                        setSelectedActivity(photo);
+                        setActivePhotoIndex(0);
+                      }}
                       className="group bg-white rounded-2xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left"
                     >
                       <div className="relative aspect-video overflow-hidden bg-slate-100">
@@ -1027,6 +1031,12 @@ export default function ChurchHome({
                         <span className="absolute top-3 left-3 bg-slate-900/80 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
                           {photo.category}
                         </span>
+                        {photo.photos && photo.photos.length > 0 && (
+                          <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                            <FolderOpen className="h-3.5 w-3.5" />
+                            <span>{photo.photos.length}장</span>
+                          </span>
+                        )}
                       </div>
                       <div className="p-4.5">
                         <span className="text-[10.5px] text-slate-400 font-mono font-semibold">{photo.date}</span>
@@ -1393,44 +1403,129 @@ export default function ChurchHome({
         </div>
       )}
 
-      {/* 14. AUXILIARY POPUP MODAL 4: 갤러리 디테일 보기 */}
+      {/* 14. AUXILIARY POPUP MODAL 4: 갤러리 디테일 보기 (행사 앨범 폴더 뷰어) */}
       {selectedActivity && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp flex flex-col max-h-[90vh]">
             
-            <div className="relative aspect-video">
-              <img 
-                src={selectedActivity.imageUrl} 
-                alt={selectedActivity.title} 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full inline-block font-sans">
+                  {selectedActivity.category}
+                </span>
+                <span className="text-slate-400 text-xs font-mono font-medium ml-2">{selectedActivity.date} 행사</span>
+                <h3 className="text-md font-extrabold text-slate-900 mt-1 leading-snug">{selectedActivity.title}</h3>
+              </div>
               <button 
                 onClick={() => setSelectedActivity(null)}
-                className="absolute top-4 right-4 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80 transition-colors"
-                title="이미지 닫기"
+                className="bg-slate-100 text-slate-500 rounded-full p-2 hover:bg-slate-200 transition-colors"
+                title="앨범 닫기"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-6">
-              <span className="text-[10.5px] uppercase font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full inline-block font-sans">
-                {selectedActivity.category}
-              </span>
-              <span className="text-slate-400 text-xs font-mono font-medium block mt-2">{selectedActivity.date} 행사</span>
-              <h3 className="text-md md:text-lg font-extrabold text-slate-900 leading-snug mt-1">{selectedActivity.title}</h3>
-              <p className="text-xs text-slate-500 mt-3.5 leading-relaxed leading-normal bg-slate-50 p-3.5 rounded-xl">
-                하늘의 연합과 순전한 섬김으로 빛나는 교회 소그룹 성도들이 힘을 다해 참여한 공동체 행사 사진입니다. 항상 지체님을 위해 전 성전의 문이 활짝 열려있습니다.
-              </p>
-              <div className="mt-5 pt-4 border-t border-slate-100 flex justify-end gap-2">
-                <button 
-                  onClick={() => setSelectedActivity(null)}
-                  className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-4 py-2 rounded-lg"
-                >
-                  사진 창 닫기
-                </button>
+            {/* Photos Viewer Section */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1 flex flex-col justify-between">
+              {(() => {
+                const photosList = selectedActivity.photos && selectedActivity.photos.length > 0 
+                  ? selectedActivity.photos 
+                  : [selectedActivity.imageUrl];
+                const activePhotoUrl = photosList[activePhotoIndex] || selectedActivity.imageUrl;
+
+                return (
+                  <div className="space-y-4">
+                    {/* Large image with navigation controls */}
+                    <div className="relative aspect-video bg-slate-950 rounded-2xl overflow-hidden group border border-slate-100 flex items-center justify-center">
+                      <img 
+                        src={activePhotoUrl} 
+                        alt={`${selectedActivity.title} - 사진 ${activePhotoIndex + 1}`} 
+                        className="max-w-full max-h-full object-contain"
+                        referrerPolicy="no-referrer"
+                      />
+                      
+                      {/* Left Arrow */}
+                      {photosList.length > 1 && (
+                        <button
+                          onClick={() => setActivePhotoIndex((prev) => (prev - 1 + photosList.length) % photosList.length)}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors focus:outline-none"
+                          title="이전 사진"
+                        >
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                      )}
+
+                      {/* Right Arrow */}
+                      {photosList.length > 1 && (
+                        <button
+                          onClick={() => setActivePhotoIndex((prev) => (prev + 1) % photosList.length)}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors focus:outline-none"
+                          title="다음 사진"
+                        >
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      )}
+
+                      {/* Photo Index Counter Badge */}
+                      <span className="absolute bottom-4 right-4 bg-black/70 text-white text-[11px] font-mono px-3 py-1 rounded-full tracking-wider">
+                        {activePhotoIndex + 1} / {photosList.length}
+                      </span>
+                    </div>
+
+                    {/* Thumbnail Carousel / Grid */}
+                    {photosList.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-200">
+                        {photosList.map((url, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setActivePhotoIndex(idx)}
+                            className={`relative w-20 aspect-video rounded-lg overflow-hidden flex-shrink-0 transition-all border-2 ${
+                              activePhotoIndex === idx 
+                                ? 'border-blue-600 scale-95 shadow-md' 
+                                : 'border-transparent opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img 
+                              src={url} 
+                              alt="썸네일" 
+                              className="w-full h-full object-cover"
+                              referrerPolicy="no-referrer"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Album Description */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-start gap-3">
+                <div className="bg-blue-100 text-blue-600 p-2.5 rounded-xl flex-shrink-0">
+                  <FolderOpen className="h-5 w-5" />
+                </div>
+                <div className="space-y-1">
+                  <strong className="text-xs font-black text-slate-800 block">빛나는교회 행사 사진첩 안내</strong>
+                  <p className="text-xs text-slate-500 leading-relaxed leading-normal">
+                    본 행사의 모든 사진들은 구글 드라이브와 실시간 동기화되어 있으며, 이 앨범 창 내에서 좌우 화살표나 아래 썸네일을 클릭해 감상하실 수 있습니다.
+                  </p>
+                </div>
               </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-2 bg-slate-50">
+              <button 
+                onClick={() => setSelectedActivity(null)}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-all"
+              >
+                닫기
+              </button>
             </div>
 
           </div>

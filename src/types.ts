@@ -63,6 +63,7 @@ export interface GalleryItem {
   date: string;
   imageUrl: string;
   category: string;
+  photos?: string[];
 }
 
 // Interactive Planning Recommendation details
