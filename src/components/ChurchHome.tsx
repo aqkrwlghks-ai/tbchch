@@ -56,6 +56,9 @@ const bgSliderImages = [
 // 구글 앱스 스크립트 웹앱 배포 URL (여기에 발급받으신 웹앱 URL을 입력하시면 구글 드라이브와 자동 연동됩니다)
 const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbyplnfEvCxHfD-eNk6GMsIe0OeQeIEL1TM0P6CUIjMZrY7_HqmJsEoCQxNhqx_jbREC/exec';
 
+// 오늘의 묵상글 연동 링크 (여기에 연동하고자 하시는 묵상글 링크를 입력하세요)
+const TODAY_MEDITATION_LINK = 'https://script.google.com/macros/s/AKfycbyplnfEvCxHfD-eNk6GMsIe0OeQeIEL1TM0P6CUIjMZrY7_HqmJsEoCQxNhqx_jbREC/exec';
+
 const getLocalCategories = () => {
   return [
     {
@@ -145,6 +148,26 @@ export default function ChurchHome({
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
+
+  // 오늘의 묵상 팝업 상태
+  const [meditationOpen, setMeditationOpen] = useState(false);
+
+  useEffect(() => {
+    // 오늘 하루 이 창 열지 않기 여부 확인
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const hideMeditation = localStorage.getItem(`hideMeditationPopup_${todayStr}`);
+    if (!hideMeditation) {
+      setMeditationOpen(true);
+    }
+  }, []);
+
+  const handleCloseMeditation = (hideToday: boolean) => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (hideToday) {
+      localStorage.setItem(`hideMeditationPopup_${todayStr}`, 'true');
+    }
+    setMeditationOpen(false);
+  };
 
   // 구글 드라이브 연동용 갤러리 카테고리 상태 및 로딩 상태
   const [galleryCategories, setGalleryCategories] = useState<any[]>(getLocalCategories());
@@ -1747,6 +1770,108 @@ export default function ChurchHome({
         >
           <ArrowUp className="h-5 w-5" />
         </button>
+      )}
+
+      {/* Floating Meditation Button */}
+      <button
+        onClick={() => setMeditationOpen(true)}
+        className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-700 to-indigo-900 hover:from-blue-800 hover:to-indigo-950 text-white font-extrabold text-xs px-4.5 py-3 rounded-full shadow-2xl transition-all duration-200 border border-indigo-500 hover:scale-105 flex items-center gap-1.5 cursor-pointer"
+        title="오늘의 묵상 보기"
+      >
+        <BookOpen className="h-4 w-4 text-amber-300 animate-pulse" />
+        <span>오늘의 묵상 📖</span>
+      </button>
+
+      {/* 17. 오늘의 묵상 팝업창 */}
+      {meditationOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp flex flex-col relative">
+            
+            {/* Header with Warm Serene Gradient */}
+            <div className="px-6 py-5 bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 text-white relative">
+              <div className="absolute right-4 top-4">
+                <button 
+                  onClick={() => handleCloseMeditation(false)}
+                  className="text-white/70 hover:text-white bg-white/10 hover:bg-white/20 rounded-full p-1.5 transition-all cursor-pointer"
+                  title="닫기"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <span className="text-[9px] uppercase tracking-widest text-amber-400 font-extrabold bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                Today's Meditation
+              </span>
+              <h3 className="text-md font-black mt-2 flex items-center gap-1.5">
+                <BookOpen className="h-4.5 w-4.5 text-amber-400" />
+                오늘의 묵상
+              </h3>
+              <p className="text-[10px] text-indigo-200 mt-1 font-mono font-medium">
+                {new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}
+              </p>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-5 flex-1">
+              
+              {/* Scripture Passage Box */}
+              <div className="bg-amber-50/60 border border-amber-100 rounded-2xl p-4.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded font-black font-sans uppercase">오늘의 말씀</span>
+                  <span className="text-xs text-amber-800 font-bold font-serif">시편 23편 1-3절</span>
+                </div>
+                <p className="text-xs md:text-sm font-serif italic text-slate-800 leading-relaxed pl-2 border-l-2 border-amber-300">
+                  “여호와는 나의 목자시니 내게 부족함이 없으리로다 그가 나를 푸른 풀밭에 누이시며 쉴 만한 물가로 인도하시는도다 내 영혼을 소생시키시고 자기 이름을 위하여 의의 길로 인도하시는도다”
+                </p>
+              </div>
+
+              {/* Meditation Text Summary */}
+              <div className="space-y-2 text-left">
+                <h4 className="text-xs font-black text-indigo-950 flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-600"></span>
+                  목자 되신 주님과의 동행
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  하나님이 우리의 목자가 되어 주실 때, 우리는 어떠한 시련이나 결핍 속에서도 부족함이 없다고 고백할 수 있습니다. 오늘 하루도 나의 영혼을 소생시키시고 의의 길로 인도하시는 주님의 음성에 귀를 기울이며, 주님이 예비하신 푸른 풀밭과 쉴 만한 물가를 기쁨으로 누리기를 소망합니다.
+                </p>
+              </div>
+
+              {/* External Link Action Button */}
+              <div className="pt-2">
+                <a
+                  href={TODAY_MEDITATION_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-indigo-900 hover:bg-indigo-950 text-white font-extrabold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-transform hover:-translate-y-0.5 active:scale-98 cursor-pointer"
+                >
+                  <span>묵상글 전문 읽기 및 연동</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-amber-300" />
+                </a>
+              </div>
+            </div>
+
+            {/* Footer with "Do not show again today" */}
+            <div className="px-6 py-3.5 border-t border-slate-100 flex items-center justify-between bg-slate-50 text-[10.5px] text-slate-500 font-medium">
+              <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-800 select-none">
+                <input 
+                  type="checkbox" 
+                  id="hideMeditationCheckbox"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 h-3.5 w-3.5 cursor-pointer"
+                />
+                <span>오늘 하루 이 창 열지 않기</span>
+              </label>
+              <button
+                onClick={() => {
+                  const checkbox = document.getElementById('hideMeditationCheckbox') as HTMLInputElement;
+                  handleCloseMeditation(checkbox?.checked || false);
+                }}
+                className="text-slate-900 hover:text-blue-600 font-extrabold cursor-pointer"
+              >
+                닫기
+              </button>
+            </div>
+
+          </div>
+        </div>
       )}
 
     </div>
