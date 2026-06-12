@@ -56,7 +56,7 @@ const bgSliderImages = [
 ];
 
 // 구글 앱스 스크립트 웹앱 배포 URL (여기에 발급받으신 웹앱 URL을 입력하시면 구글 드라이브와 자동 연동됩니다)
-const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbzZZVqfTlxh-oMC7VjZlKAFgR6HvUwU4wUVZretTP3tJsFv8kpv0oyPlEBGgHUZwYC5/exec';
+const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbyplnfEvCxHfD-eNk6GMsIe0OeQeIEL1TM0P6CUIjMZrY7_HqmJsEoCQxNhqx_jbREC/exec';
 
 const getLocalCategories = () => {
   return [
