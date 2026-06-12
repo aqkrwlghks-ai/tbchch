@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Pretendard", "Noto Sans KR", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Nanum Myeongjo", "Playfair Display", ui-serif, Georgia, serif;
+  --font-cinzel: "Cinzel", "Playfair Display", serif;
+  --font-playfair: "Playfair Display", serif;
+  
+  --color-church-primary: #1e3a8a; /* Deep Navy Blue matching Benchmarking design */
+  --color-church-secondary: #3b82f6; /* Soft sky blue accent */
+  --color-church-accent: #f59e0b; /* Golden accent */
+}
+
+/* Custom layout class for the beautiful arc banner bottom */
+.church-arc-bottom {
+  clip-path: ellipse(80% 50% at 50% 50%);
+}
+
+.arc-clip {
+  clip-path: ellipse(110% 100% at 50% 0%);
+}
+
+/* Custom scrollbar and nice transitions */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

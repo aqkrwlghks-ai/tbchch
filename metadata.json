@@ -1,0 +1,6 @@
+{
+  "name": "빛나는 교회 리뉴얼 홈페이지",
+  "description": "빛나는 교회의 기존 홈페이지를 여주성결교회 레이아웃 기반으로 세련되고 현대적으로 전면 리뉴얼한 웹사이트 및 기획안입니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
