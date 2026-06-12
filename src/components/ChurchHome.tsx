@@ -75,6 +75,7 @@ export default function ChurchHome({
   const [newFamilyFormOpen, setNewFamilyFormOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
+  const [showAllGallery, setShowAllGallery] = useState(false);
 
   // 구글 드라이브 연동용 갤러리 상태 및 로딩 상태
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(galleryPhotos);
@@ -1012,7 +1013,7 @@ export default function ChurchHome({
                     갤러리에 등록된 사진이 없습니다.
                   </div>
                 ) : (
-                  galleryItems.slice(0, 6).map((photo) => (
+                  (showAllGallery ? galleryItems : galleryItems.slice(0, 6)).map((photo) => (
                     <button
                       key={photo.id}
                       onClick={() => {
@@ -1049,19 +1050,19 @@ export default function ChurchHome({
                 )}
               </div>
 
-              {/* View All in Google Drive button */}
-              <div className="pt-8 flex justify-center">
-                <a
-                  href="https://drive.google.com/drive/folders/1mRNIHcQJ9lSeK1qYoYHMXJP9vwMCRaNp?usp=share_link"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                >
-                  <FolderOpen className="h-4.5 w-4.5 text-blue-100" />
-                  <span>갤러리 전체보기 (구글 드라이브 폴더)</span>
-                  <ExternalLink className="h-4 w-4 text-blue-200" />
-                </a>
-              </div>
+              {/* Toggle to show all gallery folders/albums */}
+              {galleryItems.length > 6 && (
+                <div className="pt-8 flex justify-center">
+                  <button
+                    onClick={() => setShowAllGallery(!showAllGallery)}
+                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                  >
+                    <FolderOpen className="h-4.5 w-4.5 text-blue-100" />
+                    <span>{showAllGallery ? "갤러리 접기" : "갤러리 전체 행사 폴더 보기"}</span>
+                    <ChevronRight className={`h-4 w-4 text-blue-200 transition-transform ${showAllGallery ? 'rotate-90' : ''}`} />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Utility grid buttons (Yeoju church UI benchmarks) */}
