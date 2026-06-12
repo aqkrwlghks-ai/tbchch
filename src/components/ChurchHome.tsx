@@ -1071,54 +1071,118 @@ export default function ChurchHome({
                 <span className="text-xs font-mono font-bold text-slate-400">성도 소식 광장</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+              <div className="space-y-8">
                 {loadingGallery ? (
-                  <div className="col-span-full py-20 text-center flex flex-col items-center justify-center gap-3">
+                  <div className="py-20 text-center flex flex-col items-center justify-center gap-3 bg-white rounded-3xl border border-slate-100 shadow-sm">
                     <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                     <p className="text-xs text-slate-400 font-medium">구글 드라이브에서 사진첩을 가져오는 중...</p>
                   </div>
                 ) : galleryCategories.length === 0 ? (
-                  <div className="col-span-full py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
+                  <div className="py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
                     등록된 사진첩이 없습니다.
                   </div>
-                ) : (
-                  galleryCategories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat)}
-                      className="group bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col relative pt-2"
-                    >
-                      {/* Folder shape accent at top */}
-                      <div className="absolute top-0 left-6 w-20 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1"></div>
-                      
-                      <div className="relative aspect-[3/2] overflow-hidden bg-slate-100 rounded-t-3xl">
-                        <img 
-                          src={cat.coverUrl} 
-                          alt={cat.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          referrerPolicy="no-referrer"
-                        />
-                        {/* Folder icon and albums count */}
-                        <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
-                          <FolderOpen className="h-3.5 w-3.5" />
-                          <span>{cat.albums ? cat.albums.length : 0}개 폴더</span>
-                        </span>
+                ) : (() => {
+                  const sortedCategories = [...galleryCategories].sort((a, b) => {
+                    const getLatestDate = (cat: any) => {
+                      if (!cat.albums || cat.albums.length === 0) return '';
+                      const dates = cat.albums.map((alb: any) => alb.date).filter(Boolean);
+                      if (dates.length === 0) return '';
+                      return dates.sort().reverse()[0];
+                    };
+                    const dateA = getLatestDate(a);
+                    const dateB = getLatestDate(b);
+                    return dateB.localeCompare(dateA);
+                  });
+
+                  const featuredCategory = sortedCategories[0];
+                  const otherCategories = sortedCategories.slice(1);
+
+                  return (
+                    <div className="space-y-8">
+                      {/* Top: 1 Featured Category Folder (Large) */}
+                      {featuredCategory && (
+                        <button
+                          onClick={() => setSelectedCategory(featuredCategory)}
+                          className="group w-full bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col lg:flex-row relative pt-2 lg:pt-0"
+                        >
+                          {/* Folder shape accent */}
+                          <div className="absolute top-0 left-6 w-24 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1 lg:hidden"></div>
+                          <div className="absolute left-0 top-6 w-2 h-24 bg-slate-200 group-hover:bg-blue-600 rounded-r-lg transition-colors -ml-1 hidden lg:block"></div>
+                          
+                          <div className="relative w-full lg:w-3/5 aspect-[3/2] lg:aspect-[16/10] overflow-hidden bg-slate-100 rounded-t-2xl lg:rounded-t-none lg:rounded-l-3xl">
+                            <img 
+                              src={featuredCategory.coverUrl} 
+                              alt={featuredCategory.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              referrerPolicy="no-referrer"
+                            />
+                            <span className="absolute top-4 left-4 bg-amber-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md animate-pulse">
+                              ★ 최신 업데이트
+                            </span>
+                            <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                              <FolderOpen className="h-4 w-4" />
+                              <span>{featuredCategory.albums ? featuredCategory.albums.length : 0}개 폴더</span>
+                            </span>
+                          </div>
+                          <div className="p-6 lg:p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-blue-600">최신 업데이트 폴더</span>
+                              <h4 className="text-lg lg:text-xl font-black text-slate-900 mt-1.5 group-hover:text-blue-700 transition-colors">
+                                {featuredCategory.name}
+                              </h4>
+                              <p className="text-xs text-slate-550 mt-2 leading-relaxed">
+                                빛나는 교회의 가장 최근 소식과 은혜의 기록들이 모여 있는 폴더입니다. 클릭하여 내부 앨범을 감상해 보세요.
+                              </p>
+                            </div>
+                            <div className="mt-6 pt-4 border-t border-slate-150 flex justify-between items-center text-xs text-slate-400 font-medium">
+                              <span className="flex items-center gap-1"><Clock className="h-4 w-4 text-blue-500" />최근 업데이트</span>
+                              <strong className="text-slate-700 font-mono">{featuredCategory.albums && featuredCategory.albums[0] ? featuredCategory.albums[0].date : '없음'}</strong>
+                            </div>
+                          </div>
+                        </button>
+                      )}
+
+                      {/* Bottom: 3 Category Folders (Grid) */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+                        {otherCategories.map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat)}
+                            className="group bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col relative pt-2"
+                          >
+                            {/* Folder shape accent at top */}
+                            <div className="absolute top-0 left-6 w-20 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1"></div>
+                            
+                            <div className="relative aspect-[3/2] overflow-hidden bg-slate-100 rounded-t-3xl">
+                              <img 
+                                src={cat.coverUrl} 
+                                alt={cat.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                referrerPolicy="no-referrer"
+                              />
+                              <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                                <FolderOpen className="h-3.5 w-3.5" />
+                                <span>{cat.albums ? cat.albums.length : 0}개 폴더</span>
+                              </span>
+                            </div>
+                            <div className="p-4.5 flex-1 flex flex-col justify-between">
+                              <div>
+                                <span className="text-[10px] uppercase font-bold text-blue-600">행사 사진첩</span>
+                                <h4 className="text-sm font-extrabold text-slate-900 mt-1 group-hover:text-blue-700 transition-colors">
+                                  {cat.name}
+                                </h4>
+                              </div>
+                              <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10.5px] text-slate-400 font-medium">
+                                <span>최근 업데이트</span>
+                                <span>{cat.albums && cat.albums[0] ? cat.albums[0].date : '없음'}</span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
                       </div>
-                      <div className="p-4.5 flex-1 flex flex-col justify-between">
-                        <div>
-                          <span className="text-[10px] uppercase font-bold text-blue-600">행사 사진첩</span>
-                          <h4 className="text-sm font-extrabold text-slate-900 mt-1 group-hover:text-blue-700 transition-colors">
-                            {cat.name}
-                          </h4>
-                        </div>
-                        <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10.5px] text-slate-400 font-medium">
-                          <span>최근 업데이트</span>
-                          <span>{cat.albums && cat.albums[0] ? cat.albums[0].date : '없음'}</span>
-                        </div>
-                      </div>
-                    </button>
-                  ))
-                )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
