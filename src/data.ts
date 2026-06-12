@@ -42,8 +42,7 @@ export const gnbMenuData: MenuItem[] = [
     link: '#nextgen-section',
     subMenu: [
       { name: '교회학교(어린이)', link: '#nextgen-section', id: 'kids-school' },
-      { name: '청소년부', link: '#nextgen-section', id: 'youth-dept' },
-      { name: '빛나는 청년교회', link: '#nextgen-section', id: 'young-adults' }
+      { name: '청청(청소년&청년)', link: '#nextgen-section', id: 'youth-adults' }
     ]
   },
   {
