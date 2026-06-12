@@ -58,6 +58,77 @@ const bgSliderImages = [
 // 구글 앱스 스크립트 웹앱 배포 URL (여기에 발급받으신 웹앱 URL을 입력하시면 구글 드라이브와 자동 연동됩니다)
 const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbzZZVqfTlxh-oMC7VjZlKAFgR6HvUwU4wUVZretTP3tJsFv8kpv0oyPlEBGgHUZwYC5/exec';
 
+const getLocalCategories = () => {
+  return [
+    {
+      id: 'local-cat-1',
+      name: '교회학교',
+      coverUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=800',
+      albums: [
+        {
+          id: 'local-alb-1',
+          title: '주일 학교 은혜 가득한 소그룹 성경공부',
+          date: '2026-06-07',
+          coverUrl: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=800',
+          photos: [
+            'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=800'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'local-cat-2',
+      name: '예배사진',
+      coverUrl: 'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=800',
+      albums: [
+        {
+          id: 'local-alb-2',
+          title: '본 예배당 성전 꽃꽂이 감사 봉사',
+          date: '2026-05-18',
+          coverUrl: 'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=800',
+          photos: [
+            'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=800',
+            'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=800'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'local-cat-3',
+      name: '청청',
+      coverUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+      albums: [
+        {
+          id: 'local-alb-3',
+          title: '청년 연합 야외 가을 묵상제',
+          date: '2026-06-01',
+          coverUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+          photos: [
+            'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'local-cat-4',
+      name: '행사사진',
+      coverUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800',
+      albums: [
+        {
+          id: 'local-alb-4',
+          title: '여신도회 주관 나눔과 섬김 반찬 배달',
+          date: '2026-05-25',
+          coverUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800',
+          photos: [
+            'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=800'
+          ]
+        }
+      ]
+    }
+  ];
+};
+
 export default function ChurchHome({ 
   activeSloganId, 
   selectedFontCombo,
@@ -73,12 +144,12 @@ export default function ChurchHome({
   
   // Custom dialogs/forms
   const [newFamilyFormOpen, setNewFamilyFormOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
-  const [showAllGallery, setShowAllGallery] = useState(false);
 
-  // 구글 드라이브 연동용 갤러리 상태 및 로딩 상태
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(galleryPhotos);
+  // 구글 드라이브 연동용 갤러리 카테고리 상태 및 로딩 상태
+  const [galleryCategories, setGalleryCategories] = useState<any[]>(getLocalCategories());
   const [loadingGallery, setLoadingGallery] = useState(false);
 
   // Dynamic automatic image transition
@@ -98,11 +169,11 @@ export default function ChurchHome({
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setGalleryItems(data);
+          setGalleryCategories(data);
         }
       })
       .catch((err) => {
-        console.error('Failed to fetch gallery from Google Drive:', err);
+        console.error('Failed to fetch gallery categories from Google Drive:', err);
       })
       .finally(() => {
         setLoadingGallery(false);
@@ -1002,67 +1073,55 @@ export default function ChurchHome({
                 <span className="text-xs font-mono font-bold text-slate-400">성도 소식 광장</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {loadingGallery ? (
-                  <div className="col-span-2 py-20 text-center flex flex-col items-center justify-center gap-3">
+                  <div className="col-span-full py-20 text-center flex flex-col items-center justify-center gap-3">
                     <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-xs text-slate-400 font-medium">구글 드라이브에서 사진을 가져오는 중...</p>
+                    <p className="text-xs text-slate-400 font-medium">구글 드라이브에서 사진첩을 가져오는 중...</p>
                   </div>
-                ) : galleryItems.length === 0 ? (
-                  <div className="col-span-2 py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
-                    갤러리에 등록된 사진이 없습니다.
+                ) : galleryCategories.length === 0 ? (
+                  <div className="col-span-full py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
+                    등록된 사진첩이 없습니다.
                   </div>
                 ) : (
-                  (showAllGallery ? galleryItems : galleryItems.slice(0, 6)).map((photo) => (
+                  galleryCategories.map((cat) => (
                     <button
-                      key={photo.id}
-                      onClick={() => {
-                        setSelectedActivity(photo);
-                        setActivePhotoIndex(0);
-                      }}
-                      className="group bg-white rounded-2xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left"
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat)}
+                      className="group bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col relative pt-2"
                     >
-                      <div className="relative aspect-video overflow-hidden bg-slate-100">
+                      {/* Folder shape accent at top */}
+                      <div className="absolute top-0 left-6 w-20 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1"></div>
+                      
+                      <div className="relative aspect-video overflow-hidden bg-slate-100 rounded-t-2xl">
                         <img 
-                          src={photo.imageUrl || photo.coverUrl} 
-                          alt={photo.title}
+                          src={cat.coverUrl} 
+                          alt={cat.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           referrerPolicy="no-referrer"
                         />
-                        <span className="absolute top-3 left-3 bg-slate-900/80 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
-                          {photo.category}
+                        {/* Folder icon and albums count */}
+                        <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                          <FolderOpen className="h-3.5 w-3.5" />
+                          <span>{cat.albums ? cat.albums.length : 0}개 폴더</span>
                         </span>
-                        {photo.photos && photo.photos.length > 0 && (
-                          <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
-                            <FolderOpen className="h-3.5 w-3.5" />
-                            <span>{photo.photos.length}장</span>
-                          </span>
-                        )}
                       </div>
-                      <div className="p-4.5">
-                        <span className="text-[10.5px] text-slate-400 font-mono font-semibold">{photo.date}</span>
-                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-1 group-hover:text-blue-700 transition-colors">
-                          {photo.title}
-                        </h4>
+                      <div className="p-4.5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <span className="text-[10px] uppercase font-bold text-blue-600">행사 사진첩</span>
+                          <h4 className="text-sm font-extrabold text-slate-900 mt-1 group-hover:text-blue-700 transition-colors">
+                            {cat.name}
+                          </h4>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10.5px] text-slate-400 font-medium">
+                          <span>최근 업데이트</span>
+                          <span>{cat.albums && cat.albums[0] ? cat.albums[0].date : '없음'}</span>
+                        </div>
                       </div>
                     </button>
                   ))
                 )}
               </div>
-
-              {/* Toggle to show all gallery folders/albums */}
-              {galleryItems.length > 6 && (
-                <div className="pt-8 flex justify-center">
-                  <button
-                    onClick={() => setShowAllGallery(!showAllGallery)}
-                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                  >
-                    <FolderOpen className="h-4.5 w-4.5 text-blue-100" />
-                    <span>{showAllGallery ? "갤러리 접기" : "갤러리 전체 행사 폴더 보기"}</span>
-                    <ChevronRight className={`h-4 w-4 text-blue-200 transition-transform ${showAllGallery ? 'rotate-90' : ''}`} />
-                  </button>
-                </div>
-              )}
             </div>
 
             {/* Utility grid buttons (Yeoju church UI benchmarks) */}
@@ -1523,6 +1582,90 @@ export default function ChurchHome({
             <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-2 bg-slate-50">
               <button 
                 onClick={() => setSelectedActivity(null)}
+                className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-all"
+              >
+                닫기
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 16. NEW MODAL: 카테고리 내부 앨범 폴더 목록 보기 */}
+      {selectedCategory && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp flex flex-col max-h-[85vh]">
+            
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <FolderOpen className="h-5 w-5 text-blue-600" />
+                <h3 className="text-md md:text-lg font-black text-slate-900">
+                  {selectedCategory.name} 폴더 내부
+                </h3>
+                <span className="text-xs text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-full font-mono font-medium">
+                  총 {selectedCategory.albums ? selectedCategory.albums.length : 0}개
+                </span>
+              </div>
+              <button 
+                onClick={() => setSelectedCategory(null)}
+                className="bg-slate-200 text-slate-600 rounded-full p-2 hover:bg-slate-300 transition-colors"
+                title="닫기"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Modal Body: Albums grid inside Category */}
+            <div className="p-6 overflow-y-auto space-y-6 flex-1">
+              <p className="text-xs text-slate-400 font-medium">
+                원하시는 행사 폴더를 클릭하시면 폴더 내부의 사진들을 슬라이드로 감상하실 수 있습니다.
+              </p>
+              
+              {!selectedCategory.albums || selectedCategory.albums.length === 0 ? (
+                <div className="py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
+                  이 카테고리 폴더 내에 등록된 행사 사진첩이 없습니다.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                  {selectedCategory.albums.map((album: any) => (
+                    <button
+                      key={album.id}
+                      onClick={() => {
+                        setSelectedActivity(album);
+                        setActivePhotoIndex(0);
+                      }}
+                      className="group bg-white rounded-2xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-slate-100">
+                        <img 
+                          src={album.coverUrl} 
+                          alt={album.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                        <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                          <FolderOpen className="h-3.5 w-3.5" />
+                          <span>{album.photos ? album.photos.length : 0}장</span>
+                        </span>
+                      </div>
+                      <div className="p-4">
+                        <span className="text-[10px] text-slate-400 font-mono font-semibold">{album.date}</span>
+                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-2 group-hover:text-blue-700 transition-colors leading-snug">
+                          {album.title}
+                        </h4>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-slate-100 flex justify-end bg-slate-50">
+              <button 
+                onClick={() => setSelectedCategory(null)}
                 className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl shadow-sm transition-all"
               >
                 닫기
