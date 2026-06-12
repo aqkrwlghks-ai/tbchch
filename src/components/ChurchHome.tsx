@@ -31,7 +31,6 @@ import {
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
 import mainChurchImg from '../main-church.jpg';
-import slide1 from '../slide1.jpg';
 import slide2 from '../slide2.jpg';
 import slide3 from '../slide3.jpg';
 import slide4 from '../slide4.jpg';
@@ -48,7 +47,6 @@ interface ChurchHomeProps {
 
 const bgSliderImages = [
   mainChurchImg,
-  slide1,
   slide2,
   slide3,
   slide4,
@@ -156,7 +154,7 @@ export default function ChurchHome({
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % bgSliderImages.length);
-    }, 30000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
@@ -408,7 +406,7 @@ export default function ChurchHome({
             <div
               key={idx}
               className={`absolute inset-0 transition-opacity duration-1000 ease-out bg-cover ${
-                idx === 0 ? 'bg-[30%_center]' : 'bg-center'
+                idx === 0 ? 'bg-[30%_top]' : 'bg-center'
               } ${
                 currentSlide === idx ? 'opacity-75 scale-105' : 'opacity-0 scale-100'
               }`}
