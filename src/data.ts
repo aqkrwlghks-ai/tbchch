@@ -51,7 +51,7 @@ export const gnbMenuData: MenuItem[] = [
     link: '#news-section',
     subMenu: [
       { name: '알림 및 공지사항', link: '#news-section', id: 'announcement' },
-      { name: '갤러리(교회활동)', link: '#gallery-section', id: 'activity-gallery' },
+      { name: '갤러리(교회활동)', link: 'https://drive.google.com/drive/folders/1mRNIHcQJ9lSeK1qYoYHMXJP9vwMCRaNp?usp=share_link', id: 'activity-gallery' },
       { name: '서식 자료실', link: '#gallery-section', id: 'form-archive' }
     ]
   },

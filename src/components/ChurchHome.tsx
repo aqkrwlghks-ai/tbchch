@@ -24,7 +24,9 @@ import {
   Volume2,
   Map,
   ArrowUp,
-  Download
+  Download,
+  ExternalLink,
+  FolderOpen
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
@@ -206,9 +208,12 @@ export default function ChurchHome({
                       <a
                         key={sub.id}
                         href={sub.link}
-                        className="block px-5 py-2 text-[13px] text-slate-600 hover:text-blue-700 hover:bg-blue-50 font-medium transition-colors"
+                        target={sub.link.startsWith('http') ? '_blank' : undefined}
+                        rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        className="flex items-center justify-between px-5 py-2 text-[13px] text-slate-600 hover:text-blue-700 hover:bg-blue-50 font-medium transition-colors"
                       >
-                        {sub.name}
+                        <span>{sub.name}</span>
+                        {sub.link.startsWith('http') && <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-blue-700" />}
                       </a>
                     ))}
                   </div>
@@ -282,10 +287,13 @@ export default function ChurchHome({
                     <a
                       key={sub.id}
                       href={sub.link}
+                      target={sub.link.startsWith('http') ? '_blank' : undefined}
+                      rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block px-2 py-1.5 text-[12.5px] text-slate-600 hover:text-blue-700 font-medium bg-slate-50/40 rounded transition-all"
+                      className="flex items-center justify-between px-2 py-1.5 text-[12.5px] text-slate-600 hover:text-blue-700 font-medium bg-slate-50/40 rounded transition-all"
                     >
-                      • {sub.name}
+                      <span>• {sub.name}</span>
+                      {sub.link.startsWith('http') && <ExternalLink className="h-3 w-3 text-slate-400" />}
                     </a>
                   ))}
                 </div>
@@ -1003,7 +1011,7 @@ export default function ChurchHome({
                     갤러리에 등록된 사진이 없습니다.
                   </div>
                 ) : (
-                  galleryItems.map((photo) => (
+                  galleryItems.slice(0, 6).map((photo) => (
                     <button
                       key={photo.id}
                       onClick={() => setSelectedActivity(photo)}
@@ -1029,6 +1037,20 @@ export default function ChurchHome({
                     </button>
                   ))
                 )}
+              </div>
+
+              {/* View All in Google Drive button */}
+              <div className="pt-8 flex justify-center">
+                <a
+                  href="https://drive.google.com/drive/folders/1mRNIHcQJ9lSeK1qYoYHMXJP9vwMCRaNp?usp=share_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-black shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                >
+                  <FolderOpen className="h-4.5 w-4.5 text-blue-100" />
+                  <span>갤러리 전체보기 (구글 드라이브 폴더)</span>
+                  <ExternalLink className="h-4 w-4 text-blue-200" />
+                </a>
               </div>
             </div>
 
