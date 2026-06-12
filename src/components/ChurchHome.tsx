@@ -29,6 +29,11 @@ import {
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
 import mainChurchImg from '../main-church.jpg';
+import slide1 from '../slide1.jpg';
+import slide2 from '../slide2.jpg';
+import slide3 from '../slide3.jpg';
+import slide4 from '../slide4.jpg';
+import slide5 from '../slide5.jpg';
 import crossBg from '../cross_bg.png';
 import prayerHandsBg from '../prayer_hands_bg.png';
 import skyBg from '../sky_bg.png';
@@ -41,8 +46,11 @@ interface ChurchHomeProps {
 
 const bgSliderImages = [
   mainChurchImg,
-  'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=1600', // Stained glass church sunbeam
-  'https://images.unsplash.com/photo-1512418490979-9179599339e0?auto=format&fit=crop&q=80&w=1600'  // Hands gathered in community
+  slide1,
+  slide2,
+  slide3,
+  slide4,
+  slide5
 ];
 
 export default function ChurchHome({ 
@@ -66,7 +74,7 @@ export default function ChurchHome({
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % bgSliderImages.length);
-    }, 6000);
+    }, 30000);
     return () => clearInterval(timer);
   }, []);
 
@@ -294,7 +302,7 @@ export default function ChurchHome({
               className={`absolute inset-0 transition-opacity duration-1000 ease-out bg-cover ${
                 idx === 0 ? 'bg-[30%_center]' : 'bg-center'
               } ${
-                currentSlide === idx ? (idx === 0 ? 'opacity-75 scale-105' : 'opacity-45 scale-105') : 'opacity-0 scale-100'
+                currentSlide === idx ? 'opacity-75 scale-105' : 'opacity-0 scale-100'
               }`}
               style={{ backgroundImage: `url('${img}')` }}
             />
