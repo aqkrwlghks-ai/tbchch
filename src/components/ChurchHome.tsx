@@ -29,6 +29,9 @@ import {
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
 import mainChurchImg from '../main-church.jpg';
+import crossBg from '../cross_bg.png';
+import prayerHandsBg from '../prayer_hands_bg.png';
+import skyBg from '../sky_bg.png';
 
 interface ChurchHomeProps {
   activeSloganId: string;
@@ -440,7 +443,19 @@ export default function ChurchHome({
       </div>
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24" id="welcome-section">
+      <section className="relative overflow-hidden bg-white py-16 md:py-24" id="welcome-section">
+        {/* Faded wooden cross watermark on the right */}
+        <div 
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-contain bg-no-repeat opacity-[0.06] pointer-events-none mix-blend-multiply hidden md:block" 
+          style={{ backgroundImage: `url('${crossBg}')`, backgroundPosition: 'right center' }}
+        />
+        {/* Faint center church outline logo */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none z-0">
+          <svg className="w-[400px] h-[400px] text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Title */}
         <div className="text-center mb-16">
@@ -592,12 +607,22 @@ export default function ChurchHome({
           </div>
 
         </div>
-
+      </div>
       </section>
 
       {/* 6. WEEKLY SERMON & PRAISE SECTION ([필수 요구사항: 이번주 설교영상 즉시 재생 연동]) */}
-      <section className="bg-slate-100 border-y border-slate-200 py-16 md:py-24" id="sermon-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-slate-100/70 border-y border-slate-200 py-16 md:py-24" id="sermon-section">
+        {/* Soft prayer hands watermark on the left */}
+        <div 
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-80 h-80 bg-contain bg-no-repeat opacity-[0.04] pointer-events-none mix-blend-multiply hidden md:block" 
+          style={{ backgroundImage: `url('${prayerHandsBg}')`, backgroundPosition: 'left center' }}
+        />
+        {/* Soft prayer hands watermark on the right */}
+        <div 
+          className="absolute right-0 top-1/2 -translate-y-1/2 w-80 h-80 bg-contain bg-no-repeat opacity-[0.04] pointer-events-none mix-blend-multiply hidden md:block transform scale-x-[-1]" 
+          style={{ backgroundImage: `url('${prayerHandsBg}')`, backgroundPosition: 'right center' }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section title */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
@@ -825,10 +850,17 @@ export default function ChurchHome({
 
       </section>
 
-      {/* 8. CHURCH NEWS & MAIN BANNER POSTER */}
-      <section className="bg-white border-t border-slate-200 py-16 md:py-24" id="news-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+      {/* Combined News & Gallery Section with Sky Background and Floating Panels */}
+      <div 
+        className="relative bg-cover bg-center py-16 md:py-24 space-y-12 overflow-hidden"
+        style={{ backgroundImage: `url('${skyBg}')` }}
+      >
+        {/* Soft white gradient overlays for smooth transition from previous section and to footer */}
+        <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-slate-100 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-slate-900/50 to-transparent pointer-events-none" />
+
+        {/* 8. CHURCH NEWS & MAIN BANNER POSTER */}
+        <section className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 py-10 md:py-16 bg-white/90 backdrop-blur-md rounded-[40px] md:rounded-[60px] shadow-2xl border border-white/20" id="news-section">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
             {/* Left side board news list */}
@@ -851,7 +883,7 @@ export default function ChurchHome({
                   <button
                     key={news.id}
                     onClick={() => setSelectedNews(news)}
-                    className="w-full text-left py-4 px-2 hover:bg-slate-50 rounded-xl transition-all duration-150 block group"
+                    className="w-full text-left py-4 px-2 hover:bg-slate-50/70 rounded-xl transition-all duration-150 block group"
                   >
                     <div className="flex justify-between items-start gap-4">
                       
@@ -909,14 +941,10 @@ export default function ChurchHome({
             </div>
 
           </div>
+        </section>
 
-        </div>
-      </section>
-
-      {/* 9. GALLERY SECTION & UTILITY ACTION BUTTON GRIDS */}
-      <section className="bg-slate-50 py-16 md:py-24 border-t border-slate-200" id="gallery-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
+        {/* 9. GALLERY SECTION & UTILITY ACTION BUTTON GRIDS */}
+        <section className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 py-10 md:py-16 bg-white/90 backdrop-blur-md rounded-[40px] md:rounded-[60px] shadow-2xl border border-white/20" id="gallery-section">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Gallery list */}
@@ -1042,9 +1070,8 @@ export default function ChurchHome({
             </div>
 
           </div>
-
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* 10. REALISTIC FOOTER */}
       <footer className="bg-slate-900 text-slate-350 pt-16 pb-12 border-t border-slate-800" id="footer-map">
