@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>설교/미디어 - 빛나는 교회</title>
+  <meta name="description" content="주일 설교 및 수요/금요 예배 설교를 영상과 오디오로 다시 볼 수 있는 설교 아카이브입니다.">
+  
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 커스텀 스타일시트 -->
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+  <!-- 헤더 & 네비게이션 -->
+  <header class="header scrolled" id="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">
+        <i class="fa-solid fa-sun logo-glow"></i>
+        <span>빛나는<span class="logo-glow">교회</span></span>
+      </a>
+      
+      <nav>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="about.html">교회 소개</a></li>
+          <li><a href="worship.html">예배 안내</a></li>
+          <li class="active"><a href="media.html">설교/미디어</a></li>
+          <li><a href="news.html">교회 소식</a></li>
+        </ul>
+      </nav>
+      
+      <div class="menu-toggle" id="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 서브 페이지 히어로 -->
+  <section class="sub-hero-section">
+    <div class="sub-hero-glow"></div>
+    <div class="container sub-hero-content">
+      <h1>설교/미디어</h1>
+      <p>매주 선포되는 생명의 말씀으로 삶을 채우는 아카이브</p>
+    </div>
+  </section>
+
+  <!-- 설교 아카이브 섹션 -->
+  <section class="section-padding">
+    <div class="container">
+      
+      <!-- 필터 & 검색 영역 -->
+      <div class="media-filter-bar glass-card reveal" style="margin-bottom: 40px; padding: 20px 30px;">
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-category="all">전체 설교</button>
+          <button class="filter-tab" data-category="sunday">주일 대예배</button>
+          <button class="filter-tab" data-category="afternoon">오후 찬양예배</button>
+          <button class="filter-tab" data-category="weekday">수요/금요예배</button>
+        </div>
+        
+        <div class="search-box">
+          <input type="text" id="sermon-search" placeholder="설교 제목, 본문, 강사 검색...">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        </div>
+      </div>
+
+      <!-- 설교 리스트 그리드 -->
+      <div class="sermon-grid" id="sermon-grid">
+        
+        <!-- 설교 카드 1 (최신) -->
+        <div class="sermon-card glass-card reveal" data-category="sunday" data-video-id="dQw4w9WgXcQ">
+          <div class="sermon-thumb">
+            <img src="https://images.unsplash.com/photo-1504052434569-70ad58565b90?q=80&w=600&auto=format&fit=crop" alt="설교 섬네일">
+            <span class="category-badge">주일 대예배</span>
+            <button class="play-overlay-btn"><i class="fa-solid fa-play"></i></button>
+          </div>
+          <div class="sermon-body">
+            <h3 class="sermon-title">복음의 능력으로 세상을 비추라</h3>
+            <p class="sermon-passage">마태복음 5:14-16</p>
+            <div class="sermon-card-meta">
+              <span><i class="fa-regular fa-user"></i> 김빛남 목사</span>
+              <span><i class="fa-regular fa-calendar"></i> 2026.06.07</span>
+            </div>
+            <div class="sermon-card-actions">
+              <button class="btn btn-gold btn-sm play-video-trigger" data-video-title="복음의 능력으로 세상을 비추라" data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                <i class="fa-solid fa-video"></i> 영상
+              </button>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-volume-high"></i> 음성</a>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-pdf"></i> 요약</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 설교 카드 2 -->
+        <div class="sermon-card glass-card reveal" data-category="sunday" data-video-id="dQw4w9WgXcQ">
+          <div class="sermon-thumb">
+            <img src="https://images.unsplash.com/photo-1438211391453-37f24029d000?q=80&w=600&auto=format&fit=crop" alt="설교 섬네일">
+            <span class="category-badge">주일 대예배</span>
+            <button class="play-overlay-btn"><i class="fa-solid fa-play"></i></button>
+          </div>
+          <div class="sermon-body">
+            <h3 class="sermon-title">믿음의 뿌리를 깊게 내리라</h3>
+            <p class="sermon-passage">골로새서 2:6-7</p>
+            <div class="sermon-card-meta">
+              <span><i class="fa-regular fa-user"></i> 김빛남 목사</span>
+              <span><i class="fa-regular fa-calendar"></i> 2026.05.31</span>
+            </div>
+            <div class="sermon-card-actions">
+              <button class="btn btn-gold btn-sm play-video-trigger" data-video-title="믿음의 뿌리를 깊게 내리라" data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                <i class="fa-solid fa-video"></i> 영상
+              </button>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-volume-high"></i> 음성</a>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-pdf"></i> 요약</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 설교 카드 3 -->
+        <div class="sermon-card glass-card reveal" data-category="afternoon" data-video-id="dQw4w9WgXcQ">
+          <div class="sermon-thumb">
+            <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=600&auto=format&fit=crop" alt="설교 섬네일">
+            <span class="category-badge">오후 찬양예배</span>
+            <button class="play-overlay-btn"><i class="fa-solid fa-play"></i></button>
+          </div>
+          <div class="sermon-body">
+            <h3 class="sermon-title">감사의 제사로 여는 소망의 문</h3>
+            <p class="sermon-passage">시편 50:23</p>
+            <div class="sermon-card-meta">
+              <span><i class="fa-regular fa-user"></i> 이선교 협동목사</span>
+              <span><i class="fa-regular fa-calendar"></i> 2026.05.24</span>
+            </div>
+            <div class="sermon-card-actions">
+              <button class="btn btn-gold btn-sm play-video-trigger" data-video-title="감사의 제사로 여는 소망의 문" data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                <i class="fa-solid fa-video"></i> 영상
+              </button>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-volume-high"></i> 음성</a>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-pdf"></i> 요약</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 설교 카드 4 -->
+        <div class="sermon-card glass-card reveal" data-category="weekday" data-video-id="dQw4w9WgXcQ">
+          <div class="sermon-thumb">
+            <img src="https://images.unsplash.com/photo-1478147427282-58a87a120781?q=80&w=600&auto=format&fit=crop" alt="설교 섬네일">
+            <span class="category-badge">금요 성령 대망회</span>
+            <button class="play-overlay-btn"><i class="fa-solid fa-play"></i></button>
+          </div>
+          <div class="sermon-body">
+            <h3 class="sermon-title">부르짖으라, 내가 응답하리라</h3>
+            <p class="sermon-passage">예레미야 33:1-3</p>
+            <div class="sermon-card-meta">
+              <span><i class="fa-regular fa-user"></i> 김빛남 목사</span>
+              <span><i class="fa-regular fa-calendar"></i> 2026.05.22</span>
+            </div>
+            <div class="sermon-card-actions">
+              <button class="btn btn-gold btn-sm play-video-trigger" data-video-title="부르짖으라, 내가 응답하리라" data-video-url="https://www.youtube.com/embed/dQw4w9WgXcQ">
+                <i class="fa-solid fa-video"></i> 영상
+              </button>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-volume-high"></i> 음성</a>
+              <a href="#" class="btn btn-secondary btn-sm"><i class="fa-solid fa-file-pdf"></i> 요약</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 비디오 플레이어 모달 (팝업) -->
+  <div class="video-modal" id="video-modal">
+    <div class="video-modal-overlay" id="video-modal-overlay"></div>
+    <div class="video-modal-content glass-card">
+      <div class="video-modal-header">
+        <h3 id="modal-video-title">설교 영상 재생</h3>
+        <button class="video-modal-close" id="video-modal-close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="video-iframe-container">
+        <iframe id="modal-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-info">
+        <a href="index.html" class="logo">
+          <i class="fa-solid fa-sun logo-glow"></i>
+          <span>빛나는<span class="logo-glow">교회</span></span>
+        </a>
+        <p><i class="fa-solid fa-location-dot"></i> 서울특별시 강남구 빛남로 777 (우: 06234)</p>
+        <p><i class="fa-solid fa-phone"></i> 대표번호: 02-123-4567 | 팩스: 02-123-4568</p>
+        <p><i class="fa-solid fa-envelope"></i> 이메일: info@shiningchurch.org</p>
+      </div>
+      
+      <div class="footer-links">
+        <h4>바로가기</h4>
+        <ul>
+          <li><a href="about.html#welcome">목사님 인사말</a></li>
+          <li><a href="about.html#vision">교회 비전 및 역사</a></li>
+          <li><a href="worship.html">예배 안내 및 약도</a></li>
+          <li><a href="media.html">주일 설교 다시보기</a></li>
+          <li><a href="news.html">주보 및 행사 소식</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-worship">
+        <h4>대표예배 시간</h4>
+        <div class="footer-worship-list">
+          <div class="footer-worship-item">
+            <span>주일 1부 예배</span>
+            <span>오전 09:00</span>
+          </div>
+          <div class="footer-worship-item">
+            <span>주일 2부 예배</span>
+            <span>오전 11:00</span>
+          </div>
+          <div class="footer-worship-item">
+            <span>수요 기도회</span>
+            <span>오후 07:30</span>
+          </div>
+          <div class="footer-worship-item">
+            <span>금요 성령 대망회</span>
+            <span>오후 09:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 빛나는 교회 (Shining Church). All Rights Reserved. Designed with Premium Grace.</p>
+    </div>
+  </footer>
+
+  <!-- 스크립트 -->
+  <script src="js/main.js"></script>
+  
+  <!-- 미디어용 인라인 추가 스크립트 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 설교 영상 모달 제어
+      const videoModal = document.getElementById('video-modal');
+      const modalIframe = document.getElementById('modal-iframe');
+      const modalTitle = document.getElementById('modal-video-title');
+      const closeBtn = document.getElementById('video-modal-close');
+      const overlay = document.getElementById('video-modal-overlay');
+      
+      const openModal = (url, title) => {
+        modalIframe.src = url + "?autoplay=1";
+        modalTitle.textContent = title;
+        videoModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // 바디 스크롤 차단
+      };
+      
+      const closeModal = () => {
+        modalIframe.src = '';
+        videoModal.classList.remove('active');
+        document.body.style.overflow = ''; // 바디 스크롤 복원
+      };
+      
+      // 영상 보기 트리거 바인딩
+      document.querySelectorAll('.play-video-trigger').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const url = this.getAttribute('data-video-url');
+          const title = this.getAttribute('data-video-title');
+          openModal(url, title);
+        });
+      });
+      
+      // 오버레이 및 닫기 버튼 바인딩
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (overlay) overlay.addEventListener('click', closeModal);
+      
+      // 검색 및 카테고리 필터 동작
+      const searchInput = document.getElementById('sermon-search');
+      const filterButtons = document.querySelectorAll('.filter-tab');
+      const sermonCards = document.querySelectorAll('.sermon-card');
+      
+      const filterSermons = () => {
+        const query = searchInput.value.toLowerCase();
+        const activeCategory = document.querySelector('.filter-tab.active').getAttribute('data-category');
+        
+        sermonCards.forEach(card => {
+          const title = card.querySelector('.sermon-title').textContent.toLowerCase();
+          const passage = card.querySelector('.sermon-passage').textContent.toLowerCase();
+          const speaker = card.querySelector('.sermon-card-meta').textContent.toLowerCase();
+          const category = card.getAttribute('data-category');
+          
+          const matchesSearch = title.includes(query) || passage.includes(query) || speaker.includes(query);
+          const matchesCategory = activeCategory === 'all' || category === activeCategory;
+          
+          if (matchesSearch && matchesCategory) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      };
+      
+      if (searchInput) {
+        searchInput.addEventListener('input', filterSermons);
+      }
+      
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          filterSermons();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
