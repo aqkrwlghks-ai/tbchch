@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
+import mainChurchImg from '../main-church.jpg';
 
 interface ChurchHomeProps {
   activeSloganId: string;
@@ -36,7 +37,7 @@ interface ChurchHomeProps {
 }
 
 const bgSliderImages = [
-  'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=1600', // Church warm lighting
+  mainChurchImg,
   'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=1600', // Stained glass church sunbeam
   'https://images.unsplash.com/photo-1512418490979-9179599339e0?auto=format&fit=crop&q=80&w=1600'  // Hands gathered in community
 ];
