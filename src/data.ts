@@ -15,14 +15,15 @@ export const gnbMenuData: MenuItem[] = [
     ]
   },
   {
-    name: '예배와 찬양',
+    name: '설교와 찬양',
     id: 'worship',
     link: '#sermon-section',
     subMenu: [
-      { name: '금주의 설교 말씀', link: '#sermon-section', id: 'sermon-video' },
-      { name: '예배 실시간 중계', link: '#sermon-section', id: 'sermon-live' },
-      { name: '빛나는 찬양과 기도', link: '#sermon-section', id: 'praise-team' },
-      { name: '주보 다운로드', link: '#bulletin-section', id: 'bulletin-download' }
+      { name: '주일설교', link: '#sermon-section', id: 'sermon-sunday' },
+      { name: '수요설교', link: '#sermon-section', id: 'sermon-wednesday' },
+      { name: '금요설교', link: '#sermon-section', id: 'sermon-friday' },
+      { name: '수요찬양', link: '#sermon-section', id: 'praise-wednesday' },
+      { name: '금요찬양', link: '#sermon-section', id: 'praise-friday' }
     ]
   },
   {
