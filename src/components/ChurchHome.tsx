@@ -1024,7 +1024,7 @@ export default function ChurchHome({
                     >
                       <div className="relative aspect-video overflow-hidden bg-slate-100">
                         <img 
-                          src={photo.imageUrl} 
+                          src={photo.imageUrl || photo.coverUrl} 
                           alt={photo.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           referrerPolicy="no-referrer"
@@ -1432,8 +1432,8 @@ export default function ChurchHome({
               {(() => {
                 const photosList = selectedActivity.photos && selectedActivity.photos.length > 0 
                   ? selectedActivity.photos 
-                  : [selectedActivity.imageUrl];
-                const activePhotoUrl = photosList[activePhotoIndex] || selectedActivity.imageUrl;
+                  : [selectedActivity.imageUrl || selectedActivity.coverUrl];
+                const activePhotoUrl = photosList[activePhotoIndex] || selectedActivity.imageUrl || selectedActivity.coverUrl;
 
                 return (
                   <div className="space-y-4">
