@@ -53,6 +53,9 @@ const bgSliderImages = [
   slide5
 ];
 
+// 구글 앱스 스크립트 웹앱 배포 URL (여기에 발급받으신 웹앱 URL을 입력하시면 구글 드라이브와 자동 연동됩니다)
+const GOOGLE_DRIVE_API_URL = '';
+
 export default function ChurchHome({ 
   activeSloganId, 
   selectedFontCombo,
@@ -70,12 +73,36 @@ export default function ChurchHome({
   const [newFamilyFormOpen, setNewFamilyFormOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
 
+  // 구글 드라이브 연동용 갤러리 상태 및 로딩 상태
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(galleryPhotos);
+  const [loadingGallery, setLoadingGallery] = useState(false);
+
   // Dynamic automatic image transition
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % bgSliderImages.length);
     }, 30000);
     return () => clearInterval(timer);
+  }, []);
+
+  // 구글 드라이브 실시간 갤러리 연동 Fetch
+  useEffect(() => {
+    if (!GOOGLE_DRIVE_API_URL) return;
+
+    setLoadingGallery(true);
+    fetch(GOOGLE_DRIVE_API_URL)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setGalleryItems(data);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch gallery from Google Drive:', err);
+      })
+      .finally(() => {
+        setLoadingGallery(false);
+      });
   }, []);
 
   // Monitor scroll for "back to top" button
@@ -966,31 +993,42 @@ export default function ChurchHome({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {galleryPhotos.map((photo) => (
-                  <button
-                    key={photo.id}
-                    onClick={() => setSelectedActivity(photo)}
-                    className="group bg-white rounded-2xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left"
-                  >
-                    <div className="relative aspect-video overflow-hidden bg-slate-100">
-                      <img 
-                        src={photo.imageUrl} 
-                        alt={photo.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        referrerPolicy="no-referrer"
-                      />
-                      <span className="absolute top-3 left-3 bg-slate-900/80 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
-                        {photo.category}
-                      </span>
-                    </div>
-                    <div className="p-4.5">
-                      <span className="text-[10.5px] text-slate-400 font-mono font-semibold">{photo.date}</span>
-                      <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-1 group-hover:text-blue-700 transition-colors">
-                        {photo.title}
-                      </h4>
-                    </div>
-                  </button>
-                ))}
+                {loadingGallery ? (
+                  <div className="col-span-2 py-20 text-center flex flex-col items-center justify-center gap-3">
+                    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-xs text-slate-400 font-medium">구글 드라이브에서 사진을 가져오는 중...</p>
+                  </div>
+                ) : galleryItems.length === 0 ? (
+                  <div className="col-span-2 py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
+                    갤러리에 등록된 사진이 없습니다.
+                  </div>
+                ) : (
+                  galleryItems.map((photo) => (
+                    <button
+                      key={photo.id}
+                      onClick={() => setSelectedActivity(photo)}
+                      className="group bg-white rounded-2xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-slate-100">
+                        <img 
+                          src={photo.imageUrl} 
+                          alt={photo.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                        <span className="absolute top-3 left-3 bg-slate-900/80 text-white text-[9.5px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
+                          {photo.category}
+                        </span>
+                      </div>
+                      <div className="p-4.5">
+                        <span className="text-[10.5px] text-slate-400 font-mono font-semibold">{photo.date}</span>
+                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-1 group-hover:text-blue-700 transition-colors">
+                          {photo.title}
+                        </h4>
+                      </div>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
 
