@@ -1550,7 +1550,7 @@ export default function ChurchHome({
 
       {/* 14. AUXILIARY POPUP MODAL 4: 갤러리 디테일 보기 (행사 앨범 폴더 뷰어) */}
       {selectedActivity && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[60]">
           <div className="bg-white rounded-3xl w-full max-w-3xl overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp flex flex-col max-h-[90vh]">
             
             {/* Modal Header */}
