@@ -627,6 +627,7 @@ export default function ChurchHome({
           <div className="mt-8 flex flex-wrap gap-4 justify-center items-center">
             <a 
               href="#sermon-section" 
+              onClick={(e) => handleNavigation(e, '#sermon-section')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-xs font-black shadow-lg transition-transform hover:-translate-y-0.5 inline-flex items-center gap-1.5"
             >
               <span>주일 예배영상 바로보기</span>
@@ -682,6 +683,7 @@ export default function ChurchHome({
           {/* CARD 2: 예배시간표 바로보기 */}
           <a
             href="#schedule-section"
+            onClick={(e) => handleNavigation(e, '#schedule-section')}
             className="bg-blue-900 text-white rounded-2xl p-6 shadow-xl border border-blue-950 transition-all hover:scale-[1.02] flex flex-col justify-between group min-h-[160px] text-left"
           >
             <div className="flex justify-between items-start w-full">
