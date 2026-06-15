@@ -169,23 +169,137 @@ export default function ChurchHome({
     setMeditationOpen(false);
   };
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
-    if (link.startsWith('#')) {
-      e.preventDefault();
-      const targetId = link.substring(1);
-      const targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        const headerOffset = 80;
-        const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'worship' | 'media' | 'news'>('home');
 
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
+  const getNavigationTarget = (link: string): { page: 'home' | 'about' | 'worship' | 'media' | 'news'; hash?: string } => {
+    if (!link.startsWith('#')) {
+      return { page: 'home' };
+    }
+    const id = link.substring(1);
+    switch (id) {
+      case 'welcome-section':
+        return { page: 'about' };
+      case 'pastor-welcome':
+        return { page: 'about', hash: 'pastor-welcome' };
+      case 'new-family':
+        return { page: 'about', hash: 'new-family' };
+      case 'vision-guide':
+        return { page: 'about', hash: 'vision-guide' };
+      case 'nextgen-section':
+        return { page: 'about', hash: 'nextgen-section' };
+      case 'community-intro':
+        return { page: 'about', hash: 'community-intro' };
+        
+      case 'schedule-section':
+      case 'worship-time':
+        return { page: 'worship' };
+        
+      case 'sermon-section':
+      case 'sermon-sunday':
+      case 'sermon-wednesday':
+      case 'sermon-friday':
+      case 'praise-wednesday':
+      case 'praise-friday':
+        return { page: 'media' };
+        
+      case 'news-section':
+      case 'announcement':
+        return { page: 'news', hash: 'news-section' };
+      case 'gallery-section':
+      case 'activity-gallery':
+      case 'form-archive':
+      case 'member-business':
+      case 'car-transportation':
+      case 'safety-guide':
+        return { page: 'news', hash: 'gallery-section' };
+        
+      case 'footer-map':
+      case 'church-map':
+        return { page: 'about', hash: 'footer-map' };
+        
+      default:
+        return { page: 'home' };
     }
   };
+
+  const navigateToPage = (page: 'home' | 'about' | 'worship' | 'media' | 'news', hash?: string) => {
+    setCurrentPage(page);
+    setMobileMenuOpen(false);
+    
+    if (hash) {
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          const headerOffset = 80;
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+    if (link.startsWith('http')) {
+      return; // External links
+    }
+    e.preventDefault();
+    const { page, hash } = getNavigationTarget(link);
+    navigateToPage(page, hash);
+  };
+
+  // Subpage Hero Banner
+  const renderSubHero = () => {
+    let title = '';
+    let description = '';
+    switch (currentPage) {
+      case 'about':
+        title = '교회 소개';
+        description = '오직 예수 복음의 능력과 따뜻한 섬김을 통해 하나님의 눈부신 영광을 비추는 영적 예배 공동체입니다.';
+        break;
+      case 'worship':
+        title = '예배 안내';
+        description = '매주 혹은 매일 성령의 역사하심과 화평한 성도의 교제가 피어나는 거룩한 예배 시간표를 안내합니다.';
+        break;
+      case 'media':
+        title = '설교와 찬양';
+        description = '매주 선포되는 담임목사님의 은혜로운 말씀과 뜨거운 찬양 영상을 통해 영적인 안식과 결단을 누리시기 바랍니다.';
+        break;
+      case 'news':
+        title = '교회 소식';
+        description = '빛나는 교회의 주간 소식, 공지사항, 성도들의 교제 현장인 활동 갤러리를 전해드립니다.';
+        break;
+      default:
+        return null;
+    }
+
+    return (
+      <section className="relative overflow-hidden bg-slate-900 text-white py-16 md:py-20">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-20 bg-no-repeat" 
+          style={{ backgroundImage: `url('${skyBg}')` }} 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 to-slate-950/95" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+          <span className="text-xs uppercase tracking-widest text-blue-400 font-extrabold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+            {currentPage.toUpperCase()}
+          </span>
+          <h1 className="text-3xl md:text-4.5xl font-black tracking-tight text-white mt-2">{title}</h1>
+          <p className="text-xs md:text-sm text-slate-350 font-medium max-w-xl mx-auto leading-relaxed">{description}</p>
+          <div className="w-12 h-1 bg-blue-500 mx-auto rounded-full mt-3" />
+        </div>
+      </section>
+    );
+  };
+
 
   // 구글 드라이브 연동용 갤러리 카테고리 상태 및 로딩 상태
   const [galleryCategories, setGalleryCategories] = useState<any[]>(getLocalCategories());
@@ -277,7 +391,7 @@ export default function ChurchHome({
           <div className="flex items-center justify-between h-20">
             
             {/* Elegant Church Brand Logo */}
-            <a href="#" className="flex items-center gap-2.5 shrink-0 group">
+            <a href="#" onClick={(e) => { e.preventDefault(); navigateToPage('home'); }} className="flex items-center gap-2.5 shrink-0 group">
               <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-blue-700 to-indigo-900 shadow-lg group-hover:scale-105 transition-transform">
                 {/* Custom glowing cross SVG icon */}
                 <svg className="w-8 h-8 text-white filter drop-shadow-[0px_0px_5px_rgba(255,255,255,0.7)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
@@ -307,7 +421,7 @@ export default function ChurchHome({
                 >
                   <a 
                     href={menu.link}
-                    onClick={(e) => scrollToSection(e, menu.link)}
+                    onClick={(e) => handleNavigation(e, menu.link)}
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-800 hover:text-blue-700 hover:bg-slate-50 text-[14.5px] font-bold tracking-tight transition-all"
                   >
                     {menu.name}
@@ -323,7 +437,7 @@ export default function ChurchHome({
                         href={sub.link}
                         target={sub.link.startsWith('http') ? '_blank' : undefined}
                         rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                        onClick={(e) => scrollToSection(e, sub.link)}
+                        onClick={(e) => handleNavigation(e, sub.link)}
                         className="flex items-center justify-between px-5 py-2 text-[13px] text-slate-600 hover:text-blue-700 hover:bg-blue-50 font-medium transition-colors"
                       >
                         <span>{sub.name}</span>
@@ -405,7 +519,7 @@ export default function ChurchHome({
                       rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
                       onClick={(e) => {
                         setMobileMenuOpen(false);
-                        scrollToSection(e, sub.link);
+                        handleNavigation(e, sub.link);
                       }}
                       className="flex items-center justify-between px-2 py-1.5 text-[12.5px] text-slate-600 hover:text-blue-700 font-medium bg-slate-50/40 rounded transition-all"
                     >
@@ -443,8 +557,10 @@ export default function ChurchHome({
         )}
       </header>
 
-      {/* 3. HERO HERO CAROUSEL BANNER (With Yeoju Church Style ARC-CLIP CURVED BOTTOM) */}
-      <section className="relative bg-slate-900 text-white min-h-[520px] md:min-h-[580px] lg:min-h-[630px] flex flex-col justify-between overflow-hidden">
+      {currentPage === 'home' && (
+        <>
+          {/* 3. HERO HERO CAROUSEL BANNER (With Yeoju Church Style ARC-CLIP CURVED BOTTOM) */}
+          <section className="relative bg-slate-900 text-white min-h-[520px] md:min-h-[580px] lg:min-h-[630px] flex flex-col justify-between overflow-hidden">
         
         {/* Dynamic sliding background imagery */}
         <div className="absolute inset-0 z-0">
@@ -601,9 +717,14 @@ export default function ChurchHome({
 
         </div>
       </div>
+        </>
+      )}
+
+      {currentPage !== 'home' && renderSubHero()}
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
-      <section className="relative overflow-hidden bg-white py-16 md:py-24" id="welcome-section">
+      {(currentPage === 'home' || currentPage === 'about') && (
+        <section className="relative overflow-hidden bg-white py-16 md:py-24" id="welcome-section">
         {/* Faded wooden cross watermark on the right */}
         <div 
           className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-contain bg-no-repeat opacity-[0.06] pointer-events-none mix-blend-multiply hidden md:block" 
@@ -726,6 +847,7 @@ export default function ChurchHome({
             </div>
             <a 
               href="#nextgen-section"
+              onClick={(e) => handleNavigation(e, '#nextgen-section')}
               className="mt-4 text-xs font-bold text-emerald-600 inline-flex items-center gap-1 hover:text-emerald-700 hover:translate-x-0.5 transition-all"
             >
               다음세대 부서 안내 <ChevronRight className="h-3 w-3" />
@@ -743,6 +865,7 @@ export default function ChurchHome({
             </div>
             <a 
               href="#community-intro"
+              onClick={(e) => handleNavigation(e, '#community-intro')}
               className="mt-4 text-xs font-bold text-pink-600 inline-flex items-center gap-1 hover:text-pink-700 hover:translate-x-0.5 transition-all"
             >
               선교 및 봉사 안내 <ChevronRight className="h-3 w-3" />
@@ -760,6 +883,7 @@ export default function ChurchHome({
             </div>
             <a 
               href="#community-intro"
+              onClick={(e) => handleNavigation(e, '#community-intro')}
               className="mt-4 text-xs font-bold text-amber-600 inline-flex items-center gap-1 hover:text-amber-700 hover:translate-x-0.5 transition-all"
             >
               말씀 훈련 소개 <ChevronRight className="h-3 w-3" />
@@ -769,9 +893,11 @@ export default function ChurchHome({
         </div>
       </div>
       </section>
+      )}
 
       {/* 6. WEEKLY SERMON & PRAISE SECTION ([필수 요구사항: 이번주 설교영상 즉시 재생 연동]) */}
-      <section className="relative overflow-hidden bg-slate-100/70 border-y border-slate-200 py-16 md:py-24" id="sermon-section">
+      {(currentPage === 'home' || currentPage === 'media') && (
+        <section className="relative overflow-hidden bg-slate-100/70 border-y border-slate-200 py-16 md:py-24" id="sermon-section">
         {/* Soft prayer hands watermark on the left */}
         <div 
           className="absolute left-0 top-1/2 -translate-y-1/2 w-80 h-80 bg-contain bg-no-repeat opacity-[0.04] pointer-events-none mix-blend-multiply hidden md:block" 
@@ -942,9 +1068,11 @@ export default function ChurchHome({
 
         </div>
       </section>
+      )}
 
       {/* 7. REDESIGNED WORSHIP TIMETABLE SECTION ([가독성 전격 가공 및 모바일 밀착 분할]) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24" id="schedule-section">
+      {(currentPage === 'home' || currentPage === 'worship') && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24" id="schedule-section">
         
         {/* Header Title */}
         <div className="text-center mb-12">
@@ -1009,12 +1137,14 @@ export default function ChurchHome({
         </div>
 
       </section>
+      )}
 
       {/* Combined News & Gallery Section with Sky Background and Floating Panels */}
-      <div 
-        className="relative bg-cover bg-center py-16 md:py-24 space-y-12 overflow-hidden"
-        style={{ backgroundImage: `url('${skyBg}')` }}
-      >
+      {(currentPage === 'home' || currentPage === 'news') && (
+        <div 
+          className="relative bg-cover bg-center py-16 md:py-24 space-y-12 overflow-hidden"
+          style={{ backgroundImage: `url('${skyBg}')` }}
+        >
         {/* Soft white gradient overlays for smooth transition from previous section and to footer */}
         <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-slate-100 to-transparent pointer-events-none" />
         <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-slate-900/50 to-transparent pointer-events-none" />
@@ -1318,6 +1448,7 @@ export default function ChurchHome({
           </div>
         </section>
       </div>
+      )}
 
       {/* 10. REALISTIC FOOTER */}
       <footer className="bg-slate-900 text-slate-350 pt-16 pb-12 border-t border-slate-800" id="footer-map">
@@ -1326,7 +1457,7 @@ export default function ChurchHome({
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 border-b border-slate-800 pb-12">
             
             <div className="md:col-span-4 space-y-4">
-              <a href="#" className="flex items-center gap-2 group">
+              <a href="#" onClick={(e) => { e.preventDefault(); navigateToPage('home'); }} className="flex items-center gap-2 group">
                 <div className="flex items-center justify-center w-11 h-11 rounded-full bg-blue-700 shadow-md">
                   <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m-6-8h12" />
