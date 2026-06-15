@@ -169,6 +169,24 @@ export default function ChurchHome({
     setMeditationOpen(false);
   };
 
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, link: string) => {
+    if (link.startsWith('#')) {
+      e.preventDefault();
+      const targetId = link.substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        const headerOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
   // 구글 드라이브 연동용 갤러리 카테고리 상태 및 로딩 상태
   const [galleryCategories, setGalleryCategories] = useState<any[]>(getLocalCategories());
   const [loadingGallery, setLoadingGallery] = useState(false);
@@ -289,6 +307,7 @@ export default function ChurchHome({
                 >
                   <a 
                     href={menu.link}
+                    onClick={(e) => scrollToSection(e, menu.link)}
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-slate-800 hover:text-blue-700 hover:bg-slate-50 text-[14.5px] font-bold tracking-tight transition-all"
                   >
                     {menu.name}
@@ -304,6 +323,7 @@ export default function ChurchHome({
                         href={sub.link}
                         target={sub.link.startsWith('http') ? '_blank' : undefined}
                         rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        onClick={(e) => scrollToSection(e, sub.link)}
                         className="flex items-center justify-between px-5 py-2 text-[13px] text-slate-600 hover:text-blue-700 hover:bg-blue-50 font-medium transition-colors"
                       >
                         <span>{sub.name}</span>
@@ -383,7 +403,10 @@ export default function ChurchHome({
                       href={sub.link}
                       target={sub.link.startsWith('http') ? '_blank' : undefined}
                       rel={sub.link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        setMobileMenuOpen(false);
+                        scrollToSection(e, sub.link);
+                      }}
                       className="flex items-center justify-between px-2 py-1.5 text-[12.5px] text-slate-600 hover:text-blue-700 font-medium bg-slate-50/40 rounded transition-all"
                     >
                       <span>• {sub.name}</span>
