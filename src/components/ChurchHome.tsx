@@ -604,7 +604,7 @@ export default function ChurchHome({
         </div>
 
         {/* Pastor greeting details */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16 pb-16 border-b border-slate-200">
+        <div id="pastor-welcome" className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16 pb-16 border-b border-slate-200">
           
           <div className="lg:col-span-7 space-y-6">
             <div className="flex items-center gap-1">
@@ -673,10 +673,10 @@ export default function ChurchHome({
         </div>
 
         {/* Yeoju Church 4 major value layouts */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div id="vision-guide" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* Card 1 */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          <div id="new-family" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
             <div>
               <div className="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-4">
                 <User className="h-5 w-5" />
@@ -693,7 +693,7 @@ export default function ChurchHome({
           </div>
 
           {/* Card 2 */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          <div id="nextgen-section" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
             <div>
               <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4">
                 <GraduationCap className="h-5 w-5" />
@@ -710,7 +710,7 @@ export default function ChurchHome({
           </div>
 
           {/* Card 3 */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          <div id="community-intro" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
             <div>
               <div className="h-10 w-10 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-4">
                 <Heart className="h-5 w-5" />
