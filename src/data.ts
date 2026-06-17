@@ -94,13 +94,14 @@ export const bannerSlogans: SloganOption[] = [
 
 // 3. 주일 예배 시간표 (깔끔하고 반응형 가독성이 뛰어난 구성)
 export const worshipSchedules: WorshipSchedule[] = [
-  { name: '주일 1부 예배', target: '장년 및 성도', time: '오전 09:10', location: '본당 (2층 대성전)' },
-  { name: '주일 2부 예배', target: '장년 및 청년', time: '오전 11:00', location: '본당 (2층 대성전)' },
-  { name: '교회학교 예배', target: '유치·초등부', time: '오전 10:40', location: '교육과 (지하 1층)' },
-  { name: '청소년 & 청년 예배', target: '중·고등/대학생', time: '오전 10:40', location: '목양관 (3층 시온홀)' },
-  { name: '수요예배', target: '성도 전체', time: '수요일 오후 07:30', location: '본당 (2층 대성전)' },
-  { name: '금요기도회', target: '성도 전체', time: '금요일 오후 08:00', location: '본당 (2층 대성전)' },
-  { name: '새벽기도회', target: '성도 전체', time: '매일 오전 05:00', location: '본당 (2층 대성전)' }
+  { name: '주일 1부 예배', target: '1부(오전)', time: '오전 09:10', location: '본당 (2층 대성전)' },
+  { name: '주일 2부 예배', target: '2부(오전)', time: '오전 11:00', location: '본당 (2층 대성전)' },
+  { name: '주일 오후 예배', target: '오후예배', time: '오후 01:30', location: '본당 (2층 대성전)' },
+  { name: '교회학교 예배', target: '어린이(오전)', time: '오전 10:40', location: '교육관 (지하 1층)' },
+  { name: '청소년 & 청년 예배', target: '청소년&청년(오전)', time: '오전 10:40', location: '목양관 (3층 시온홀)' },
+  { name: '수요예배', target: '(수)오후', time: '오후 07:30', location: '본당 (2층 대성전)' },
+  { name: '금요기도회', target: '(금)오후', time: '오후 08:00', location: '본당 (2층 대성전)' },
+  { name: '새벽기도회', target: '(월~금)오전', time: '매일 오전 05:00', location: '본당 (2층 대성전)' }
 ];
 
 // 4. 금주의 설교 (유튜브 비디오 연동 및 클릭 시 즉시 시청)

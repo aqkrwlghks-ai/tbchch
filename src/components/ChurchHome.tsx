@@ -843,7 +843,7 @@ export default function ChurchHome({
         </>
       )}
 
-      {currentPage !== 'home' && currentPage !== 'greeting' && renderSubHero()}
+      {currentPage !== 'home' && currentPage !== 'greeting' && currentPage !== 'worship' && renderSubHero()}
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
       {currentPage === 'home' && (
@@ -1507,7 +1507,7 @@ export default function ChurchHome({
       )}
 
       {/* 7. REDESIGNED WORSHIP TIMETABLE SECTION ([가독성 전격 가공 및 모바일 밀착 분할]) */}
-      {(currentPage === 'home' || currentPage === 'worship') && (
+      {currentPage === 'home' && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24" id="schedule-section">
         
         {/* Header Title */}
@@ -1573,6 +1573,80 @@ export default function ChurchHome({
         </div>
 
       </section>
+      )}
+
+      {/* 7-A. DEDICATED WORSHIP PAGE VIEW */}
+      {currentPage === 'worship' && (
+        <section className="relative overflow-hidden bg-white py-12 md:py-16 animate-fadeIn" id="worship-guide-page">
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* Breadcrumb Header */}
+            <div className="flex justify-between items-end border-b border-slate-200 pb-3 mb-10">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 font-sans">예배안내</h2>
+              <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">HOME &gt; 빛나는교회 &gt; 예배안내</span>
+            </div>
+
+            {/* Timetable Table exactly matching mockup */}
+            <div className="w-full overflow-x-auto border-t-2 border-b-2 border-slate-400">
+              <table className="w-full text-left border-collapse text-xs md:text-sm text-slate-700">
+                <tbody className="divide-y divide-slate-200 font-sans">
+                  {/* 주일예배 (Rowspan = 5) */}
+                  <tr>
+                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 w-1/3 bg-slate-50/20" rowSpan={5}>
+                      주일예배
+                    </td>
+                    <td className="py-4 px-5 border-r border-slate-200 w-1/3">1부(오전)</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">9:10</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-5 border-r border-slate-200">2부(오전)</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">11:00</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-5 border-r border-slate-200">오후예배</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">1:30</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-5 border-r border-slate-200">어린이(오전)</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">10:40</td>
+                  </tr>
+                  <tr>
+                    <td className="py-4 px-5 border-r border-slate-200">청소년&amp;청년(오전)</td>
+                    <td className="py-4 px-5 text-[#3b5998] font-bold">10:40</td>
+                  </tr>
+
+                  {/* 수요예배 */}
+                  <tr>
+                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
+                      수요예배
+                    </td>
+                    <td className="py-4 px-5 border-r border-slate-200">(수)오후</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">7:30</td>
+                  </tr>
+
+                  {/* 금요예배 */}
+                  <tr>
+                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
+                      금요예배
+                    </td>
+                    <td className="py-4 px-5 border-r border-slate-200">(금)오후</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">8:00</td>
+                  </tr>
+
+                  {/* 새벽기도 */}
+                  <tr>
+                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
+                      새벽기도
+                    </td>
+                    <td className="py-4 px-5 border-r border-slate-200">(월~금)오전</td>
+                    <td className="py-4 px-5 text-slate-900 font-medium">5:00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </section>
       )}
 
       {/* Combined News & Gallery Section with Sky Background and Floating Panels */}
