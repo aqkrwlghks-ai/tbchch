@@ -26,7 +26,12 @@ import {
   ArrowUp,
   Download,
   ExternalLink,
-  FolderOpen
+  FolderOpen,
+  Home,
+  Smile,
+  ShoppingBag,
+  ShieldCheck,
+  Car
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
@@ -169,9 +174,9 @@ export default function ChurchHome({
     setMeditationOpen(false);
   };
 
-  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'worship' | 'media' | 'news'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin'>('home');
 
-  const getNavigationTarget = (link: string): { page: 'home' | 'about' | 'worship' | 'media' | 'news'; hash?: string } => {
+  const getNavigationTarget = (link: string): { page: 'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin'; hash?: string } => {
     if (!link.startsWith('#')) {
       return { page: 'home' };
     }
@@ -185,10 +190,17 @@ export default function ChurchHome({
         return { page: 'about', hash: 'new-family' };
       case 'vision-guide':
         return { page: 'about', hash: 'vision-guide' };
+        
       case 'nextgen-section':
-        return { page: 'about', hash: 'nextgen-section' };
+      case 'kids-school':
+      case 'youth-adults':
+        return { page: 'nextgen' };
+        
       case 'community-intro':
-        return { page: 'about', hash: 'community-intro' };
+      case 'meditation-life':
+      case 'mission-group':
+      case 'home-worship':
+        return { page: 'community' };
         
       case 'schedule-section':
       case 'worship-time':
@@ -208,10 +220,12 @@ export default function ChurchHome({
       case 'gallery-section':
       case 'activity-gallery':
       case 'form-archive':
+        return { page: 'news', hash: 'gallery-section' };
+        
       case 'member-business':
       case 'car-transportation':
       case 'safety-guide':
-        return { page: 'news', hash: 'gallery-section' };
+        return { page: 'admin' };
         
       case 'footer-map':
       case 'church-map':
@@ -222,7 +236,7 @@ export default function ChurchHome({
     }
   };
 
-  const navigateToPage = (page: 'home' | 'about' | 'worship' | 'media' | 'news', hash?: string) => {
+  const navigateToPage = (page: 'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin', hash?: string) => {
     setCurrentPage(page);
     setMobileMenuOpen(false);
     
@@ -276,6 +290,18 @@ export default function ChurchHome({
       case 'news':
         title = '교회 소식';
         description = '빛나는 교회의 주간 소식, 공지사항, 성도들의 교제 현장인 활동 갤러리를 전해드립니다.';
+        break;
+      case 'community':
+        title = '공동체 & 양육';
+        description = '그리스도의 사랑으로 묶여진 따뜻한 관계 속에서 서로 위로하고 격려하며 건강한 성장을 이뤄갑니다.';
+        break;
+      case 'nextgen':
+        title = '다음세대 공동체';
+        description = '빛나는 교회의 미래인 다음세대를 하나님의 말씀과 사랑으로 양육하여 세상의 빛으로 세워갑니다.';
+        break;
+      case 'admin':
+        title = '행정 및 편의';
+        description = '교우들의 편의를 돕고 쾌적한 신앙생활을 지원하기 위한 셔틀버스 정보 및 온라인 행정 자료실을 안내합니다.';
         break;
       default:
         return null;
@@ -1450,6 +1476,160 @@ export default function ChurchHome({
           </div>
         </section>
       </div>
+      )}
+
+      {/* 9.1 COMMUNITY & NURTURE PAGE */}
+      {currentPage === 'community' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* 소그룹 묵상과 삶 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-6">
+                  <Users className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-black text-slate-900">묵상과 삶 (소그룹 모임)</h3>
+                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
+                  매주 삶의 묵상과 나눔을 통해 하나님의 말씀이 일상 속에서 풍성히 살아 숨 쉬도록 서로 위로하고 권면하는 따뜻한 소그룹 신앙 나눔방입니다.
+                </p>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
+                <span>모임: 매주 주일 소그룹실</span>
+                <span className="bg-blue-50 px-2 py-1 rounded">성도 소통</span>
+              </div>
+            </div>
+
+            {/* 남여전도회 연합 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-6">
+                  <Heart className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-black text-slate-900">남·여전도회 연합회</h3>
+                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
+                  연령대별로 구성된 신도회 모임을 통해 활발한 친교와 교류를 나누며, 교회 봉사와 지역 이웃 사랑 실천을 위한 활기찬 사역 연합 공동체입니다.
+                </p>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-pink-600">
+                <span>모임: 매월 1회 지정 장소</span>
+                <span className="bg-pink-50 px-2 py-1 rounded">교회 봉사</span>
+              </div>
+            </div>
+
+            {/* 가정 및 구역 예배 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
+              <div>
+                <div className="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-6">
+                  <Home className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-black text-slate-900">가정 및 구역 예배</h3>
+                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
+                  가정의 화평을 이루고 구역원 간의 깊은 친교를 위해 각 가정에서 드리는 예배로, 온 성도가 기도로 서로를 든든히 보살피는 연합 예배입니다.
+                </p>
+              </div>
+              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-600">
+                <span>모임: 격주 금요일 각 가정</span>
+                <span className="bg-amber-50 px-2 py-1 rounded">말씀 양육</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 md:p-12 rounded-[40px] border border-blue-100 text-center max-w-4xl mx-auto space-y-4">
+            <h4 className="text-xl font-black text-blue-900">“서로 사랑하라 내가 너희를 사랑한 것 같이 너희도 서로 사랑하라”</h4>
+            <p className="text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed">
+              빛나는 교회는 성도의 따뜻한 교제 속에서 삼위일체 하나님의 풍성한 교제와 기쁨을 맛보기를 원합니다. 우리의 크고 작은 모든 모임이 삶의 평안이 되는 거룩한 정원이 될 것입니다.
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* 9.2 NEXT GENERATION PAGE */}
+      {currentPage === 'nextgen' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* 어린이 교회학교 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <Smile className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900">교회학교 (영유치부 및 초등부)</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  미래의 기둥이 될 어린이들이 예수님의 성품을 배우고, 재미있는 예배와 소그룹 성경 교육 활동을 통해 하나님의 나라를 꿈꿀 수 있도록 사랑으로 양육합니다.
+                </p>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600 space-y-2">
+                  <div className="flex justify-between"><strong>주일 예배 시간:</strong> <span>오전 10:40</span></div>
+                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>교육관 지하 1층</span></div>
+                  <div className="flex justify-between"><strong>대상 연령:</strong> <span>유치원생 ~ 초등학생</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* 청청 공동체 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-black text-slate-900">청청 공동체 (청소년 및 청년)</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  역동적인 찬양과 솔직한 말씀 소통을 바탕으로, 10대 청소년들과 청년들이 복음의 정체성을 든든히 세워가고 세상을 변화시키는 기독교의 리더로 성장합니다.
+                </p>
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600 space-y-2">
+                  <div className="flex justify-between"><strong>주일 예배 시간:</strong> <span>오전 10:40</span></div>
+                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>목양관 3층 시온홀</span></div>
+                  <div className="flex justify-between"><strong>대상 연령:</strong> <span>중·고등학생 / 대학생 및 청년</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.3 ADMIN & INFO PAGE */}
+      {currentPage === 'admin' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* 차량 및 셔틀 운행 정보 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
+              <div className="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <Car className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-black text-slate-900">셔틀 및 차량운행 정보</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                주일 오전 성도님들의 편안한 성전 방문을 위해 셔틀 차량을 순환 운행합니다. 
+              </p>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-[11px] text-slate-600 space-y-1.5">
+                <div><strong>1호차 (개봉역 방면):</strong> 주일 오전 08:30 / 10:20</div>
+                <div><strong>2호차 (광명 방면):</strong> 주일 오전 08:45 / 10:30</div>
+              </div>
+            </div>
+
+            {/* 교우 기업 소식 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
+              <div className="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                <ShoppingBag className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-black text-slate-900">교우 기업 소식</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                빛나는 교회 성도님들이 운영하시는 업종과 일터를 소개해 드립니다. 서로 방문하시고 복된 기도로 함께 응원하고 격려해 주세요.
+              </p>
+              <div className="text-xs font-bold text-amber-600">행정처에 기업 소개 원서 제출 시 등록 가능</div>
+            </div>
+
+            {/* 안전 및 편의 위원회 */}
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
+              <div className="h-12 w-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-black text-slate-900">안전 및 편의 위원회</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                화재 예방, 방역, 시설물 점검 및 예배 보조 지원을 담당하는 부서로, 성도님들이 가장 쾌적하고 안전하게 예배당을 이용할 수 있도록 봉사합니다.
+              </p>
+              <div className="text-xs font-bold text-rose-600">긴급 연락망: 사무국 내선 번호 101</div>
+            </div>
+          </div>
+        </section>
       )}
 
       {/* 10. REALISTIC FOOTER */}
