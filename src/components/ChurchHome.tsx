@@ -43,6 +43,7 @@ import slide5 from '../slide5.jpg';
 import crossBg from '../cross_bg.png';
 import prayerHandsBg from '../prayer_hands_bg.png';
 import skyBg from '../sky_bg.png';
+import pastorPortrait from '../pastor_portrait.png';
 
 interface ChurchHomeProps {
   activeSloganId: string;
@@ -842,7 +843,7 @@ export default function ChurchHome({
         </>
       )}
 
-      {currentPage !== 'home' && renderSubHero()}
+      {currentPage !== 'home' && currentPage !== 'greeting' && renderSubHero()}
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
       {currentPage === 'home' && (
@@ -1019,72 +1020,85 @@ export default function ChurchHome({
 
       {/* 5-A. GREETING PAGE VIEW */}
       {currentPage === 'greeting' && (
-        <section className="relative overflow-hidden bg-white py-16 md:py-24 animate-fadeIn" id="pastor-welcome-page">
-          <div 
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-contain bg-no-repeat opacity-[0.06] pointer-events-none mix-blend-multiply hidden md:block" 
-            style={{ backgroundImage: `url('${crossBg}')`, backgroundPosition: 'right center' }}
-          />
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <section className="relative overflow-hidden bg-white py-12 md:py-16 animate-fadeIn" id="pastor-welcome-page">
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            {/* Breadcrumb Header */}
+            <div className="flex justify-between items-end border-b border-slate-200 pb-3 mb-10">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 font-sans">인사말</h2>
+              <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">HOME &gt; 빛나는교회 &gt; 인사말</span>
+            </div>
+
+            {/* Headline */}
+            <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-snug mb-10 tracking-tight text-left">
+              성령의 능력 안에서 <span className="text-[#659b41]">복음</span>과 <span className="text-[#659b41]">섬김</span>으로<br className="hidden md:block" />
+              하나님의 영광을 드러내는 <span className="text-[#3b5998]">빛나는 교회</span> <span className="text-slate-400 text-xs md:text-sm font-light font-sans tracking-normal">(사43:21,고후5:18)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
               
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex items-center gap-1.5">
-                  <Sparkles className="h-5 w-5 text-amber-500 shrink-0" />
-                  <span className="text-amber-700 font-extrabold text-sm tracking-tight font-sans">목사님의 축복 인사</span>
+              {/* Left Column: Photo + Caption */}
+              <div className="md:col-span-4 flex flex-col items-center">
+                <div className="w-full max-w-[260px] border border-slate-200 p-1 bg-white shadow-sm rounded-sm">
+                  <img 
+                    src={pastorPortrait} 
+                    alt="김제희 목사" 
+                    className="w-full h-auto object-cover rounded-sm"
+                  />
                 </div>
-                
-                <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-snug">
-                  {polishedPastorMessage.headline}
-                </h3>
-                
-                <p className="text-xs text-slate-400 font-bold tracking-normal uppercase border-l-2 border-blue-600 pl-2.5">
-                  {polishedPastorMessage.subHeadline}
-                </p>
-
-                <div className="text-slate-600 leading-relaxed text-sm md:text-[14.5px] space-y-4 font-light">
-                  {polishedPastorMessage.paragraphs.map((para, i) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-
-                <div className="pt-3">
-                  <button
-                    onClick={() => setNewFamilyFormOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-md flex items-center gap-1.5 transition-all"
-                  >
-                    <span>새가족 등록 및 온라인 등록 안내</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
+                <span className="text-xs md:text-sm text-slate-700 font-sans font-bold mt-4 tracking-tight text-center">
+                  빛나는교회 목사 <span className="text-slate-950 font-extrabold">김제희</span>
+                </span>
               </div>
 
-              <div className="lg:col-span-5 flex justify-center">
-                <div className="relative w-full max-w-md p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center justify-center text-center py-12 overflow-hidden">
-                  <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-blue-200/50 filter blur-xl"></div>
-                  <div className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-indigo-200/50 filter blur-xl"></div>
+              {/* Right Column: Greetings Content */}
+              <div className="md:col-span-8 space-y-6 text-slate-800 leading-relaxed text-[13.5px] md:text-[14.5px] font-sans font-normal tracking-wide text-left">
+                <p>
+                  안녕하십니까?<br />
+                  빛나는 교회 오신 것을 환영하고 축복합니다.
+                </p>
 
-                  <div className="relative bg-white rounded-full p-6 shadow-md mb-6 inline-flex border border-slate-100">
-                    <svg className="w-16 h-16 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                  </div>
-
-                  <h4 className="text-lg font-black text-slate-800">우리가 세상의 눈부신 빛입니다</h4>
-                  <p className="text-xs text-slate-500 mt-2 max-w-sm">
-                    “형제가 연합하여 동거함이 어찌 그리 좋은가.” 세상 가장 따스하고 안전한 양육 정원, 빛나는 교회에서 당신의 온 만남을 준비 중입니다.
+                <div>
+                  <p className="text-slate-500">하나님께서 시편133편1절에서 이렇게 말씀하십니다.</p>
+                  <p className="text-[#659b41] font-extrabold text-[14px] md:text-[15px] mt-1">
+                    “보라 형제가 연합하여 동거함이 어찌 그리 선하고 아름다운지요”
                   </p>
-
-                  <div className="mt-6 pt-6 border-t border-slate-200 w-full grid grid-cols-2 gap-4 text-center">
-                    <div>
-                      <div className="text-lg font-black text-blue-900">7개</div>
-                      <span className="text-[10px] text-slate-400 font-bold font-sans">예배 부서 및 모임</span>
-                    </div>
-                    <div>
-                      <div className="text-lg font-black text-blue-900">100%</div>
-                      <span className="text-[10px] text-slate-400 font-bold font-sans">말씀 중심 연합 케어</span>
-                    </div>
-                  </div>
                 </div>
+
+                <p>
+                  하나님께서 삼위일체로 존재하십니다.<br />
+                  하나님께서도 공동체로 존재하시는 것입니다.<br />
+                  그래서 하나님께서 공동체(가정&amp;교회)를 창조하셨습니다.<br />
+                  함께하는 것을<br />
+                  기뻐하셨기 때문입니다.<br />
+                  이런 이유로<br />
+                  사람은 각각 예수 그리스도를 통해 구원받아야할 뿐 아니라<br />
+                  함께함으로<br />
+                  연합함으로<br />
+                  공동체(가정과 교회)를 이루어야 하는 것입니다.<br />
+                  사람은 건강한 공동체 안에 거할 때<br />
+                  참된 보호와 성숙과 안정을 경험하게 됩니다.<br />
+                  예수님 안에서<br />
+                  서로 사랑하고 섬겨<br />
+                  그리스도의 몸을 이루고<br />
+                  사명과 비전을 온전히 감당할 수 있게 되는 것입니다.
+                </p>
+
+                <p>
+                  사람이 교회입니다.<br />
+                  당신이 바로 교회입니다.<br />
+                  당신은 소중한 사람입니다.<br />
+                  함께 그리스도의 몸으로 불러 주신<br />
+                  주님을 찬송합니다. 할렐루야.
+                </p>
+
+                <p>
+                  당신을 환영하고 사랑하고 축복합니다.
+                </p>
+
+                <p className="pt-4 text-[14px] md:text-[15px] text-slate-900">
+                  <span className="font-extrabold">김제희 목사와 성도 일동</span>
+                </p>
               </div>
 
             </div>
