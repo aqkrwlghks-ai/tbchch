@@ -17,52 +17,52 @@ export const gnbMenuData: MenuItem[] = [
   {
     name: '설교와 찬양',
     id: 'worship',
-    link: '#sermon-section',
+    link: '#sermon-sunday',
     subMenu: [
-      { name: '주일설교', link: '#sermon-section', id: 'sermon-sunday' },
-      { name: '수요설교', link: '#sermon-section', id: 'sermon-wednesday' },
-      { name: '금요설교', link: '#sermon-section', id: 'sermon-friday' },
-      { name: '수요찬양', link: '#sermon-section', id: 'praise-wednesday' },
-      { name: '금요찬양', link: '#sermon-section', id: 'praise-friday' }
+      { name: '주일설교', link: '#sermon-sunday', id: 'sermon-sunday' },
+      { name: '수요설교', link: '#sermon-wednesday', id: 'sermon-wednesday' },
+      { name: '금요설교', link: '#sermon-friday', id: 'sermon-friday' },
+      { name: '수요찬양', link: '#praise-wednesday', id: 'praise-wednesday' },
+      { name: '금요찬양', link: '#praise-friday', id: 'praise-friday' }
     ]
   },
   {
     name: '공동체 & 양육',
     id: 'community',
-    link: '#community-intro',
+    link: '#meditation-life',
     subMenu: [
-      { name: '묵상과 삶(소그룹)', link: '#community-intro', id: 'meditation-life' },
-      { name: '남·여전도회 연합', link: '#community-intro', id: 'mission-group' },
-      { name: '가정 및 구역 예배', link: '#community-intro', id: 'home-worship' }
+      { name: '묵상과 삶(소그룹)', link: '#meditation-life', id: 'meditation-life' },
+      { name: '남·여전도회 연합', link: '#mission-group', id: 'mission-group' },
+      { name: '가정 및 구역 예배', link: '#home-worship', id: 'home-worship' }
     ]
   },
   {
     name: '다음세대',
     id: 'nextgen',
-    link: '#nextgen-section',
+    link: '#kids-school',
     subMenu: [
-      { name: '교회학교(어린이)', link: '#nextgen-section', id: 'kids-school' },
-      { name: '청청(청소년&청년)', link: '#nextgen-section', id: 'youth-adults' }
+      { name: '교회학교(어린이)', link: '#kids-school', id: 'kids-school' },
+      { name: '청청(청소년&청년)', link: '#youth-adults', id: 'youth-adults' }
     ]
   },
   {
     name: '교회소식',
     id: 'news',
-    link: '#news-section',
+    link: '#announcement',
     subMenu: [
-      { name: '알림 및 공지사항', link: '#news-section', id: 'announcement' },
-      { name: '갤러리(교회활동)', link: '#gallery-section', id: 'activity-gallery' },
-      { name: '서식 자료실', link: '#gallery-section', id: 'form-archive' }
+      { name: '알림 및 공지사항', link: '#announcement', id: 'announcement' },
+      { name: '갤러리(교회활동)', link: '#activity-gallery', id: 'activity-gallery' },
+      { name: '서식 자료실', link: '#form-archive', id: 'form-archive' }
     ]
   },
   {
     name: '행정 및 편의',
     id: 'admin',
-    link: '#gallery-section',
+    link: '#member-business',
     subMenu: [
-      { name: '교우 기업 소식', link: '#gallery-section', id: 'member-business' },
-      { name: '셔틀 및 차량운행 정보', link: '#gallery-section', id: 'car-transportation' },
-      { name: '안전 및 편의 위원회', link: '#gallery-section', id: 'safety-guide' }
+      { name: '교우 기업 소식', link: '#member-business', id: 'member-business' },
+      { name: '셔틀 및 차량운행 정보', link: '#car-transportation', id: 'car-transportation' },
+      { name: '안전 및 편의 위원회', link: '#safety-guide', id: 'safety-guide' }
     ]
   }
 ];
@@ -134,6 +134,46 @@ export const sermonData: SermonItem[] = [
     youtubeId: 'Fis0NscgZrk',
     thumbnail: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=1200',
     type: '주일설교'
+  },
+  {
+    id: 'sermon-wed-1',
+    title: '예수 동행의 삶과 은혜의 동거',
+    preacher: '부목사',
+    date: '2026-06-10',
+    passage: '요한복음 15:4 - 7',
+    youtubeId: 'pC7E77n9Mek',
+    thumbnail: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&q=80&w=1200',
+    type: '수요설교'
+  },
+  {
+    id: 'sermon-fri-1',
+    title: '기도의 골방에서 만나는 성령',
+    preacher: '담임목사',
+    date: '2026-06-12',
+    passage: '마태복음 6:6, 로마서 8:26',
+    youtubeId: 'I7m-pALF9uM',
+    thumbnail: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=1200',
+    type: '금요설교'
+  },
+  {
+    id: 'praise-wed-1',
+    title: '은혜로다 (예수 나의 주) 찬양대의 특송',
+    preacher: '빛나는찬양대',
+    date: '2026-06-10',
+    passage: '시편 100:1 - 3',
+    youtubeId: 'Fis0NscgZrk',
+    thumbnail: 'https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=1200',
+    type: '수요찬양'
+  },
+  {
+    id: 'praise-fri-1',
+    title: '임재 (하늘의 문을 여소서) 온세대 경배와 찬양',
+    preacher: '시온기획팀',
+    date: '2026-06-12',
+    passage: '역대하 7:1 - 3',
+    youtubeId: 'pC7E77n9Mek',
+    thumbnail: 'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&q=80&w=1200',
+    type: '금요찬양'
   }
 ];
 

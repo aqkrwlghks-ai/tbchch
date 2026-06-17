@@ -43,7 +43,7 @@ export interface SermonItem {
   passage: string;
   youtubeId: string;
   thumbnail: string;
-  type: '주일설교' | '수요예배' | '금요찬양';
+  type: '주일설교' | '수요설교' | '금요설교' | '수요찬양' | '금요찬양' | '수요예배' | '금요찬양';
 }
 
 // Board list item (church news/bulletin)

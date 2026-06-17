@@ -174,9 +174,33 @@ export default function ChurchHome({
     setMeditationOpen(false);
   };
 
-  type PageType = 'home' | 'about' | 'greeting' | 'vision' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin';
+  type PageType = 
+    | 'home' | 'about' | 'greeting' | 'vision' | 'worship' 
+    | 'sermon-sunday' | 'sermon-wednesday' | 'sermon-friday' | 'praise-wednesday' | 'praise-friday'
+    | 'meditation-life' | 'mission-group' | 'home-worship'
+    | 'kids-school' | 'youth-adults'
+    | 'announcement' | 'activity-gallery' | 'form-archive'
+    | 'member-business' | 'car-transportation' | 'safety-guide';
 
   const [currentPage, setCurrentPage] = useState<PageType>('home');
+
+  const getFilteredSermons = () => {
+    switch (currentPage) {
+      case 'sermon-sunday':
+        return sermonData.filter(s => s.type === '주일설교');
+      case 'sermon-wednesday':
+        return sermonData.filter(s => s.type === '수요설교');
+      case 'sermon-friday':
+        return sermonData.filter(s => s.type === '금요설교');
+      case 'praise-wednesday':
+        return sermonData.filter(s => s.type === '수요찬양');
+      case 'praise-friday':
+        return sermonData.filter(s => s.type === '금요찬양');
+      default:
+        return sermonData;
+    }
+  };
+  const filteredSermons = getFilteredSermons();
 
   const getNavigationTarget = (link: string): { page: PageType; hash?: string } => {
     if (!link.startsWith('#')) {
@@ -194,40 +218,55 @@ export default function ChurchHome({
         return { page: 'vision' };
         
       case 'nextgen-section':
+        return { page: 'kids-school' };
       case 'kids-school':
+        return { page: 'kids-school' };
       case 'youth-adults':
-        return { page: 'nextgen' };
+        return { page: 'youth-adults' };
         
       case 'community-intro':
+        return { page: 'meditation-life' };
       case 'meditation-life':
+        return { page: 'meditation-life' };
       case 'mission-group':
+        return { page: 'mission-group' };
       case 'home-worship':
-        return { page: 'community' };
+        return { page: 'home-worship' };
         
       case 'schedule-section':
       case 'worship-time':
         return { page: 'worship' };
         
       case 'sermon-section':
+        return { page: 'sermon-sunday' };
       case 'sermon-sunday':
+        return { page: 'sermon-sunday' };
       case 'sermon-wednesday':
+        return { page: 'sermon-wednesday' };
       case 'sermon-friday':
+        return { page: 'sermon-friday' };
       case 'praise-wednesday':
+        return { page: 'praise-wednesday' };
       case 'praise-friday':
-        return { page: 'media' };
+        return { page: 'praise-friday' };
         
       case 'news-section':
+        return { page: 'announcement' };
       case 'announcement':
-        return { page: 'news', hash: 'news-section' };
+        return { page: 'announcement' };
       case 'gallery-section':
+        return { page: 'activity-gallery' };
       case 'activity-gallery':
+        return { page: 'activity-gallery' };
       case 'form-archive':
-        return { page: 'news', hash: 'gallery-section' };
+        return { page: 'form-archive' };
         
       case 'member-business':
+        return { page: 'member-business' };
       case 'car-transportation':
+        return { page: 'car-transportation' };
       case 'safety-guide':
-        return { page: 'admin' };
+        return { page: 'safety-guide' };
         
       case 'footer-map':
       case 'church-map':
@@ -240,6 +279,7 @@ export default function ChurchHome({
 
   const navigateToPage = (page: PageType, hash?: string) => {
     setCurrentPage(page);
+    setActiveVideo(null);
     setMobileMenuOpen(false);
     
     if (hash) {
@@ -293,25 +333,69 @@ export default function ChurchHome({
         title = '예배 안내';
         description = '매주 혹은 매일 성령의 역사하심과 화평한 성도의 교제가 피어나는 거룩한 예배 시간표를 안내합니다.';
         break;
-      case 'media':
-        title = '설교와 찬양';
-        description = '매주 선포되는 담임목사님의 은혜로운 말씀과 뜨거운 찬양 영상을 통해 영적인 안식과 결단을 누리시기 바랍니다.';
+      case 'sermon-sunday':
+        title = '주일설교';
+        description = '빛나는교회 주일 공동체 대예배 설교 말씀을 전해드립니다.';
         break;
-      case 'news':
-        title = '교회 소식';
-        description = '빛나는 교회의 주간 소식, 공지사항, 성도들의 교제 현장인 활동 갤러리를 전해드립니다.';
+      case 'sermon-wednesday':
+        title = '수요설교';
+        description = '주일 말씀의 은혜를 주중 삶으로 이어가는 수요 성경강설입니다.';
         break;
-      case 'community':
-        title = '공동체 & 양육';
-        description = '그리스도의 사랑으로 묶여진 따뜻한 관계 속에서 서로 위로하고 격려하며 건강한 성장을 이뤄갑니다.';
+      case 'sermon-friday':
+        title = '금요설교';
+        description = '뜨거운 연합 기도회와 은혜 가득한 금요 성경 나눔 말씀입니다.';
         break;
-      case 'nextgen':
-        title = '다음세대 공동체';
-        description = '빛나는 교회의 미래인 다음세대를 하나님의 말씀과 사랑으로 양육하여 세상의 빛으로 세워갑니다.';
+      case 'praise-wednesday':
+        title = '수요찬양';
+        description = '수요예배를 더욱 영광스럽게 비추는 빛나는교회 찬양대의 은혜로운 고백입니다.';
         break;
-      case 'admin':
-        title = '행정 및 편의';
-        description = '교우들의 편의를 돕고 쾌적한 신앙생활을 지원하기 위한 셔틀버스 정보 및 온라인 행정 자료실을 안내합니다.';
+      case 'praise-friday':
+        title = '금요찬양';
+        description = '금요기도회를 채우는 뜨거운 성령의 임재와 은혜로운 경배 찬양입니다.';
+        break;
+      case 'meditation-life':
+        title = '묵상과 삶 (소그룹)';
+        description = '매주 삶의 묵상과 소통을 통해 은혜의 강물로 나아가는 소그룹방입니다.';
+        break;
+      case 'mission-group':
+        title = '남·여전도회 연합';
+        description = '연령별 신도회 친교와 교류를 통해 이웃 사랑을 실천하는 사역 연합회입니다.';
+        break;
+      case 'home-worship':
+        title = '가정 및 구역 예배';
+        description = '가정의 화평과 구역원 간의 든든한 신앙적 보살핌을 위한 연합 예배입니다.';
+        break;
+      case 'kids-school':
+        title = '교회학교 (어린이)';
+        description = '예수님의 따스한 인격을 배우며 꿈을 키우는 영유치·초등부 예배 공동체입니다.';
+        break;
+      case 'youth-adults':
+        title = '청청 공동체 (청소년&청년)';
+        description = '10대와 대학 청년들의 복음 정체성을 든든히 세우는 역동적인 젊은이 예배입니다.';
+        break;
+      case 'announcement':
+        title = '알림 및 공지사항';
+        description = '빛나는교회의 최신 공지, 행사 알림 및 주요 주간 교회 소식을 전해드립니다.';
+        break;
+      case 'activity-gallery':
+        title = '갤러리 (교회활동)';
+        description = '성도들의 아름다운 만남과 나눔, 교회의 교제 현장을 사진첩으로 공유합니다.';
+        break;
+      case 'form-archive':
+        title = '서식 자료실';
+        description = '온라인 신앙 신청 서식 원본 및 주보 다운로드를 신속히 지원합니다.';
+        break;
+      case 'member-business':
+        title = '교우 기업 소식';
+        description = '성도님들이 운영하시는 업종과 복된 일터를 서로 소개하고 응원합니다.';
+        break;
+      case 'car-transportation':
+        title = '셔틀 및 차량 운행';
+        description = '주일 오전 성도님들의 편안하고 기품있는 성전 이동을 돕는 운행 시간표입니다.';
+        break;
+      case 'safety-guide':
+        title = '안전 및 편의 위원회';
+        description = '가장 쾌적하고 안전한 교회 생활과 보조 지원을 위해 묵묵히 봉사하는 부서입니다.';
         break;
       default:
         return null;
@@ -1221,7 +1305,12 @@ export default function ChurchHome({
       )}
 
       {/* 6. WEEKLY SERMON & PRAISE SECTION ([필수 요구사항: 이번주 설교영상 즉시 재생 연동]) */}
-      {(currentPage === 'home' || currentPage === 'media') && (
+      {(currentPage === 'home' || 
+        currentPage === 'sermon-sunday' || 
+        currentPage === 'sermon-wednesday' || 
+        currentPage === 'sermon-friday' || 
+        currentPage === 'praise-wednesday' || 
+        currentPage === 'praise-friday') && (
         <section className="relative overflow-hidden bg-slate-100/70 border-y border-slate-200 py-16 md:py-24" id="sermon-section">
         {/* Soft prayer hands watermark on the left */}
         <div 
@@ -1256,140 +1345,148 @@ export default function ChurchHome({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left Sermon Playback Zone */}
-            <div className="lg:col-span-8 bg-white rounded-3xl p-5 md:p-6 shadow-xl border border-slate-200">
-              <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 group shadow-inner">
-                
-                {/* Active YouTube embed controller if activeVideo state is set */}
-                {activeVideo ? (
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1`}
-                    title={activeVideo.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <>
-                    <img 
-                      src={sermonData[0].thumbnail} 
-                      alt="Sermon backdrop"
-                      className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 flex flex-col justify-between p-6">
-                      
-                      {/* Badge info */}
-                      <span className="self-start bg-blue-600 text-white text-[10px] uppercase font-black px-2.5 py-1 rounded-full space-x-1">
-                        ● 최근 말씀 LIVE 재생 가능
-                      </span>
-
-                      {/* Play Action button overlay */}
-                      <button 
-                        onClick={() => setActiveVideo(sermonData[0])}
-                        className="self-center bg-white hover:bg-amber-400 hover:text-slate-950 text-slate-900 rounded-full p-6 shadow-2xl hover:scale-110 active:scale-95 transition-transform duration-200"
-                        title="예배 동영상 바로 듣기"
-                      >
-                        <Play className="h-8 w-8 fill-current ml-1" />
-                      </button>
-
-                      {/* Video Title and bible info */}
-                      <div className="text-left py-1 text-white">
-                        <span className="text-xs text-blue-300 font-bold block">{sermonData[0].date} • {sermonData[0].preacher} 목사</span>
-                        <h3 className="text-lg md:text-xl font-bold mt-1 leading-tight group-hover:text-amber-300 transition-colors">
-                          {sermonData[0].title}
-                        </h3>
-                        <p className="text-xs text-slate-300 mt-1 font-serif">성경본문: {sermonData[0].passage}</p>
-                      </div>
-
-                    </div>
-                  </>
-                )}
-
-              </div>
-
-              {/* Player details block */}
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div className="text-left">
-                  <span className="text-[10px] text-slate-400 font-extrabold">now playing info</span>
-                  <p className="text-sm font-extrabold text-slate-800">
-                    {activeVideo ? activeVideo.title : sermonData[0].title}
-                  </p>
-                  <p className="text-[11px] text-slate-500 font-serif mt-0.5">
-                    성경구절: {activeVideo ? activeVideo.passage : sermonData[0].passage}
-                  </p>
-                </div>
-                {activeVideo && (
-                  <button 
-                    onClick={() => setActiveVideo(null)}
-                    className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                  >
-                    동영상 플레이어 닫기
-                  </button>
-                )}
-              </div>
+          {filteredSermons.length === 0 ? (
+            <div className="py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-3xl bg-white shadow-md">
+              등록된 설교 또는 찬양 영상이 없습니다.
             </div>
-
-            {/* Right sermons list sidebar */}
-            <div className="lg:col-span-4 space-y-4">
-              <h3 className="text-xs uppercase tracking-wider font-extrabold text-slate-400 flex items-center gap-1">
-                <Volume2 className="h-4 w-4 text-blue-600" />
-                이전 주차 설교 목록 (클릭 연동)
-              </h3>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              <div className="space-y-3">
-                {sermonData.map((sermon) => {
-                  const isCurrentActive = activeVideo?.id === sermon.id || (!activeVideo && sermon.id === sermonData[0].id);
-                  return (
-                    <button
-                      key={sermon.id}
-                      onClick={() => setActiveVideo(sermon)}
-                      className={`w-full rounded-2xl p-4 border text-left transition-all ${
-                        isCurrentActive 
-                          ? 'border-blue-600 bg-white shadow-md ring-2 ring-blue-100' 
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
-                      }`}
-                    >
-                      <span className="text-[10px] text-blue-600 font-bold block">{sermon.date} 주일 메인 강설</span>
-                      <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 lines-clamp-1 group-hover:text-blue-700 transition-colors">
-                        {sermon.title}
-                      </h4>
-                      <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-400">
-                        <span>성경구절: {sermon.passage}</span>
-                        <span className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[9px] font-mono select-none">
-                          {sermon.preacher}
+              {/* Left Sermon Playback Zone */}
+              <div className="lg:col-span-8 bg-white rounded-3xl p-5 md:p-6 shadow-xl border border-slate-200">
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 group shadow-inner">
+                  
+                  {/* Active YouTube embed controller if activeVideo state is set */}
+                  {activeVideo ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${activeVideo.youtubeId}?autoplay=1`}
+                      title={activeVideo.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <>
+                      <img 
+                        src={filteredSermons[0]?.thumbnail || sermonData[0].thumbnail} 
+                        alt="Sermon backdrop"
+                        className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/30 flex flex-col justify-between p-6">
+                        
+                        {/* Badge info */}
+                        <span className="self-start bg-blue-600 text-white text-[10px] uppercase font-black px-2.5 py-1 rounded-full space-x-1">
+                          ● 최근 말씀 LIVE 재생 가능
                         </span>
+
+                        {/* Play Action button overlay */}
+                        <button 
+                          onClick={() => setActiveVideo(filteredSermons[0])}
+                          className="self-center bg-white hover:bg-amber-400 hover:text-slate-950 text-slate-900 rounded-full p-6 shadow-2xl hover:scale-110 active:scale-95 transition-transform duration-200"
+                          title="예배 동영상 바로 듣기"
+                        >
+                          <Play className="h-8 w-8 fill-current ml-1" />
+                        </button>
+
+                        {/* Video Title and bible info */}
+                        <div className="text-left py-1 text-white">
+                          <span className="text-xs text-blue-300 font-bold block">
+                            {(filteredSermons[0] || sermonData[0]).date} • {(filteredSermons[0] || sermonData[0]).preacher} {(filteredSermons[0] || sermonData[0]).type.includes('찬양') ? '찬양대' : '목사'}
+                          </span>
+                          <h3 className="text-lg md:text-xl font-bold mt-1 leading-tight group-hover:text-amber-300 transition-colors">
+                            {(filteredSermons[0] || sermonData[0]).title}
+                          </h3>
+                          <p className="text-xs text-slate-300 mt-1 font-serif">성경본문: {(filteredSermons[0] || sermonData[0]).passage}</p>
+                        </div>
+
                       </div>
+                    </>
+                  )}
+
+                </div>
+
+                {/* Player details block */}
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <div className="text-left">
+                    <span className="text-[10px] text-slate-400 font-extrabold">now playing info</span>
+                    <p className="text-sm font-extrabold text-slate-800">
+                      {activeVideo ? activeVideo.title : (filteredSermons[0]?.title || sermonData[0].title)}
+                    </p>
+                    <p className="text-[11px] text-slate-500 font-serif mt-0.5">
+                      성경구절: {activeVideo ? activeVideo.passage : (filteredSermons[0]?.passage || sermonData[0].passage)}
+                    </p>
+                  </div>
+                  {activeVideo && (
+                    <button 
+                      onClick={() => setActiveVideo(null)}
+                      className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    >
+                      동영상 플레이어 닫기
                     </button>
-                  );
-                })}
+                  )}
+                </div>
               </div>
 
-              {/* YouTube Banner CTA */}
-              <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-950 p-5 text-white shadow-xl relative overflow-hidden">
-                <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4">
-                  <Youtube className="w-40 h-40 fill-white" />
+              {/* Right sermons list sidebar */}
+              <div className="lg:col-span-4 space-y-4">
+                <h3 className="text-xs uppercase tracking-wider font-extrabold text-slate-400 flex items-center gap-1">
+                  <Volume2 className="h-4 w-4 text-blue-600" />
+                  동영상 목록 (클릭 연동)
+                </h3>
+                
+                <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+                  {filteredSermons.map((sermon) => {
+                    const isCurrentActive = activeVideo?.id === sermon.id || (!activeVideo && sermon.id === filteredSermons[0].id);
+                    return (
+                      <button
+                        key={sermon.id}
+                        onClick={() => setActiveVideo(sermon)}
+                        className={`w-full rounded-2xl p-4 border text-left transition-all ${
+                          isCurrentActive 
+                            ? 'border-blue-600 bg-white shadow-md ring-2 ring-blue-100' 
+                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                        }`}
+                      >
+                        <span className="text-[10px] text-blue-600 font-bold block">{sermon.date} {sermon.type}</span>
+                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-1 group-hover:text-blue-700 transition-colors">
+                          {sermon.title}
+                        </h4>
+                        <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-400">
+                          <span>구절: {sermon.passage}</span>
+                          <span className="bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded text-[9px] font-mono select-none">
+                            {sermon.preacher}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-                <span className="bg-red-600 text-white rounded text-[8.5px] font-black uppercase px-1.5 py-0.5 inline-block tracking-wider mb-2">
-                  Live Stream
-                </span>
-                <h4 className="text-md font-bold mb-1 leading-tight">빛나는 교회 온라인 예배국</h4>
-                <p className="text-xs text-slate-300 leading-snug">매주 주일 오전 11:00 실시간 주일 연합 예배가 즉시 고화질 생중계됩니다.</p>
-                <a 
-                  href="https://www.youtube.com/@TheBrighteningchurch"
-                  target="_blank"
-                  referrerPolicy="no-referrer"
-                  className="mt-4 bg-white hover:bg-amber-400 text-slate-900 hover:scale-105 font-extrabold text-[11px] py-1.5 px-3.5 rounded-full shadow-md transition-all inline-flex items-center gap-1.5"
-                >
-                  공식 채널 가기 <ArrowRight className="h-3 w-3" />
-                </a>
+
+                {/* YouTube Banner CTA */}
+                <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-slate-950 p-5 text-white shadow-xl relative overflow-hidden">
+                  <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4">
+                    <Youtube className="w-40 h-40 fill-white" />
+                  </div>
+                  <span className="bg-red-600 text-white rounded text-[8.5px] font-black uppercase px-1.5 py-0.5 inline-block tracking-wider mb-2">
+                    Live Stream
+                  </span>
+                  <h4 className="text-md font-bold mb-1 leading-tight">빛나는 교회 온라인 예배국</h4>
+                  <p className="text-xs text-slate-300 leading-snug">매주 주일 오전 11:00 실시간 주일 연합 예배가 즉시 고화질 생중계됩니다.</p>
+                  <a 
+                    href="https://www.youtube.com/@TheBrighteningchurch"
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                    className="mt-4 bg-white hover:bg-amber-400 text-slate-900 hover:scale-105 font-extrabold text-[11px] py-1.5 px-3.5 rounded-full shadow-md transition-all inline-flex items-center gap-1.5"
+                  >
+                    공식 채널 가기 <ArrowRight className="h-3 w-3" />
+                  </a>
+                </div>
+
               </div>
 
             </div>
-
-          </div>
+          )}
 
         </div>
       </section>
@@ -1465,7 +1562,7 @@ export default function ChurchHome({
       )}
 
       {/* Combined News & Gallery Section with Sky Background and Floating Panels */}
-      {(currentPage === 'home' || currentPage === 'news') && (
+      {currentPage === 'home' && (
         <div 
           className="relative bg-cover bg-center py-16 md:py-24 space-y-12 overflow-hidden"
           style={{ backgroundImage: `url('${skyBg}')` }}
@@ -1486,7 +1583,7 @@ export default function ChurchHome({
                   <h3 className="text-xl md:text-2xl font-black text-slate-950 mt-1">빛나는 교회 새소식</h3>
                 </div>
                 <button
-                  onClick={() => setBulletinModalOpen(true)}
+                  onClick={() => navigateToPage('announcement')}
                   className="text-xs font-bold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5"
                 >
                   더보기 <ChevronRight className="h-4 w-4" />
@@ -1569,7 +1666,12 @@ export default function ChurchHome({
                   <span className="text-xs uppercase tracking-widest text-blue-600 font-extrabold">Active beautiful moments</span>
                   <h3 className="text-xl md:text-2xl font-black text-slate-900 mt-1">빛나는 교회 갤러리</h3>
                 </div>
-                <span className="text-xs font-mono font-bold text-slate-400">성도 소식 광장</span>
+                <button
+                  onClick={() => navigateToPage('activity-gallery')}
+                  className="text-xs font-bold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5"
+                >
+                  더보기 <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
 
               <div className="space-y-8">
@@ -1599,72 +1701,57 @@ export default function ChurchHome({
                   const otherCategories = sortedCategories.slice(1);
 
                   return (
-                    <div className="space-y-8">
-                      {/* Top: 1 Featured Category Folder (Large) */}
-                      {featuredCategory && (
-                        <button
-                          onClick={() => setSelectedCategory(featuredCategory)}
-                          className="group w-full bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col lg:flex-row relative pt-2 lg:pt-0"
-                        >
-                          {/* Folder shape accent */}
-                          <div className="absolute top-0 left-6 w-24 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1 lg:hidden"></div>
-                          <div className="absolute left-0 top-6 w-2 h-24 bg-slate-200 group-hover:bg-blue-600 rounded-r-lg transition-colors -ml-1 hidden lg:block"></div>
-                          
-                          <div className="relative w-full lg:w-3/5 aspect-[3/2] lg:aspect-[16/10] overflow-hidden bg-slate-100 rounded-t-2xl lg:rounded-t-none lg:rounded-l-3xl">
+                    <div className="space-y-10">
+                      {/* Featured Album */}
+                      {featuredCategory && featuredCategory.albums && featuredCategory.albums[0] && (
+                        <div className="bg-slate-50 rounded-3xl p-5 md:p-6 border border-slate-100 flex flex-col md:flex-row gap-6 items-center shadow-inner">
+                          <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden shadow bg-slate-900 relative group">
                             <img 
-                              src={featuredCategory.coverUrl} 
-                              alt={featuredCategory.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              referrerPolicy="no-referrer"
+                              src={featuredCategory.albums[0].coverUrl || featuredCategory.albums[0].photos?.[0] || 'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=800'} 
+                              alt="Featured Album Cover" 
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                             />
-                            <span className="absolute top-4 left-4 bg-amber-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md animate-pulse">
-                              ★ 최신 업데이트
-                            </span>
-                            <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
-                              <FolderOpen className="h-4 w-4" />
-                              <span>{featuredCategory.albums ? featuredCategory.albums.length : 0}개 폴더</span>
-                            </span>
-                          </div>
-                          <div className="p-6 lg:p-8 flex-1 flex flex-col justify-between">
-                            <div>
-                              <span className="text-[10px] uppercase font-bold text-blue-600">최신 업데이트 폴더</span>
-                              <h4 className="text-lg lg:text-xl font-black text-slate-900 mt-1.5 group-hover:text-blue-700 transition-colors">
-                                {featuredCategory.name}
-                              </h4>
-                              <p className="text-xs text-slate-550 mt-2 leading-relaxed">
-                                빛나는 교회의 가장 최근 소식과 은혜의 기록들이 모여 있는 폴더입니다. 클릭하여 내부 앨범을 감상해 보세요.
-                              </p>
-                            </div>
-                            <div className="mt-6 pt-4 border-t border-slate-150 flex justify-between items-center text-xs text-slate-400 font-medium">
-                              <span className="flex items-center gap-1"><Clock className="h-4 w-4 text-blue-500" />최근 업데이트</span>
-                              <strong className="text-slate-700 font-mono">{featuredCategory.albums && featuredCategory.albums[0] ? featuredCategory.albums[0].date : '없음'}</strong>
+                            <div className="absolute top-3 left-3 bg-blue-600 text-white text-[9px] uppercase font-black px-2 py-0.5 rounded-full">
+                              New Featured Photo
                             </div>
                           </div>
-                        </button>
+                          <div className="w-full md:w-1/2 text-left space-y-3">
+                            <span className="text-[10px] text-blue-600 font-extrabold uppercase font-sans tracking-wider">{featuredCategory.name}</span>
+                            <h4 className="text-md md:text-lg font-black text-slate-900 leading-tight">
+                              {featuredCategory.albums[0].title}
+                            </h4>
+                            <p className="text-xs text-slate-400 font-mono">{featuredCategory.albums[0].date} 업데이트</p>
+                            <button
+                              onClick={() => setAlbumToShow(featuredCategory.albums[0])}
+                              className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-full shadow transition-all inline-flex items-center gap-1 mt-2"
+                            >
+                              <span>앨범 사진첩 전체보기</span>
+                              <ChevronRight className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </div>
                       )}
 
-                      {/* Bottom: 3 Category Folders (Grid) */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
+                      {/* Small Albums Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {otherCategories.map((cat) => (
                           <button
                             key={cat.id}
-                            onClick={() => setSelectedCategory(cat)}
-                            className="group bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-md hover:shadow-xl transition-all duration-300 transform text-left flex flex-col relative pt-2"
+                            onClick={() => {
+                              if (cat.albums && cat.albums[0]) {
+                                setAlbumToShow(cat.albums[0]);
+                              } else {
+                                alert('앨범 목록이 비어있습니다.');
+                              }
+                            }}
+                            className="bg-slate-50/50 hover:bg-white rounded-2xl overflow-hidden border border-slate-100 flex shadow-sm hover:shadow group text-left transition-all"
                           >
-                            {/* Folder shape accent at top */}
-                            <div className="absolute top-0 left-6 w-20 h-2 bg-slate-200 group-hover:bg-blue-600 rounded-t-lg transition-colors -mt-1"></div>
-                            
-                            <div className="relative aspect-[3/2] overflow-hidden bg-slate-100 rounded-t-3xl">
+                            <div className="w-24 md:w-28 aspect-square bg-slate-200 shrink-0 relative overflow-hidden">
                               <img 
-                                src={cat.coverUrl} 
-                                alt={cat.name}
+                                src={cat.albums && cat.albums[0] ? (cat.albums[0].coverUrl || cat.albums[0].photos?.[0]) : 'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=300'} 
+                                alt="Album Cover Thumbnail" 
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                referrerPolicy="no-referrer"
                               />
-                              <span className="absolute bottom-3 right-3 bg-blue-600/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
-                                <FolderOpen className="h-3.5 w-3.5" />
-                                <span>{cat.albums ? cat.albums.length : 0}개 폴더</span>
-                              </span>
                             </div>
                             <div className="p-4.5 flex-1 flex flex-col justify-between">
                               <div>
@@ -1696,7 +1783,7 @@ export default function ChurchHome({
                 {/* Button 1 */}
                 <button
                   onClick={() => {
-                    setBulletinModalOpen(true);
+                    navigateToPage('form-archive');
                   }}
                   className="w-full flex items-center justify-between p-4 bg-white hover:bg-blue-50 border border-slate-200 rounded-2xl text-left group shadow-sm transition-all"
                 >
@@ -1775,107 +1862,393 @@ export default function ChurchHome({
       </div>
       )}
 
-      {/* 9.1 COMMUNITY & NURTURE PAGE */}
-      {currentPage === 'community' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 소그룹 묵상과 삶 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-6">
-                  <Users className="h-6 w-6" />
+      {/* 9.1.1 묵상과 삶 (소그룹) */}
+      {currentPage === 'meditation-life' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-8 space-y-8">
+              <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-6">
+                <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <Users className="h-7 w-7" />
                 </div>
-                <h3 className="text-lg font-black text-slate-900">묵상과 삶 (소그룹 모임)</h3>
-                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
-                  매주 삶의 묵상과 나눔을 통해 하나님의 말씀이 일상 속에서 풍성히 살아 숨 쉬도록 서로 위로하고 권면하는 따뜻한 소그룹 신앙 나눔방입니다.
+                <h3 className="text-2xl font-black text-slate-900">말씀 묵상과 함께 성장하는 소그룹 공동체</h3>
+                <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                  빛나는교회 소그룹은 매주 하나님의 말씀을 개인의 삶에 적용한 간증과 묵상을 나누며, 서로를 위해 중보기도하고 주님의 사랑을 삶 속에서 구체적으로 실천하는 신앙의 모체입니다.
                 </p>
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-4 text-sm text-slate-700">
+                  <h4 className="font-extrabold text-slate-900">소그룹 운영 및 모임 안내</h4>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>모임 시간:</strong> 매주 주일 낮 대예배 직후 (오전 12:30 ~ )
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>모임 장소:</strong> 본관 2층 대성전 옆 소그룹실 및 교육관 각 실
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>진행 내용:</strong> 금주의 주일 말씀 요약 묵상, 나눔 교제, 중보기도 시간
+                      </div>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
-                <span>모임: 매주 주일 소그룹실</span>
-                <span className="bg-blue-50 px-2 py-1 rounded">성도 소통</span>
+
+              {/* Active Small Groups list mockup */}
+              <div className="space-y-6">
+                <h4 className="text-lg font-black text-slate-900">현재 활동 중인 대표 구역(소그룹)</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow hover:shadow-md transition-all space-y-3">
+                    <span className="text-[10px] text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-bold">장년 1교구</span>
+                    <h5 className="font-black text-slate-900 text-base">에덴 구역 (구역장: 김영자 권사)</h5>
+                    <p className="text-xs text-slate-500 leading-relaxed font-light">가장 오랜 전통을 자랑하며, 따뜻한 어머니의 품과 같은 기도로 교우들을 품고 매주 사랑방 모임을 이어갑니다.</p>
+                  </div>
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow hover:shadow-md transition-all space-y-3">
+                    <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full font-bold">장년 2교구</span>
+                    <h5 className="font-black text-slate-900 text-base">시온 구역 (구역장: 박민수 집사)</h5>
+                    <p className="text-xs text-slate-500 leading-relaxed font-light">3040 직장인 및 신혼 부부 중심으로 구성되어 퇴근 후 온/오프라인 연합 묵상을 실천하며 기도로 동행합니다.</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* 남여전도회 연합 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-6">
-                  <Heart className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-black text-slate-900">남·여전도회 연합회</h3>
-                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
-                  연령대별로 구성된 신도회 모임을 통해 활발한 친교와 교류를 나누며, 교회 봉사와 지역 이웃 사랑 실천을 위한 활기찬 사역 연합 공동체입니다.
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-gradient-to-br from-blue-700 to-indigo-900 rounded-[40px] text-white p-8 shadow-lg text-center space-y-6">
+                <Sparkles className="h-10 w-10 text-amber-300 mx-auto animate-pulse" />
+                <h4 className="text-lg font-black leading-snug">소그룹 모임에 함께 동참하세요</h4>
+                <p className="text-xs text-slate-200 leading-relaxed font-light">
+                  성도 간의 긴밀한 교제와 기도는 영적 성장의 가장 빠른 길입니다. 빛나는교회 소그룹의 문은 언제나 열려있습니다.
+                </p>
+                <button
+                  onClick={() => alert('소그룹 신청 안내:\n소그룹(구역) 배정을 요청하셨습니다. 교회 행정처에서 확인 후 이번 주 중으로 유선 연락 드리겠습니다.')}
+                  className="w-full bg-white hover:bg-amber-400 hover:text-slate-950 text-slate-900 font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-transform hover:-translate-y-0.5"
+                >
+                  소그룹 모임 가입 신청하기
+                </button>
+              </div>
+
+              <div className="bg-white p-6 rounded-3xl border border-slate-150 shadow-sm space-y-4">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">오늘의 추천 성구</h4>
+                <p className="text-xs text-slate-600 font-serif italic leading-relaxed">
+                  "두세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라" (마태복음 18:20)
                 </p>
               </div>
-              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-pink-600">
-                <span>모임: 매월 1회 지정 장소</span>
-                <span className="bg-pink-50 px-2 py-1 rounded">교회 봉사</span>
-              </div>
             </div>
-
-            {/* 가정 및 구역 예배 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
-              <div>
-                <div className="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-6">
-                  <Home className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg font-black text-slate-900">가정 및 구역 예배</h3>
-                <p className="text-sm text-slate-500 mt-3 leading-relaxed">
-                  가정의 화평을 이루고 구역원 간의 깊은 친교를 위해 각 가정에서 드리는 예배로, 온 성도가 기도로 서로를 든든히 보살피는 연합 예배입니다.
-                </p>
-              </div>
-              <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-600">
-                <span>모임: 격주 금요일 각 가정</span>
-                <span className="bg-amber-50 px-2 py-1 rounded">말씀 양육</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 md:p-12 rounded-[40px] border border-blue-100 text-center max-w-4xl mx-auto space-y-4">
-            <h4 className="text-xl font-black text-blue-900">“서로 사랑하라 내가 너희를 사랑한 것 같이 너희도 서로 사랑하라”</h4>
-            <p className="text-sm text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              빛나는 교회는 성도의 따뜻한 교제 속에서 삼위일체 하나님의 풍성한 교제와 기쁨을 맛보기를 원합니다. 우리의 크고 작은 모든 모임이 삶의 평안이 되는 거룩한 정원이 될 것입니다.
-            </p>
           </div>
         </section>
       )}
 
-      {/* 9.2 NEXT GENERATION PAGE */}
-      {currentPage === 'nextgen' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* 어린이 교회학교 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                  <Smile className="h-6 w-6" />
+      {/* 9.1.2 남·여전도회 연합 */}
+      {currentPage === 'mission-group' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div className="max-w-3xl space-y-4">
+              <div className="h-14 w-14 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold">
+                <Heart className="h-7 w-7" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900">선교와 친교를 도모하는 남·여전도회 연합회</h3>
+              <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                남·여전도회는 성도들의 연령대별 친밀한 교류와 사역적 연합을 바탕으로 주님의 지상명령인 세계 선교를 후원하고, 교회 내부의 봉사와 이웃 사랑을 실천하는 선교 동역 공동체입니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+              {/* 남전도회 */}
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 pb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
+                  <h4 className="text-lg font-black text-slate-900">남전도회 구성원 안내</h4>
                 </div>
-                <h3 className="text-xl font-black text-slate-900">교회학교 (영유치부 및 초등부)</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
-                  미래의 기둥이 될 어린이들이 예수님의 성품을 배우고, 재미있는 예배와 소그룹 성경 교육 활동을 통해 하나님의 나라를 꿈꿀 수 있도록 사랑으로 양육합니다.
-                </p>
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600 space-y-2">
-                  <div className="flex justify-between"><strong>주일 예배 시간:</strong> <span>오전 10:40</span></div>
-                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>교육관 지하 1층</span></div>
-                  <div className="flex justify-between"><strong>대상 연령:</strong> <span>유치원생 ~ 초등학생</span></div>
+                <div className="space-y-4">
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제1남전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 65세 이상 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">친교 및 원로 지원</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제2남전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 55세 ~ 64세 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">예배 및 주차 봉사</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제3남전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 45세 ~ 54세 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">안전 방재 및 선교 후원</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제4남전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 45세 미만 청장년 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">미디어 사역 및 청년 멘토링</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 여전도회 */}
+              <div className="space-y-6">
+                <div className="border-b border-slate-200 pb-3 flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-pink-600 rounded-full"></span>
+                  <h4 className="text-lg font-black text-slate-900">여전도회 구성원 안내</h4>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제1여전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 65세 이상 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded">기도 중보 및 심방 조력</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제2여전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 55세 ~ 64세 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded">친교 봉사 및 이웃 구제</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제3여전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 45세 ~ 54세 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded">성전 데코 및 주방 봉사</span>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
+                    <div>
+                      <strong className="text-sm font-black text-slate-900 block">제4여전도회</strong>
+                      <span className="text-[11px] text-slate-400">연령: 만 45세 미만 청장년 성도</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded">교회학교 후원 및 찬양 사역</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 청청 공동체 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg flex flex-col justify-between hover:shadow-xl transition-all">
-              <div className="space-y-4">
-                <div className="h-12 w-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
-                  <Sparkles className="h-6 w-6" />
+            <div className="bg-gradient-to-r from-pink-50 to-rose-100 p-8 rounded-3xl border border-pink-100 text-center max-w-4xl mx-auto space-y-4 mt-8">
+              <h4 className="text-lg font-black text-pink-900">“서로 대접하기를 원망 없이 하고 각각 은사를 받은 대로... 봉사하라” (베드로전서 4:9-10)</h4>
+              <p className="text-xs text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
+                남·여전도회는 월례회를 통해 영의 양식을 나눌 뿐 아니라 교회의 기둥 부서로서 연중 다양한 사랑 나눔 행사를 펼치고 있습니다. 여러분의 헌신과 기도가 빛나는 교회를 더욱 눈부시게 비춥니다.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.1.3 가정 및 구역 예배 */}
+      {currentPage === 'home-worship' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-8 space-y-8">
+              <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-6">
+                <div className="h-14 w-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                  <Home className="h-7 w-7" />
                 </div>
-                <h3 className="text-xl font-black text-slate-900">청청 공동체 (청소년 및 청년)</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
-                  역동적인 찬양과 솔직한 말씀 소통을 바탕으로, 10대 청소년들과 청년들이 복음의 정체성을 든든히 세워가고 세상을 변화시키는 기독교의 리더로 성장합니다.
+                <h3 className="text-2xl font-black text-slate-900">가정을 화평케 하는 연합 구역 예배</h3>
+                <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                  가정 및 구역 예배는 모든 구역원이 각 가정을 순회하며 예수 복음 중심의 말씀 안에서 삶을 나누는 거룩한 단기 연합 예배입니다. 가정을 성전 삼아 드려지는 이 작은 예배를 통해 온전한 신앙 보살핌과 평안을 누리게 됩니다.
                 </p>
-                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs text-slate-600 space-y-2">
-                  <div className="flex justify-between"><strong>주일 예배 시간:</strong> <span>오전 10:40</span></div>
+                
+                {/* Liturgy Order List */}
+                <div className="space-y-4">
+                  <h4 className="font-extrabold text-slate-900 text-base border-b border-slate-150 pb-2">기본 구역 예배 순서 가이드</h4>
+                  <div className="flow-root">
+                    <ul className="-mb-8">
+                      <li className="relative pb-8">
+                        <div className="relative flex space-x-3">
+                          <div>
+                            <span className="h-8 w-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-black">1</span>
+                          </div>
+                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                            <div>
+                              <p className="text-xs font-extrabold text-slate-900">신앙고백 및 묵상기도</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5">사도신경을 고백하며 다함께 예배의 마음을 정돈합니다.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li className="relative pb-8">
+                        <div className="relative flex space-x-3">
+                          <div>
+                            <span className="h-8 w-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-black">2</span>
+                          </div>
+                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                            <div>
+                              <p className="text-xs font-extrabold text-slate-900">찬송 및 인도자 기도</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5">구역 찬송과 대표 기도자로 선정된 지체의 은혜로운 인도 기도.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li className="relative pb-8">
+                        <div className="relative flex space-x-3">
+                          <div>
+                            <span className="h-8 w-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-black">3</span>
+                          </div>
+                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                            <div>
+                              <p className="text-xs font-extrabold text-slate-900">성경 봉독 및 말씀 나눔</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5">금주의 구역 말씀 교재를 낭독하고 한 주간 은혜를 실시간 나눕니다.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                      <li className="relative">
+                        <div className="relative flex space-x-3">
+                          <div>
+                            <span className="h-8 w-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs font-black">4</span>
+                          </div>
+                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                            <div>
+                              <p className="text-xs font-extrabold text-slate-900">중보기도 및 주기도문</p>
+                              <p className="text-[11px] text-slate-500 mt-0.5">가정과 구역, 교회를 위한 합심기도 후 주기도문으로 예배를 마칩니다.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-slate-900 rounded-[40px] text-white p-8 shadow-xl text-center space-y-6">
+                <FileText className="h-10 w-10 text-amber-400 mx-auto" />
+                <h4 className="text-base font-black">금주의 가정예배 순서지 PDF</h4>
+                <p className="text-xs text-slate-400 leading-relaxed font-light">
+                  구역예배 및 가정 대예배 시 활용하실 수 있는 공식 교안과 순서지 원본 파일입니다.
+                </p>
+                <button
+                  onClick={() => alert('구역예배 순서지 다운로드:\n[빛나는교회_가정예배순서지_6월호.pdf] 파일 다운로드를 시작합니다.')}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow transition-transform active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  예배 교안 다운로드 (PDF)
+                </button>
+              </div>
+
+              <div className="bg-amber-50/60 p-6 rounded-3xl border border-amber-100 space-y-3">
+                <h5 className="text-xs font-bold text-amber-800 uppercase tracking-wider">가정 예배 권장 사항</h5>
+                <p className="text-xs text-slate-600 leading-relaxed font-light">
+                  - 격주 금요일 저녁 구역별 지정 세대 방문.<br/>
+                  - 예배 직후 지나친 향응이나 식사를 지양하고 따뜻한 차 위주의 다과 권장.<br/>
+                  - 이웃 주민 소음 방지를 위해 구역 찬송 시 음량 배려.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.2.1 교회학교 (어린이) */}
+      {currentPage === 'kids-school' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-8">
+              <div className="max-w-3xl space-y-4">
+                <div className="h-14 w-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <Smile className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900">예수님의 꿈을 꾸는 빛나는 교회학교</h3>
+                <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                  다음세대 어린이들이 하나님의 크신 사랑 안에서 마음껏 뛰어놀며, 바른 성경 말씀 교육을 바탕으로 건강한 기독교 가치관을 품고 성장할 수 있도록 돕습니다.
+                </p>
+              </div>
+              <div>
+                <button
+                  onClick={() => alert('교회학교 안내:\n교회학교 입학 및 등록 관련 상담을 요청하셨습니다. 담당 교육전도사님이 이번 주 중으로 문자 연락 드리겠습니다.')}
+                  className="bg-emerald-650 hover:bg-emerald-700 text-white font-extrabold text-xs px-6 py-3.5 rounded-xl shadow-md transition-all shrink-0"
+                >
+                  자녀 교회학교 등록 문의
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* 영유치부 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full font-bold">만 0세 ~ 7세</span>
+                <h4 className="text-lg font-black text-slate-900">영·유치부 예배 (Dream-Seed)</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  생애 첫 신앙생활을 시작하는 아기들과 부모님이 함께 드리는 사랑 넘치는 예배입니다. 오감을 자극하는 성경 오르프 연주 놀이, 다채로운 인형극 놀이 교안 등을 가르칩니다.
+                </p>
+                <div className="bg-white p-4.5 rounded-2xl border border-slate-150 text-xs text-slate-600 space-y-2 font-light">
+                  <div className="flex justify-between"><strong>예배 시간:</strong> <span>매주 주일 오전 10:40</span></div>
+                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>본관 1층 자비실</span></div>
+                  <div className="flex justify-between"><strong>교육 비전:</strong> <span>말씀 안에서 바르고 착하게 자라기</span></div>
+                </div>
+              </div>
+
+              {/* 초등부 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full font-bold">초등학교 1학년 ~ 6학년</span>
+                <h4 className="text-lg font-black text-slate-900">초등부 예배 (Bright-Kids)</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  학교 생활을 본격 시작하는 아이들의 눈높이에 맞춘 활기찬 찬양 워십과 체험 중심 성경공부 반별 활동입니다. 매년 여름성경학교와 말씀 캠프를 통해 성경 인격을 기릅니다.
+                </p>
+                <div className="bg-white p-4.5 rounded-2xl border border-slate-150 text-xs text-slate-600 space-y-2 font-light">
+                  <div className="flex justify-between"><strong>예배 시간:</strong> <span>매주 주일 오전 10:40</span></div>
+                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>교육관 지하 1층 소강당</span></div>
+                  <div className="flex justify-between"><strong>교육 비전:</strong> <span>스스로 성경 읽고 이웃 사랑 가치 갖기</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.2.2 청청 공동체 (청소년&청년) */}
+      {currentPage === 'youth-adults' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-10">
+            <div className="max-w-3xl space-y-4">
+              <div className="h-14 w-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                <Sparkles className="h-7 w-7" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900">비전과 열정의 세대, 청청 공동체</h3>
+              <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                청청 공동체는 '청소년(10대)'과 '청년(2030)'이 연합하여 복음의 기독교 가치관을 주도적으로 배우고, 세상에서 선한 영향력을 끼치는 믿음의 리더로 무장하는 열정적인 예배 공동체입니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* 중고등부 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-bold">중·고등학생 대상 (만 13세 ~ 18세)</span>
+                <h4 className="text-lg font-black text-slate-900">중·고등부 예배</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  청소년 사춘기 시절의 고민과 학업 진로의 부담감을 기도로 극복하고 성경 속 비전을 향해 나아갑니다. 또래 모임을 통해 돈독한 신앙 우정을 나눕니다.
+                </p>
+                <div className="bg-white p-4.5 rounded-2xl border border-slate-150 text-xs text-slate-600 space-y-2 font-light">
+                  <div className="flex justify-between"><strong>예배 시간:</strong> <span>매주 주일 오전 10:40</span></div>
                   <div className="flex justify-between"><strong>예배 장소:</strong> <span>목양관 3층 시온홀</span></div>
-                  <div className="flex justify-between"><strong>대상 연령:</strong> <span>중·고등학생 / 대학생 및 청년</span></div>
+                  <div className="flex justify-between"><strong>특별 활동:</strong> <span>동계 수련회, 찬양단 워십 스쿨, 학교 기도 모임</span></div>
+                </div>
+              </div>
+
+              {/* 대학청년부 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full font-bold">대학생 및 청년 (만 19세 ~ 35세)</span>
+                <h4 className="text-lg font-black text-slate-900">대학청년부 예배</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  청년 지체들이 세상의 기준을 넘어 하나님 나라를 꿈꾸며 뜨거운 찬양과 논리적인 성경공부 교제를 통해 취업, 결혼 등 삶의 비전을 함께 설계합니다.
+                </p>
+                <div className="bg-white p-4.5 rounded-2xl border border-slate-150 text-xs text-slate-600 space-y-2 font-light">
+                  <div className="flex justify-between"><strong>예배 시간:</strong> <span>매주 주일 오후 01:30</span></div>
+                  <div className="flex justify-between"><strong>예배 장소:</strong> <span>목양관 3층 시온홀</span></div>
+                  <div className="flex justify-between"><strong>특별 사역:</strong> <span>국내 오지 낙도 단기선교, 소그룹 독서 토론 모임</span></div>
                 </div>
               </div>
             </div>
@@ -1883,47 +2256,317 @@ export default function ChurchHome({
         </section>
       )}
 
-      {/* 9.3 ADMIN & INFO PAGE */}
-      {currentPage === 'admin' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* 차량 및 셔틀 운행 정보 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
-              <div className="h-12 w-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                <Car className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-black text-slate-900">셔틀 및 차량운행 정보</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                주일 오전 성도님들의 편안한 성전 방문을 위해 셔틀 차량을 순환 운행합니다. 
-              </p>
-              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-[11px] text-slate-600 space-y-1.5">
-                <div><strong>1호차 (개봉역 방면):</strong> 주일 오전 08:30 / 10:20</div>
-                <div><strong>2호차 (광명 방면):</strong> 주일 오전 08:45 / 10:30</div>
+      {/* 9.3.1 알림 및 공지사항 (교회소식) */}
+      {currentPage === 'announcement' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-8 animate-fadeIn">
+          <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-6">
+            <div className="flex justify-between items-center border-b border-slate-150 pb-4">
+              <h3 className="text-xl font-black text-slate-900">빛나는교회 알림 소식 게시판</h3>
+              <span className="text-xs text-slate-400 font-mono font-medium">총 {churchNews.length}건</span>
+            </div>
+
+            <div className="divide-y divide-slate-150 space-y-4">
+              {churchNews.map((news) => (
+                <button
+                  key={news.id}
+                  onClick={() => setSelectedNews(news)}
+                  className="w-full text-left py-5 px-3 hover:bg-slate-50/70 rounded-2xl transition-all duration-150 block group"
+                >
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-full ${
+                          news.category === '공지사항' 
+                            ? 'bg-red-50 text-red-700 border border-red-200' 
+                            : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                        }`}>
+                          {news.category}
+                        </span>
+                        <span className="text-[11.5px] text-slate-400 font-mono font-medium">{news.date}</span>
+                      </div>
+                      <h4 className="text-sm md:text-base font-black text-slate-900 group-hover:text-blue-700 transition-colors">
+                        {news.title}
+                      </h4>
+                      <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-light">{news.content}</p>
+                    </div>
+                    <ChevronRight className="h-4.5 w-4.5 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 mt-1" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.3.2 갤러리 (교회활동) */}
+      {currentPage === 'activity-gallery' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div className="flex justify-between items-end border-b border-slate-150 pb-4">
+              <div>
+                <h3 className="text-xl font-black text-slate-900">빛나는교회 아름다운 사진첩</h3>
+                <p className="text-xs text-slate-400 mt-1">예배와 교육, 소그룹 모임 등 성도들의 거룩한 만남의 교제 현장을 생생히 전해드립니다.</p>
               </div>
             </div>
 
-            {/* 교우 기업 소식 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
-              <div className="h-12 w-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-                <ShoppingBag className="h-6 w-6" />
+            {loadingGallery ? (
+              <div className="py-20 text-center flex flex-col items-center justify-center gap-3 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-xs text-slate-400 font-medium">사진첩 목록을 불러오는 중...</p>
               </div>
-              <h3 className="text-lg font-black text-slate-900">교우 기업 소식</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                빛나는 교회 성도님들이 운영하시는 업종과 일터를 소개해 드립니다. 서로 방문하시고 복된 기도로 함께 응원하고 격려해 주세요.
-              </p>
-              <div className="text-xs font-bold text-amber-600">행정처에 기업 소개 원서 제출 시 등록 가능</div>
+            ) : galleryCategories.length === 0 ? (
+              <div className="py-20 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-2xl">
+                등록된 사진첩이 없습니다.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                {galleryCategories.map((cat) => {
+                  const latestAlbum = cat.albums?.[0];
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                      }}
+                      className="group bg-slate-50/50 hover:bg-white rounded-3xl overflow-hidden border border-slate-150 shadow-sm hover:shadow-xl transition-all duration-300 transform text-left"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-slate-200">
+                        <img 
+                          src={latestAlbum ? latestAlbum.coverUrl : 'https://images.unsplash.com/photo-1456406644174-8dba4c7f7d2c?auto=format&fit=crop&q=80&w=800'} 
+                          alt={cat.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          referrerPolicy="no-referrer"
+                        />
+                        <span className="absolute bottom-3 right-3 bg-slate-900/80 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md backdrop-blur-sm shadow flex items-center gap-1">
+                          <FolderOpen className="h-3.5 w-3.5 text-blue-400" />
+                          <span>폴더 열기</span>
+                        </span>
+                      </div>
+                      <div className="p-5.5 space-y-2">
+                        <span className="text-[10px] text-blue-600 font-extrabold uppercase">카테고리 폴더</span>
+                        <h4 className="text-sm md:text-base font-black text-slate-900 line-clamp-1 group-hover:text-blue-700 transition-colors leading-tight">
+                          {cat.name}
+                        </h4>
+                        <div className="pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                          <span>등록 앨범: {cat.albums ? cat.albums.length : 0}개</span>
+                          <span>{latestAlbum ? latestAlbum.date : ''}</span>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 9.3.3 서식 자료실 */}
+      {currentPage === 'form-archive' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div>
+              <h3 className="text-xl font-black text-slate-900">교회 서식 자료 및 주보실</h3>
+              <p className="text-xs text-slate-400 mt-1">빛나는교회 성도님들의 다양한 신앙 행정 절차 신청서 및 최근 주보 파일을 다운로드받으실 수 있습니다.</p>
             </div>
 
-            {/* 안전 및 편의 위원회 */}
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-4 hover:shadow-xl transition-all">
-              <div className="h-12 w-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
-                <ShieldCheck className="h-6 w-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {[
+                { title: '교적부 새신자 등록 원서', desc: '새가족 가입 후 교인 명부 등재용 신청서입니다.', file: '빛나는교회_교적원서.pdf' },
+                { title: '수례/입교 희망 신청원', desc: '세례 및 입교 문답을 위한 공식 서식 원지입니다.', file: '세례희망신청원.pdf' },
+                { title: '유아 세례 신청서', desc: '만 2세 미만 자녀의 유아세례 문답 신청원입니다.', file: '유아세례신청원.pdf' },
+                { title: '차량 등록 및 운행 증명원', desc: '성전 전용 주차권 및 차량 운행 신청원 양식.', file: '차량등록원서.pdf' },
+                { title: '기부금(헌금) 증명서 신청서', desc: '연말정산 헌금 영수증 발급용 행정 청원원.', file: '기부금증명신청서.pdf' },
+                { title: '구역 연합 묵상지 순서교재', desc: '이번 달 가정/구역예배 순서지가 내장된 인쇄 파일.', file: '구역예배순서지_6월호.pdf' },
+              ].map((item, idx) => (
+                <div key={idx} className="bg-slate-50 p-6 rounded-3xl border border-slate-150 hover:border-blue-200 transition-all flex flex-col justify-between space-y-5">
+                  <div className="space-y-2.5">
+                    <FileText className="h-6 w-6 text-blue-600" />
+                    <h4 className="text-xs md:text-sm font-black text-slate-900 leading-snug">{item.title}</h4>
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
+                  </div>
+                  <button
+                    onClick={() => alert(`서식 파일 다운로드 시작:\n[${item.file}] 파일을 다운로드 하였습니다.`)}
+                    className="w-full bg-white hover:bg-slate-900 hover:text-white border border-slate-200 font-extrabold text-[10.5px] py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1 text-slate-800"
+                  >
+                    <Download className="h-3.5 w-3.5 text-blue-600" />
+                    서식 원본 받기 (PDF)
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.4.1 교우 기업 소식 */}
+      {currentPage === 'member-business' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-6">
+              <div className="max-w-3xl space-y-4">
+                <div className="h-14 w-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                  <ShoppingBag className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900">서로 돕고 연합하는 교우 기업 소식</h3>
+                <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                  빛나는교회 성도님들이 운영하시는 업종과 일터를 소개합니다. 서로 이용하고 기도로 응원하여 주 안에서 아름다운 경제 공동체를 이루어가기를 소망합니다.
+                </p>
               </div>
-              <h3 className="text-lg font-black text-slate-900">안전 및 편의 위원회</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                화재 예방, 방역, 시설물 점검 및 예배 보조 지원을 담당하는 부서로, 성도님들이 가장 쾌적하고 안전하게 예배당을 이용할 수 있도록 봉사합니다.
+              <button
+                onClick={() => alert('기업 등록 문의:\n교우 기업 등록 신청을 요청하셨습니다. 교회 사무국에서 등록 양식을 문자로 안내해 드리겠습니다.')}
+                className="bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs px-5 py-3.5 rounded-xl shadow-md transition-all shrink-0"
+              >
+                교우 기업 신규 등록 신청
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {[
+                { title: '빛나는 베이커리', tag: '식음료', location: '구로구 개봉동', desc: '매일 아침 유기농 밀가루로 건강하고 정직한 빵을 굽는 따스한 빵집입니다. 주일 성도 할인 10% 지원.' },
+                { title: '에덴 인테리어 & 디자인', tag: '주거/설비', location: '구로구 구로동', desc: '실내 주택 인테리어 리모델링, 욕실 리모델링 전문 에이전시입니다. 성도 세대 꼼꼼하고 저렴히 책임 시공.' },
+                { title: '소망 자동차 종합 정비', tag: '정비/수리', location: '구로구 오류동', desc: '자동차 정비, 엔진오일 교환, 정기 검사 대행 전문 카센터입니다. 정직한 진단과 수리 보장.' },
+                { title: '시온 연합 크리닝 (세탁소)', tag: '생활서비스', location: '금천구 독산동', desc: '겨울 이불 세탁, 드라이클리닝 전문 수거 배달 세탁소입니다. 은혜의 집사 집안 운영.' },
+                { title: '예안 온가족 한의원', tag: '의료/건강', location: '광명시 철산동', desc: '성도 관절 물리치료, 보약 한약 진단 전문 한의원입니다. 성도님 내원 시 특별 상담 지원.' },
+              ].map((biz, idx) => (
+                <div key={idx} className="bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-all space-y-4">
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between items-start">
+                      <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{biz.tag}</span>
+                      <span className="text-[10px] text-slate-400 font-mono font-medium">{biz.location}</span>
+                    </div>
+                    <h4 className="text-sm font-black text-slate-900">{biz.title}</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-light">{biz.desc}</p>
+                  </div>
+                  <div className="text-[11px] font-bold text-amber-600 bg-white p-2.5 rounded-xl border border-slate-150 text-center">
+                    사무처 공식 제휴 교우 업체
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.4.2 셔틀 및 차량운행 정보 */}
+      {currentPage === 'car-transportation' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div className="max-w-3xl space-y-4">
+              <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <Car className="h-7 w-7" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900">셔틀버스 노선 및 차량 운행 안내</h3>
+              <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                빛나는교회는 주일 대예배에 참석하시는 성도님들의 편안한 성전 이동을 위하여 셔틀버스를 매주 순환 운영하고 있습니다. 정차 코스 및 노선표를 미리 확인하십시오.
               </p>
-              <div className="text-xs font-bold text-rose-600">긴급 연락망: 사무국 내선 번호 101</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+              {/* 1호차 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full font-bold">1호차 (개봉역 방면 코스)</span>
+                <h4 className="text-lg font-black text-slate-900">개봉역/고척동 주일 순환선</h4>
+                
+                <div className="relative border-l-2 border-blue-400 pl-4.5 space-y-5 py-2 font-mono text-xs">
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-blue-500 border-2 border-white ring-2 ring-blue-300"></span>
+                    <strong>개봉역 1번 출구 버스정류장 뒤편 (출발)</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">운행 시각: 1부(08:30) / 2부(10:20)</span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-slate-400 border-2 border-white ring-2 ring-slate-300"></span>
+                    <strong>고척사거리 농협 은행 앞 정차</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">운행 시각: 1부(08:38) / 2부(10:28)</span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-blue-500 border-2 border-white ring-2 ring-blue-300"></span>
+                    <strong>빛나는교회 성전 로비 광장 (도착)</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">도착 예정: 1부(08:50) / 2부(10:40)</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2호차 */}
+              <div className="bg-slate-50 p-6 md:p-8 rounded-3xl border border-slate-100 space-y-5">
+                <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full font-bold">2호차 (광명/철산 방면 코스)</span>
+                <h4 className="text-lg font-black text-slate-900">철산역/광명사거리 주일 순환선</h4>
+                
+                <div className="relative border-l-2 border-indigo-400 pl-4.5 space-y-5 py-2 font-mono text-xs">
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-indigo-500 border-2 border-white ring-2 ring-indigo-300"></span>
+                    <strong>철산역 2번 출구 다이소 앞 (출발)</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">운행 시각: 1부(08:35) / 2부(10:25)</span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-slate-400 border-2 border-white ring-2 ring-slate-300"></span>
+                    <strong>광명사거리역 3번 출구 기업은행 앞</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">운행 시각: 1부(08:43) / 2부(10:33)</span>
+                  </div>
+                  <div className="relative">
+                    <span className="absolute -left-[23.5px] top-1 h-3.5 w-3.5 rounded-full bg-indigo-500 border-2 border-white ring-2 ring-indigo-300"></span>
+                    <strong>빛나는교회 성전 로비 광장 (도착)</strong>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">도착 예정: 1부(08:55) / 2부(10:45)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-100 p-5 rounded-2xl text-xs text-amber-900 space-y-1.5 leading-relaxed font-light">
+              <strong>차량 이용 및 성전 주차 수칙 필독 안내:</strong><br/>
+              - 주일 오전 성전 내 주차 공간이 매우 협소하오니 가급적 대중교통 및 교회 셔틀버스를 적극 이용해 주시기를 정중히 청합니다.<br/>
+              - 승용차 방문 성도님들은 주차 요원 집사님들의 안내 수령 방향에 즉시 순응하셔서 일렬 평행 주차해 주셔야 비상 소방 차량 진입이 지연되지 않습니다.
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 9.4.3 안전 및 편의 위원회 */}
+      {currentPage === 'safety-guide' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
+            <div className="max-w-3xl space-y-4">
+              <div className="h-14 w-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                <ShieldCheck className="h-7 w-7" />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900">쾌적하고 안전한 교회를 돕는 편의위원회</h3>
+              <p className="text-slate-600 leading-relaxed font-light text-[15px]">
+                안전 및 편의위원회는 화재 예방 방제 순찰, 건물 시설물 상시 점검, 전염 소독 보건, 주일 거동이 불편하신 성도님과 노약자 휠체어 전용 보조 에스코트를 전담 지원하여 가장 안락한 예배 환경을 제공하는 사랑의 부서입니다.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+              <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-3">
+                <h4 className="text-sm font-extrabold text-slate-900">소방 방재 및 시설 안전</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  각 대예배당 및 교육 부서실에 고성능 K급 소화기 설치 현황을 매월 정밀 점검하고 비상 유도등 배터리 교체를 돌보며, 비상시 신속히 탈출 통로를 확보할 수 있도록 지휘 통제합니다.
+                </p>
+              </div>
+              <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-3">
+                <h4 className="text-sm font-extrabold text-slate-900">보조 편의 서비스</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  성전 주 출입구 경사판 배치, 휠체어 구비 보관, 거동 불편 성도용 전용 주차 슬롯 통제 및 유모차 대여를 통해 장애인 및 임산부 노약자들의 예배당 이용 진입벽을 완전히 낮춥니다.
+                </p>
+              </div>
+              <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-3">
+                <h4 className="text-sm font-extrabold text-slate-900">보건 방역 및 긴급 구조</h4>
+                <p className="text-xs text-slate-500 leading-relaxed font-light">
+                  성도님들이 호흡하시는 공기질 필터 교체 관리 및 예배 중 불의의 졸도 또는 응급 사태가 연출될 경우 신속히 행정처 구비 자동제세동기(AED)를 지참 에스코트할 수 있는 요원망 구축.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-rose-50 border border-rose-100 p-5 rounded-2xl text-xs text-rose-900 flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="leading-relaxed font-light text-left">
+                <strong>안전 및 긴급 에스코트 연락처:</strong><br/>
+                예배 시 비상 안전사고 발생, 거동 휠체어 보조 지원이 긴급히 요청될 경우 본당 행정실 대표 번호로 즉각 제보하여 수령하십시오.
+              </div>
+              <button
+                onClick={() => alert('긴급 연결망 안내:\n안전위원회 긴급 당직자(내선 101)와 다이렉트 통화를 연결하였습니다.')}
+                className="bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs px-5 py-3 rounded-xl shadow transition-transform hover:-translate-y-0.5 active:scale-95 shrink-0"
+              >
+                긴급 핫라인 전화 연결
+              </button>
             </div>
           </div>
         </section>
