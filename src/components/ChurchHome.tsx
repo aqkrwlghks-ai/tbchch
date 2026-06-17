@@ -1577,72 +1577,65 @@ export default function ChurchHome({
 
       {/* 7-A. DEDICATED WORSHIP PAGE VIEW */}
       {currentPage === 'worship' && (
-        <section className="relative overflow-hidden bg-white py-12 md:py-16 animate-fadeIn" id="worship-guide-page">
+        <section className="relative overflow-hidden bg-[#faf7f2] py-12 md:py-16 min-h-screen animate-fadeIn" id="worship-guide-page">
           <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Breadcrumb Header */}
-            <div className="flex justify-between items-end border-b border-slate-200 pb-3 mb-10">
-              <h2 className="text-xl md:text-2xl font-black text-slate-900 font-sans">예배안내</h2>
-              <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">HOME &gt; 빛나는교회 &gt; 예배안내</span>
+            <div className="flex justify-between items-end border-b border-slate-300/30 pb-3 mb-10">
+              <h2 className="text-xl md:text-2xl font-black text-[#0f3b64] font-sans">예배안내</h2>
+              <span className="text-[11px] md:text-xs text-slate-500 font-medium font-sans">HOME &gt; 빛나는교회 &gt; 예배안내</span>
             </div>
 
-            {/* Timetable Table exactly matching mockup */}
-            <div className="w-full overflow-x-auto border-t-2 border-b-2 border-slate-400">
-              <table className="w-full text-left border-collapse text-xs md:text-sm text-slate-700">
-                <tbody className="divide-y divide-slate-200 font-sans">
-                  {/* 주일예배 (Rowspan = 5) */}
-                  <tr>
-                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 w-1/3 bg-slate-50/20" rowSpan={5}>
-                      주일예배
-                    </td>
-                    <td className="py-4 px-5 border-r border-slate-200 w-1/3">1부(오전)</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">9:10</td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-5 border-r border-slate-200">2부(오전)</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">11:00</td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-5 border-r border-slate-200">오후예배</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">1:30</td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-5 border-r border-slate-200">어린이(오전)</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">10:40</td>
-                  </tr>
-                  <tr>
-                    <td className="py-4 px-5 border-r border-slate-200">청소년&amp;청년(오전)</td>
-                    <td className="py-4 px-5 text-[#3b5998] font-bold">10:40</td>
-                  </tr>
+            {/* 1. 예배시간 Section */}
+            <div className="space-y-6 mb-12">
+              <div className="flex">
+                <span className="bg-[#e6856c] text-white text-xs font-bold px-3 py-1.5 rounded-[4px] uppercase tracking-wider">
+                  예배시간
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { title: '주일 1부 예배', time: '오전 9:10', loc: '본당 (2층 대성전)' },
+                  { title: '주일 2부 예배', time: '오전 11:00', loc: '본당 (2층 대성전)' },
+                  { title: '주일 오후 예배', time: '오후 1:30', loc: '본당 (2층 대성전)' },
+                  { title: '수요예배', time: '오후 7:30', loc: '본당 (2층 대성전)' },
+                  { title: '금요기도회', time: '오후 8:00', loc: '본당 (2층 대성전)' },
+                  { title: '새벽기도회', time: '오전 5:00', loc: '본당 (2층 대성전)' },
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-white rounded-lg p-6 shadow-sm border border-slate-150/40 hover:shadow-md transition-shadow text-left">
+                    <h4 className="text-[15px] font-black text-[#0f3b64]">{item.title}</h4>
+                    <p className="text-[12.5px] text-slate-500 mt-2 font-medium">
+                      {item.time} <span className="text-slate-300 mx-1">|</span> {item.loc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* 수요예배 */}
-                  <tr>
-                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
-                      수요예배
-                    </td>
-                    <td className="py-4 px-5 border-r border-slate-200">(수)오후</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">7:30</td>
-                  </tr>
+            {/* 2. 교육부서 Section */}
+            <div className="space-y-6">
+              <div className="flex">
+                <span className="bg-[#e6856c] text-white text-xs font-bold px-3 py-1.5 rounded-[4px] uppercase tracking-wider">
+                  교육부서
+                </span>
+              </div>
 
-                  {/* 금요예배 */}
-                  <tr>
-                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
-                      금요예배
-                    </td>
-                    <td className="py-4 px-5 border-r border-slate-200">(금)오후</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">8:00</td>
-                  </tr>
-
-                  {/* 새벽기도 */}
-                  <tr>
-                    <td className="py-4 px-5 font-bold text-slate-800 text-center align-middle border-r border-slate-200 bg-slate-50/20">
-                      새벽기도
-                    </td>
-                    <td className="py-4 px-5 border-r border-slate-200">(월~금)오전</td>
-                    <td className="py-4 px-5 text-slate-900 font-medium">5:00</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {[
+                  { title: '교회학교 (영유치부)', time: '주일 오전 10:40', loc: '교육관 1층 자비실' },
+                  { title: '교회학교 (초등부)', time: '주일 오전 10:40', loc: '교육관 지하 1층 소강당' },
+                  { title: '청청 공동체 (청소년부)', time: '주일 오전 10:40', loc: '목양관 3층 시온홀' },
+                  { title: '청청 공동체 (청년부)', time: '주일 오후 1:30', loc: '목양관 3층 시온홀' },
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-white rounded-lg p-6 shadow-sm border border-slate-150/40 hover:shadow-md transition-shadow text-left">
+                    <h4 className="text-[15px] font-black text-[#0f3b64]">{item.title}</h4>
+                    <p className="text-[12.5px] text-slate-500 mt-2 font-medium">
+                      {item.time} <span className="text-slate-300 mx-1">|</span> {item.loc}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
           </div>
