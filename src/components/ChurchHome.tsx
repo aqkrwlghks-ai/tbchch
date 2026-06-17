@@ -174,9 +174,11 @@ export default function ChurchHome({
     setMeditationOpen(false);
   };
 
-  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin'>('home');
+  type PageType = 'home' | 'about' | 'greeting' | 'vision' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin';
 
-  const getNavigationTarget = (link: string): { page: 'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin'; hash?: string } => {
+  const [currentPage, setCurrentPage] = useState<PageType>('home');
+
+  const getNavigationTarget = (link: string): { page: PageType; hash?: string } => {
     if (!link.startsWith('#')) {
       return { page: 'home' };
     }
@@ -185,11 +187,11 @@ export default function ChurchHome({
       case 'welcome-section':
         return { page: 'about' };
       case 'pastor-welcome':
-        return { page: 'about', hash: 'pastor-welcome' };
+        return { page: 'greeting' };
       case 'new-family':
-        return { page: 'about', hash: 'new-family' };
+        return { page: 'about' };
       case 'vision-guide':
-        return { page: 'about', hash: 'vision-guide' };
+        return { page: 'vision' };
         
       case 'nextgen-section':
       case 'kids-school':
@@ -236,7 +238,7 @@ export default function ChurchHome({
     }
   };
 
-  const navigateToPage = (page: 'home' | 'about' | 'worship' | 'media' | 'news' | 'community' | 'nextgen' | 'admin', hash?: string) => {
+  const navigateToPage = (page: PageType, hash?: string) => {
     setCurrentPage(page);
     setMobileMenuOpen(false);
     
@@ -244,7 +246,7 @@ export default function ChurchHome({
       setTimeout(() => {
         const element = document.getElementById(hash);
         if (element) {
-          const headerOffset = 80;
+          const headerOffset = 85;
           const elementPosition = element.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.scrollY - headerOffset;
           window.scrollTo({
@@ -275,9 +277,17 @@ export default function ChurchHome({
     let title = '';
     let description = '';
     switch (currentPage) {
+      case 'greeting':
+        title = '목사님 인사말';
+        description = '그리스도의 몸 된 지체로 오신 당신을 주님의 이름으로 축복합니다.';
+        break;
       case 'about':
         title = '교회 소개';
         description = '오직 예수 복음의 능력과 따뜻한 섬김을 통해 하나님의 눈부신 영광을 비추는 영적 예배 공동체입니다.';
+        break;
+      case 'vision':
+        title = '핵심 가치';
+        description = '빛나는 교회가 지향하는 4대 신앙 비전과 목표입니다.';
         break;
       case 'worship':
         title = '예배 안내';
@@ -751,7 +761,7 @@ export default function ChurchHome({
       {currentPage !== 'home' && renderSubHero()}
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
-      {(currentPage === 'home' || currentPage === 'about') && (
+      {currentPage === 'home' && (
         <section className="relative overflow-hidden bg-white py-16 md:py-24" id="welcome-section">
         {/* Faded wooden cross watermark on the right */}
         <div 
@@ -921,6 +931,293 @@ export default function ChurchHome({
         </div>
       </div>
       </section>
+      )}
+
+      {/* 5-A. GREETING PAGE VIEW */}
+      {currentPage === 'greeting' && (
+        <section className="relative overflow-hidden bg-white py-16 md:py-24 animate-fadeIn" id="pastor-welcome-page">
+          <div 
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-contain bg-no-repeat opacity-[0.06] pointer-events-none mix-blend-multiply hidden md:block" 
+            style={{ backgroundImage: `url('${crossBg}')`, backgroundPosition: 'right center' }}
+          />
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              
+              <div className="lg:col-span-7 space-y-6">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="h-5 w-5 text-amber-500 shrink-0" />
+                  <span className="text-amber-700 font-extrabold text-sm tracking-tight font-sans">목사님의 축복 인사</span>
+                </div>
+                
+                <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-snug">
+                  {polishedPastorMessage.headline}
+                </h3>
+                
+                <p className="text-xs text-slate-400 font-bold tracking-normal uppercase border-l-2 border-blue-600 pl-2.5">
+                  {polishedPastorMessage.subHeadline}
+                </p>
+
+                <div className="text-slate-600 leading-relaxed text-sm md:text-[14.5px] space-y-4 font-light">
+                  {polishedPastorMessage.paragraphs.map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </div>
+
+                <div className="pt-3">
+                  <button
+                    onClick={() => setNewFamilyFormOpen(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-6 py-3 rounded-full shadow-md flex items-center gap-1.5 transition-all"
+                  >
+                    <span>새가족 등록 및 온라인 등록 안내</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="relative w-full max-w-md p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center justify-center text-center py-12 overflow-hidden">
+                  <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-blue-200/50 filter blur-xl"></div>
+                  <div className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-indigo-200/50 filter blur-xl"></div>
+
+                  <div className="relative bg-white rounded-full p-6 shadow-md mb-6 inline-flex border border-slate-100">
+                    <svg className="w-16 h-16 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+
+                  <h4 className="text-lg font-black text-slate-800">우리가 세상의 눈부신 빛입니다</h4>
+                  <p className="text-xs text-slate-500 mt-2 max-w-sm">
+                    “형제가 연합하여 동거함이 어찌 그리 좋은가.” 세상 가장 따스하고 안전한 양육 정원, 빛나는 교회에서 당신의 온 만남을 준비 중입니다.
+                  </p>
+
+                  <div className="mt-6 pt-6 border-t border-slate-200 w-full grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <div className="text-lg font-black text-blue-900">7개</div>
+                      <span className="text-[10px] text-slate-400 font-bold font-sans">예배 부서 및 모임</span>
+                    </div>
+                    <div>
+                      <div className="text-lg font-black text-blue-900">100%</div>
+                      <span className="text-[10px] text-slate-400 font-bold font-sans">말씀 중심 연합 케어</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 5-B. CHURCH ABOUT (INTRO) PAGE VIEW */}
+      {currentPage === 'about' && (
+        <section className="relative overflow-hidden bg-white py-16 md:py-24 animate-fadeIn" id="about-church-page">
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none z-0">
+            <svg className="w-[400px] h-[400px] text-slate-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div className="text-center mb-16">
+              <span className="text-xs uppercase tracking-widest text-blue-600 font-extrabold bg-blue-50 px-3 py-1.5 rounded-full">About The Brightening Church</span>
+              <h2 className="text-2xl md:text-3.5xl font-black tracking-tight text-slate-950 mt-3 md:mt-4 leading-normal">
+                빛나는 교회에 오신 것을 영적으로 진심으로 기뻐합니다
+              </h2>
+              <div className="w-12 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+              
+              <div className="lg:col-span-7 space-y-8">
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-blue-700 font-extrabold text-sm uppercase tracking-wider">
+                    <Sparkles className="h-4.5 w-4.5 text-blue-600" />
+                    <span>교회 비전 및 표어</span>
+                  </div>
+                  <h3 className="text-xl font-extrabold text-slate-900">“성령의 능력 안에서 복음과 섬김으로 하나님의 영광을 드러내는 공동체”</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed font-light">
+                    빛나는 교회는 이 시대의 방황하는 영혼들에게 참된 평안과 예수 그리스도의 복음의 소망을 전하고자 세워진 공동체입니다. 
+                    우리는 온 성도가 하나님의 복음을 풍성히 누리며 서로 사랑으로 연합하고 세상을 향해 가진 사랑을 흘려보내는 거룩한 처소입니다.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-indigo-700 font-extrabold text-sm uppercase tracking-wider">
+                    <Heart className="h-4.5 w-4.5 text-indigo-600" />
+                    <span>빛나는 교회의 이름 뜻</span>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed font-light">
+                    우리는 세상의 소금이자 어두운 세상을 환히 비추는 <strong>'눈부신 빛(The Brightening Church)'</strong>으로 부름을 받았습니다. 
+                    주님의 말씀이 우리를 날마다 새롭게 빛내시며, 우리 또한 주변 이웃과 지역 사회, 나아가 전 세계에 하나님의 찬란한 소망과 사랑을 반사하는 통로가 되길 지향합니다.
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-150 space-y-4">
+                  <h4 className="text-md font-extrabold text-slate-900 flex items-center gap-2">
+                    <User className="h-5 w-5 text-blue-600" />
+                    <span>새가족 등록 안내 (Welcome Process)</span>
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    빛나는 교회의 정식 등록 교우가 되기 위한 새가족 과정은 다음과 같이 구성되어 있습니다. 
+                    등록을 원하시는 성도님들은 예배당 로비의 새가족부 부스로 문의하시거나 하단의 온라인 링크를 통해 편리하게 등록 신청을 하실 수 있습니다.
+                  </p>
+                  <ul className="text-xs text-slate-600 space-y-2 font-medium">
+                    <li className="flex items-center gap-1.5">• <strong>1주차:</strong> 만남과 환영 (교회 안내 및 등록 접수)</li>
+                    <li className="flex items-center gap-1.5">• <strong>2주차:</strong> 믿음의 기초 (예수 그리스도와 복음의 의미)</li>
+                    <li className="flex items-center gap-1.5">• <strong>3주차:</strong> 공동체의 축복 (교회와 성도의 거룩한 연합)</li>
+                    <li className="flex items-center gap-1.5">• <strong>4주차:</strong> 사명으로 전진 (구역 배정 및 소그룹 활동 시작)</li>
+                  </ul>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => setNewFamilyFormOpen(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-full shadow-md transition-all flex items-center gap-1.5"
+                    >
+                      <span>온라인 새가족 등록 바로 신청하기</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="relative w-full max-w-md p-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl border border-slate-200 shadow-xl flex flex-col items-center justify-center text-center py-12 overflow-hidden">
+                  <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-blue-200/50 filter blur-xl"></div>
+                  <div className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-indigo-200/50 filter blur-xl"></div>
+
+                  <div className="relative bg-white rounded-full p-6 shadow-md mb-6 inline-flex border border-slate-100">
+                    <svg className="w-16 h-16 text-blue-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+
+                  <h4 className="text-lg font-black text-slate-800">우리가 세상의 눈부신 빛입니다</h4>
+                  <p className="text-xs text-slate-500 mt-2 max-w-sm">
+                    “형제가 연합하여 동거함이 어찌 그리 좋은가.” 세상 가장 따스하고 안전한 양육 정원, 빛나는 교회에서 당신의 온 만남을 준비 중입니다.
+                  </p>
+
+                  <div className="mt-6 pt-6 border-t border-slate-200 w-full grid grid-cols-2 gap-4 text-center">
+                    <div>
+                      <div className="text-lg font-black text-blue-900">7개</div>
+                      <span className="text-[10px] text-slate-400 font-bold font-sans">예배 부서 및 모임</span>
+                    </div>
+                    <div>
+                      <div className="text-lg font-black text-blue-900">100%</div>
+                      <span className="text-[10px] text-slate-400 font-bold font-sans">말씀 중심 연합 케어</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+      )}
+
+      {/* 5-C. CORE VALUES (VISION) PAGE VIEW */}
+      {currentPage === 'vision' && (
+        <section className="relative overflow-hidden bg-white py-16 md:py-24 animate-fadeIn" id="vision-values-page">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div className="text-center mb-16">
+              <span className="text-xs uppercase tracking-widest text-blue-600 font-extrabold bg-blue-50 px-3 py-1.5 rounded-full">Core Values</span>
+              <h2 className="text-2xl md:text-3.5xl font-black tracking-tight text-slate-950 mt-3 md:mt-4 leading-normal">
+                하나님을 영화롭게, 이웃을 행복하게 하는 4대 신앙 비전
+              </h2>
+              <div className="w-12 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              
+              {/* Card 1 */}
+              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-6">
+                    <User className="h-6 w-6" />
+                  </div>
+                  <h4 className="text-md font-extrabold text-slate-900">예배 & 새가족</h4>
+                  <h5 className="text-xs font-bold text-blue-600 mt-1 mb-3">새가족 처음에 오셨나요?</h5>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    빛나는교회의 영구 성도가 되기 위한 새가족 4주 성경과정 및 환영부서 등록 절차를 정성껏 소개하고 안내합니다.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setNewFamilyFormOpen(true)}
+                  className="mt-6 text-xs font-bold text-blue-600 inline-flex items-center gap-1 hover:text-blue-700 hover:translate-x-0.5 transition-all text-left w-full pt-4 border-t border-slate-100"
+                >
+                  상세 안내 바로가기 <ChevronRight className="h-3 w-3" />
+                </button>
+              </div>
+
+              {/* Card 2 */}
+              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-6">
+                    <GraduationCap className="h-6 w-6" />
+                  </div>
+                  <h4 className="text-md font-extrabold text-slate-900">다음세대 교육</h4>
+                  <h5 className="text-xs font-bold text-emerald-600 mt-1 mb-3">다음세대를 키우는 교육</h5>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    영아유치부부터 늘 말씀 안에 깨어있는 어린이교회, 청소년 및 역동적인 빛나는 청년들을 기도로 뜨겁게 양육합니다.
+                  </p>
+                </div>
+                <a 
+                  href="#nextgen-section"
+                  onClick={(e) => handleNavigation(e, '#nextgen-section')}
+                  className="mt-6 text-xs font-bold text-emerald-600 inline-flex items-center gap-1 hover:text-emerald-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
+                >
+                  다음세대 부서 안내 <ChevronRight className="h-3 w-3" />
+                </a>
+              </div>
+
+              {/* Card 3 */}
+              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-6">
+                    <Heart className="h-6 w-6" />
+                  </div>
+                  <h4 className="text-md font-extrabold text-slate-900">봉사 & 선교</h4>
+                  <h5 className="text-xs font-bold text-pink-600 mt-1 mb-3">지역 사회 봉사와 섬김</h5>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    예수님의 사랑을 우리 지역 불우이웃 돕기, 반찬 배달 사역, 해외 선교 및 미디어 기성 선교로 아낌없이 흘려보냅니다.
+                  </p>
+                </div>
+                <a 
+                  href="#community-intro"
+                  onClick={(e) => handleNavigation(e, '#community-intro')}
+                  className="mt-6 text-xs font-bold text-pink-600 inline-flex items-center gap-1 hover:text-pink-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
+                >
+                  선교 및 봉사 안내 <ChevronRight className="h-3 w-3" />
+                </a>
+              </div>
+
+              {/* Card 4 */}
+              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-6">
+                    <Users className="h-6 w-6" />
+                  </div>
+                  <h4 className="text-md font-extrabold text-slate-900">훈련 & 성장</h4>
+                  <h5 className="text-xs font-bold text-amber-600 mt-1 mb-3">그리스도 예수 무리 양육</h5>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    소그룹 구역 단위 모임, 평일 수요 성경강해, 일대일 양육 동반 교육 등을 통해 신앙의 전인격적 성숙을 도모합니다.
+                  </p>
+                </div>
+                <a 
+                  href="#community-intro"
+                  onClick={(e) => handleNavigation(e, '#community-intro')}
+                  className="mt-6 text-xs font-bold text-amber-600 inline-flex items-center gap-1 hover:text-amber-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
+                >
+                  말씀 훈련 소개 <ChevronRight className="h-3 w-3" />
+                </a>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
       )}
 
       {/* 6. WEEKLY SERMON & PRAISE SECTION ([필수 요구사항: 이번주 설교영상 즉시 재생 연동]) */}
