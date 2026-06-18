@@ -154,6 +154,105 @@ export default function ChurchHome({
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
+  const [activeValue, setActiveValue] = useState<number | null>(null);
+
+  const coreValues = [
+    {
+      title: '하나님 사랑 복음',
+      number: '01',
+      icon: Sparkles,
+      accentColor: 'emerald',
+      bgLight: 'bg-emerald-50/50',
+      borderCol: 'border-emerald-200/60',
+      badgeBg: 'bg-emerald-500/10 text-emerald-700',
+      textAccent: 'text-[#659b41]',
+      shadowGlow: 'hover:shadow-emerald-100',
+      scriptures: [
+        { ref: '신명기 6:4~5', text: '이스라엘아 들으라 우리 하나님 여호와는 오직 유일한 여호와이시니 너는 마음을 다하고 뜻을 다하고 힘을 다하여 네 하나님 여호와를 사랑하라' },
+        { ref: '로마서 1:16~17', text: '내가 복음을 부끄러워하지 아니하노니 이 복음은 모든 믿는 자에게 구원을 주시는 하나님의 능력이 됨이라... 복음에는 하나님의 의가 나타나서 믿음으로 믿음에 이르게 하나니' }
+      ],
+      description: '오직 하나님의 사랑과 십자가 복음만을 자랑하며, 그 복음의 능력으로 영혼을 살리고 회복시키는 구원의 통로가 됩니다.'
+    },
+    {
+      title: '예배',
+      number: '02',
+      icon: BookOpen,
+      accentColor: 'blue',
+      bgLight: 'bg-blue-50/50',
+      borderCol: 'border-blue-200/60',
+      badgeBg: 'bg-blue-500/10 text-blue-700',
+      textAccent: 'text-blue-600',
+      shadowGlow: 'hover:shadow-blue-100',
+      scriptures: [
+        { ref: '이사야 43:21', text: '이 백성은 내가 나를 위하여 지었나니 나를 찬송하게 하려 함이니라' },
+        { ref: '요한복음 4:23', text: '아버지께 참되게 예배하는 자들은 영과 진리로 예배할 때가 오나니 곧 이 때라 아버지께서는 자기에게 이렇게 예배하는 자들을 찾으시느니라' },
+        { ref: '로마서 12:1', text: '너희 몸을 하나님이 기뻐하시는 거룩한 산 제물로 드리라 이는 너희가 드릴 영적 예배니라' }
+      ],
+      description: '하나님의 임재를 경험하는 감격이 있고 영과 진리로 드리는 공적인 예배와, 매일의 삶을 거룩한 산 제물로 드리는 삶의 예배를 드립니다.'
+    },
+    {
+      title: '가정·교육',
+      number: '03',
+      icon: Home,
+      accentColor: 'amber',
+      bgLight: 'bg-amber-50/50',
+      borderCol: 'border-amber-200/60',
+      badgeBg: 'bg-amber-500/10 text-amber-700',
+      textAccent: 'text-amber-600',
+      shadowGlow: 'hover:shadow-amber-100',
+      scriptures: [
+        { ref: '신명기 6:6~9', text: '오늘 내가 네게 명하는 이 말씀을 너는 마음에 새기고 네 자녀에게 부지런히 가르치며 집에 앉았을 때에든지 길을 갈 때에든지 누워 있을 때에든지 일어날 때에든지 이 말씀을 강론할 것이며' }
+      ],
+      description: '가정을 주님이 세우신 최초의 교회이자 축복의 터전으로 세우고, 다음세대 자녀들을 하나님의 말씀과 사랑으로 부지런히 가르쳐 영적 지도자로 길러냅니다.'
+    },
+    {
+      title: '교회·제자',
+      number: '04',
+      icon: Users,
+      accentColor: 'indigo',
+      bgLight: 'bg-indigo-50/50',
+      borderCol: 'border-indigo-200/60',
+      badgeBg: 'bg-indigo-500/10 text-indigo-700',
+      textAccent: 'text-indigo-600',
+      shadowGlow: 'hover:shadow-indigo-100',
+      scriptures: [
+        { ref: '마태복음 16:18', text: '내가 이 반석 위에 내 교회를 세우리니 음부의 권세가 이기지 못하리라' }
+      ],
+      description: '예수 그리스도를 머리로 한 건강한 믿음의 공동체이자 반석 위에 서서 음부의 권세를 이기는 교회를 이루며, 철저한 말씀 훈련을 통해 세상 속 제자로 파송합니다.'
+    },
+    {
+      title: '전도/섬김',
+      number: '05',
+      icon: Heart,
+      accentColor: 'rose',
+      bgLight: 'bg-rose-50/50',
+      borderCol: 'border-rose-200/60',
+      badgeBg: 'bg-rose-500/10 text-rose-700',
+      textAccent: 'text-rose-600',
+      shadowGlow: 'hover:shadow-rose-100',
+      scriptures: [
+        { ref: '마가복음 16:15', text: '너희는 온 천하에 다니며 만민에게 복음을 전파하라' },
+        { ref: '요한복음 13:34~35', text: '새 계명을 너희에게 주노니 서로 사랑하라... 너희가 서로 사랑하면 이로써 모든 사람이 너희가 내 제자인 줄 알리라' },
+        { ref: '마태복음 5:16', text: '이같이 너희 빛이 사람 앞에 비치게 하여 그들로 너희 착한 행실을 보고 하늘에 계신 너희 아버지께 영광을 돌리게 하라' }
+      ],
+      description: '천하보다 귀한 생명을 구원하기 위해 힘써 복음을 전하며, 예수님의 마음으로 이웃의 아픔을 보듬고 착한 행실과 사랑으로 지역 사회를 섬깁니다.'
+    },
+    {
+      title: '지상명령 선교',
+      number: '06',
+      icon: Map,
+      accentColor: 'red',
+      bgLight: 'bg-red-50/50',
+      borderCol: 'border-red-200/60',
+      badgeBg: 'bg-red-500/10 text-red-700',
+      textAccent: 'text-red-600',
+      shadowGlow: 'hover:shadow-red-100',
+      scriptures: [
+        { ref: '마태복음 28:18~20', text: '하늘과 땅의 모든 권세를 내게 주셨으니 그러므로 너희는 가서 모든 민족을 제자로 삼아... 내가 너희에게 분부한 모든 것을 가르쳐 지키게 하라 볼지어다 내가 세상 끝날까지 너희와 항상 함께 있으리라' }
+      ],
+      description: '예수님의 마지막 유언이자 지상명령을 따라 열방을 향해 나아가 모든 민족을 제자로 삼으며, 주님의 임재와 평강을 땅 끝까지 흘려보냅니다.'
+    }
+  ];
 
   // 오늘의 묵상 팝업 상태
   const [meditationOpen, setMeditationOpen] = useState(false);
@@ -328,7 +427,7 @@ export default function ChurchHome({
         break;
       case 'vision':
         title = '핵심 가치';
-        description = '빛나는 교회가 지향하는 4대 신앙 비전과 목표입니다.';
+        description = '빛나는 교회가 지향하는 6대 핵심 가치와 신앙 비전입니다.';
         break;
       case 'worship':
         title = '예배 안내';
@@ -2058,7 +2157,7 @@ export default function ChurchHome({
                             </h4>
                             <p className="text-xs text-slate-400 font-mono">{featuredCategory.albums[0].date} 업데이트</p>
                             <button
-                              onClick={() => setAlbumToShow(featuredCategory.albums[0])}
+                              onClick={() => setSelectedActivity(featuredCategory.albums[0])}
                               className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-full shadow transition-all inline-flex items-center gap-1 mt-2"
                             >
                               <span>앨범 사진첩 전체보기</span>
@@ -2075,7 +2174,7 @@ export default function ChurchHome({
                             key={cat.id}
                             onClick={() => {
                               if (cat.albums && cat.albums[0]) {
-                                setAlbumToShow(cat.albums[0]);
+                                setSelectedActivity(cat.albums[0]);
                               } else {
                                 alert('앨범 목록이 비어있습니다.');
                               }
