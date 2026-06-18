@@ -9,6 +9,16 @@
   --color-church-primary: #1e3a8a; /* Deep Navy Blue matching Benchmarking design */
   --color-church-secondary: #3b82f6; /* Soft sky blue accent */
   --color-church-accent: #f59e0b; /* Golden accent */
+
+  /* Global typography scale adjustment for superior legibility */
+  --font-size-xs: 0.8125rem; /* 13px instead of 12px */
+  --font-size-sm: 0.9375rem; /* 15px instead of 14px */
+  --font-size-base: 1.0625rem; /* 17px instead of 16px */
+  --font-size-lg: 1.1875rem; /* 19px instead of 18px */
+  --font-size-xl: 1.3125rem; /* 21px instead of 20px */
+  --font-size-2xl: 1.625rem; /* 26px instead of 24px */
+  --font-size-3xl: 2.125rem; /* 34px instead of 30px */
+  --font-size-4xl: 2.5rem; /* 40px instead of 36px */
 }
 
 /* Custom layout class for the beautiful arc banner bottom */
@@ -37,5 +47,17 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Increase legibility of light fonts which look too thin on non-retina displays */
+.font-light {
+  font-weight: 400 !important;
+}
+
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
