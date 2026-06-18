@@ -942,75 +942,80 @@ export default function ChurchHome({
         {/* Yeoju Church 4 major value layouts */}
         <div id="vision-guide" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          {/* Card 1 */}
-          <div id="new-family" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          {/* Card 1: 목사님 인사말 */}
+          <div 
+            onClick={() => navigateToPage('greeting')}
+            className="group bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 hover:border-emerald-100 transition-all duration-300 cursor-pointer"
+          >
             <div>
-              <div className="h-10 w-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-4">
-                <User className="h-5 w-5" />
+              <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition-transform">
+                <Smile className="h-5 w-5 text-emerald-600" />
               </div>
-              <h4 className="text-sm font-extrabold text-slate-900">새가족 처음에 오셨나요?</h4>
-              <p className="text-xs text-slate-500 mt-1 lines-clamp-3">빛나는교회의 영구 성도가 되기 위한 새가족 4주 성경과정 및 환영부서 등록 절차를 소개합니다.</p>
+              <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-emerald-600 transition-colors">목사님 인사말</h4>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                그리스도의 몸 된 지체로 빛나는교회에 오신 당신을 예수님의 사랑으로 축복하며 기쁘게 환영합니다.
+              </p>
             </div>
-            <button 
-              onClick={() => setNewFamilyFormOpen(true)}
-              className="mt-4 text-xs font-bold text-blue-600 inline-flex items-center gap-1 hover:text-blue-700 hover:translate-x-0.5 transition-all text-left"
-            >
-              상세 안내 바로가기 <ChevronRight className="h-3 w-3" />
-            </button>
+            <div className="mt-4 pt-3 border-t border-slate-50 text-xs font-bold text-emerald-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              인사말 보기 <ChevronRight className="h-3.5 w-3.5" />
+            </div>
           </div>
 
-          {/* Card 2 */}
-          <div id="nextgen-section" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          {/* Card 2: 교회 소개 */}
+          <div 
+            onClick={() => navigateToPage('about')}
+            className="group bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 hover:border-blue-100 transition-all duration-300 cursor-pointer"
+          >
             <div>
-              <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-4">
-                <GraduationCap className="h-5 w-5" />
+              <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition-transform">
+                <Home className="h-5 w-5 text-blue-600" />
               </div>
-              <h4 className="text-sm font-extrabold text-slate-900">다음세대를 키우는 교육</h4>
-              <p className="text-xs text-slate-500 mt-1 lines-clamp-3">영아유치부부터 늘 깨어있는 어린이교회, 청소년 및 역동적인 빛나는 청년들을 기도로 키웁니다.</p>
+              <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors">교회 소개</h4>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                오직 예수 복음의 능력과 사랑의 섬김으로 하나님의 찬란한 영광을 비추는 영적 예배 공동체입니다.
+              </p>
             </div>
-            <a 
-              href="#nextgen-section"
-              onClick={(e) => handleNavigation(e, '#nextgen-section')}
-              className="mt-4 text-xs font-bold text-emerald-600 inline-flex items-center gap-1 hover:text-emerald-700 hover:translate-x-0.5 transition-all"
-            >
-              다음세대 부서 안내 <ChevronRight className="h-3 w-3" />
-            </a>
+            <div className="mt-4 pt-3 border-t border-slate-50 text-xs font-bold text-blue-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              소개 보기 <ChevronRight className="h-3.5 w-3.5" />
+            </div>
           </div>
 
-          {/* Card 3 */}
-          <div id="community-intro" className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          {/* Card 3: 예배 안내 */}
+          <div 
+            onClick={() => navigateToPage('worship')}
+            className="group bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 hover:border-amber-100 transition-all duration-300 cursor-pointer"
+          >
             <div>
-              <div className="h-10 w-10 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-4">
-                <Heart className="h-5 w-5" />
+              <div className="h-10 w-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition-transform">
+                <Calendar className="h-5 w-5 text-amber-600" />
               </div>
-              <h4 className="text-sm font-extrabold text-slate-900">지역 사회 봉사와 섬김</h4>
-              <p className="text-xs text-slate-500 mt-1 lines-clamp-3">가진 사랑을 우리 지역 불우이웃, 반찬 배달 사역, 해외 미디어 기성 선교로 아름답게 흘려보냅니다.</p>
+              <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-amber-600 transition-colors">예배 안내</h4>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                성령의 역사하심과 따뜻한 성도의 교제가 피어나는 주일 예배 및 평일 기도회 시간 안내입니다.
+              </p>
             </div>
-            <a 
-              href="#community-intro"
-              onClick={(e) => handleNavigation(e, '#community-intro')}
-              className="mt-4 text-xs font-bold text-pink-600 inline-flex items-center gap-1 hover:text-pink-700 hover:translate-x-0.5 transition-all"
-            >
-              선교 및 봉사 안내 <ChevronRight className="h-3 w-3" />
-            </a>
+            <div className="mt-4 pt-3 border-t border-slate-50 text-xs font-bold text-amber-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              시간표 보기 <ChevronRight className="h-3.5 w-3.5" />
+            </div>
           </div>
 
-          {/* Card 4 */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-lg transition-all">
+          {/* Card 4: 핵심 가치 */}
+          <div 
+            onClick={() => navigateToPage('vision')}
+            className="group bg-white rounded-2xl p-6 border border-slate-100 shadow-md flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 hover:border-purple-100 transition-all duration-300 cursor-pointer"
+          >
             <div>
-              <div className="h-10 w-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-4">
-                <Users className="h-5 w-5" />
+              <div className="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold mb-4 group-hover:scale-110 transition-transform">
+                <Sparkles className="h-5 w-5 text-purple-600" />
               </div>
-              <h4 className="text-sm font-extrabold text-slate-900">그리스도 예수 무리 양육</h4>
-              <p className="text-xs text-slate-500 mt-1 lines-clamp-3">구역 단위 모임, 평일 수요 성경강해와 일대일 양육 동반 교육 등으로 신앙의 전 성숙을 도모합니다.</p>
+              <h4 className="text-sm font-extrabold text-slate-900 group-hover:text-purple-600 transition-colors">핵심 가치</h4>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                빛나는교회가 오직 복음 위에 굳게 서서 하나님 나라를 세워가는 6대 신앙 비전입니다.
+              </p>
             </div>
-            <a 
-              href="#community-intro"
-              onClick={(e) => handleNavigation(e, '#community-intro')}
-              className="mt-4 text-xs font-bold text-amber-600 inline-flex items-center gap-1 hover:text-amber-700 hover:translate-x-0.5 transition-all"
-            >
-              말씀 훈련 소개 <ChevronRight className="h-3 w-3" />
-            </a>
+            <div className="mt-4 pt-3 border-t border-slate-50 text-xs font-bold text-purple-600 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+              6대 가치 보기 <ChevronRight className="h-3.5 w-3.5" />
+            </div>
           </div>
 
         </div>
@@ -1216,102 +1221,352 @@ export default function ChurchHome({
 
       {/* 5-C. CORE VALUES (VISION) PAGE VIEW */}
       {currentPage === 'vision' && (
-        <section className="relative overflow-hidden bg-white py-16 md:py-24 animate-fadeIn" id="vision-values-page">
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative overflow-hidden bg-[#fbfcfd] py-12 md:py-16 min-h-screen animate-fadeIn" id="vision-values-page">
+          <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div className="text-center mb-16">
-              <span className="text-xs uppercase tracking-widest text-blue-600 font-extrabold bg-blue-50 px-3 py-1.5 rounded-full">Core Values</span>
-              <h2 className="text-2xl md:text-3.5xl font-black tracking-tight text-slate-950 mt-3 md:mt-4 leading-normal">
-                하나님을 영화롭게, 이웃을 행복하게 하는 4대 신앙 비전
-              </h2>
-              <div className="w-12 h-1 bg-blue-600 mx-auto mt-4 rounded-full" />
+            {/* Breadcrumb Header */}
+            <div className="flex justify-between items-end border-b border-slate-200 pb-3 mb-10">
+              <h2 className="text-xl md:text-2xl font-black text-slate-900 font-sans">핵심가치</h2>
+              <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">HOME &gt; 빛나는교회 &gt; 핵심가치</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              
-              {/* Card 1 */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div>
-                  <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold mb-6">
-                    <User className="h-6 w-6" />
+            {/* Header Section */}
+            <div className="text-center mb-12">
+              <span className="text-[10px] uppercase tracking-widest text-[#0f3b64] font-extrabold bg-blue-50 px-3 py-1.5 rounded-full">
+                Core Values
+              </span>
+              <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 mt-4 leading-snug">
+                빛나는교회가 지향하는 <span className="text-[#0f3b64]">6대 핵심 가치</span>
+              </h3>
+              <p className="text-slate-500 text-xs md:text-sm mt-3 max-w-xl mx-auto font-medium leading-relaxed">
+                빛나는교회는 오직 예수 복음 위에 든든히 서서, 예배와 교육, 교회와 제자 훈련, 그리고 전도와 선교를 통해 하나님의 나라를 세워갑니다.
+              </p>
+              <div className="w-12 h-1 bg-[#0f3b64] mx-auto mt-5 rounded-full opacity-35" />
+            </div>
+
+            {/* Interactive Core Value Map (CSS Diagram) - Hidden on Mobile */}
+            <div className="relative w-[600px] h-[640px] mx-auto my-12 hidden md:block select-none">
+              {/* Connection Lines (SVG) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 600 640">
+                {/* Outer Ellipse connecting Top, Left, Right, Bottom */}
+                <ellipse 
+                  cx="300" 
+                  cy="315" 
+                  rx="180" 
+                  ry="215" 
+                  fill="none" 
+                  stroke="#cbd5e1" 
+                  strokeWidth="1.5" 
+                  strokeDasharray="4 4" 
+                  className="opacity-70"
+                />
+                
+                {/* Concentric Circles wrapping the middle column */}
+                <circle 
+                  cx="300" 
+                  cy="315" 
+                  r="80" 
+                  fill="none" 
+                  stroke="#e2e8f0" 
+                  strokeWidth="1.5" 
+                  strokeDasharray="3 3" 
+                  className="opacity-60"
+                />
+                <circle 
+                  cx="300" 
+                  cy="315" 
+                  r="150" 
+                  fill="none" 
+                  stroke="#cbd5e1" 
+                  strokeWidth="1" 
+                  strokeDasharray="3 3" 
+                  className="opacity-50"
+                />
+
+                {/* Vertical Central Line */}
+                <line 
+                  x1="300" 
+                  y1="180" 
+                  x2="300" 
+                  y2="450" 
+                  stroke="#cbd5e1" 
+                  strokeWidth="1.5" 
+                  strokeDasharray="4 4" 
+                  className="opacity-50"
+                />
+
+                {/* Horizontal Left-Right Connector Line */}
+                <line 
+                  x1="200" 
+                  y1="315" 
+                  x2="400" 
+                  y2="315" 
+                  stroke="#cbd5e1" 
+                  strokeWidth="1.5" 
+                  strokeDasharray="4 4" 
+                  className="opacity-50"
+                />
+              </svg>
+
+              {/* Nodes */}
+              {/* Node 1: 하나님 사랑 복음 (Top) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '300px', top: '100px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(0)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-0')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-40 h-40 rounded-full bg-gradient-to-tr from-[#659b41] via-[#85b961] to-[#cbd5e1] p-[3px] shadow-[0_10px_25px_-5px_rgba(101,155,65,0.3)] transition-all duration-300 ${activeValue === 0 ? 'scale-105 ring-4 ring-emerald-200 ring-offset-2' : ''}`}>
+                  <div className="w-full h-full rounded-full bg-[#659b41] flex flex-col items-center justify-center text-white p-3 text-center transition-colors">
+                    <Sparkles className="w-6 h-6 mb-1 text-yellow-300 animate-bounce duration-1000" />
+                    <span className="font-black text-[15px] leading-tight font-sans tracking-wide">하나님 사랑</span>
+                    <span className="font-black text-[15px] leading-tight font-sans tracking-wide mb-1">복음</span>
+                    <div className="border-t border-white/30 my-1 w-12" />
+                    <span className="text-[9px] text-white/90 font-mono tracking-tighter">신 6:4~5</span>
+                    <span className="text-[9px] text-white/90 font-mono tracking-tighter">롬 1:16~17</span>
                   </div>
-                  <h4 className="text-md font-extrabold text-slate-900">예배 & 새가족</h4>
-                  <h5 className="text-xs font-bold text-blue-600 mt-1 mb-3">새가족 처음에 오셨나요?</h5>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    빛나는교회의 영구 성도가 되기 위한 새가족 4주 성경과정 및 환영부서 등록 절차를 정성껏 소개하고 안내합니다.
-                  </p>
                 </div>
+              </div>
+
+              {/* Node 2: 가정·교육 (Middle 1) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '300px', top: '250px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(2)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-2')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-[110px] h-[110px] rounded-full p-[2px] bg-slate-300 transition-all duration-300 ${activeValue === 2 ? 'scale-105 ring-4 ring-amber-200 ring-offset-2 bg-amber-400' : 'hover:bg-slate-400'}`}>
+                  <div className={`w-full h-full rounded-full flex flex-col items-center justify-center p-2 text-center transition-colors ${activeValue === 2 ? 'bg-amber-500 text-white' : 'bg-[#8fa0b5] text-white'}`}>
+                    <Home className="w-5 h-5 mb-0.5 text-white/80" />
+                    <span className="font-bold text-[12.5px] tracking-wide font-sans">가정·교육</span>
+                    <div className="border-t border-white/20 my-1 w-8" />
+                    <span className="text-[8.5px] opacity-90 font-mono">신 6:6~9</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Node 3: 교회·제자 (Middle 2) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '300px', top: '390px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(3)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-3')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-[110px] h-[110px] rounded-full p-[2px] bg-slate-300 transition-all duration-300 ${activeValue === 3 ? 'scale-105 ring-4 ring-indigo-200 ring-offset-2 bg-indigo-400' : 'hover:bg-slate-400'}`}>
+                  <div className={`w-full h-full rounded-full flex flex-col items-center justify-center p-2 text-center transition-colors ${activeValue === 3 ? 'bg-indigo-500 text-white' : 'bg-[#8fa0b5] text-white'}`}>
+                    <Users className="w-5 h-5 mb-0.5 text-white/80" />
+                    <span className="font-bold text-[12.5px] tracking-wide font-sans">교회·제자</span>
+                    <div className="border-t border-white/20 my-1 w-8" />
+                    <span className="text-[8.5px] opacity-90 font-mono">마 16:18</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Node 4: 지상명령 선교 (Bottom) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '300px', top: '530px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(5)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-5')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-[110px] h-[110px] rounded-full p-[2px] bg-slate-300 transition-all duration-300 ${activeValue === 5 ? 'scale-105 ring-4 ring-red-200 ring-offset-2 bg-red-400' : 'hover:bg-slate-400'}`}>
+                  <div className={`w-full h-full rounded-full flex flex-col items-center justify-center p-2 text-center transition-colors ${activeValue === 5 ? 'bg-red-500 text-white' : 'bg-[#8fa0b5] text-white'}`}>
+                    <Map className="w-5 h-5 mb-0.5 text-white/80" />
+                    <span className="font-bold text-[12.5px] tracking-wide font-sans">지상명령</span>
+                    <span className="font-bold text-[12.5px] tracking-wide font-sans">선교</span>
+                    <div className="border-t border-white/20 my-1 w-8" />
+                    <span className="text-[8.5px] opacity-90 font-mono">마 28:18~20</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Node 5: 예배 (Left) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '120px', top: '315px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(1)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-1')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-[120px] h-[120px] rounded-full p-[2px] bg-slate-300 transition-all duration-300 ${activeValue === 1 ? 'scale-105 ring-4 ring-blue-200 ring-offset-2 bg-blue-400' : 'hover:bg-slate-400'}`}>
+                  <div className={`w-full h-full rounded-full flex flex-col items-center justify-center p-3 text-center transition-colors ${activeValue === 1 ? 'bg-blue-500 text-white' : 'bg-[#8fa0b5] text-white'}`}>
+                    <BookOpen className="w-5.5 h-5.5 mb-0.5 text-white/80" />
+                    <span className="font-bold text-[13.5px] tracking-wide font-sans">예배</span>
+                    <div className="border-t border-white/20 my-1 w-8" />
+                    <span className="text-[8px] opacity-90 font-mono leading-none">사 43:21</span>
+                    <span className="text-[8px] opacity-90 font-mono leading-none mt-0.5">요 4:23 | 롬 12:1</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Node 6: 전도/섬김 (Right) */}
+              <div 
+                className="absolute transition-all duration-300 z-20 cursor-pointer"
+                style={{ left: '480px', top: '315px', transform: 'translate(-50%, -50%)' }}
+                onMouseEnter={() => setActiveValue(4)}
+                onMouseLeave={() => setActiveValue(null)}
+                onClick={() => document.getElementById('value-card-4')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+              >
+                <div className={`w-[120px] h-[120px] rounded-full p-[2px] bg-slate-300 transition-all duration-300 ${activeValue === 4 ? 'scale-105 ring-4 ring-rose-200 ring-offset-2 bg-rose-400' : 'hover:bg-slate-400'}`}>
+                  <div className={`w-full h-full rounded-full flex flex-col items-center justify-center p-3 text-center transition-colors ${activeValue === 4 ? 'bg-rose-500 text-white' : 'bg-[#8fa0b5] text-white'}`}>
+                    <Heart className="w-5.5 h-5.5 mb-0.5 text-white/80" />
+                    <span className="font-bold text-[13.5px] tracking-wide font-sans">전도/섬김</span>
+                    <div className="border-t border-white/20 my-1 w-8" />
+                    <span className="text-[8px] opacity-90 font-mono leading-none">막 16:15</span>
+                    <span className="text-[8px] opacity-90 font-mono leading-none mt-0.5">요13 | 마5:16</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Diagram View (Vertical Flow) */}
+            <div className="block md:hidden max-w-sm mx-auto my-8 bg-slate-50 p-6 rounded-2xl border border-slate-100/80">
+              <h4 className="text-[10px] font-bold text-slate-400 mb-6 text-center uppercase tracking-wider">핵심가치 연결 흐름도</h4>
+              <div className="flex flex-col items-center space-y-4">
+                {/* 1. 하나님 사랑 복음 */}
                 <button 
-                  onClick={() => setNewFamilyFormOpen(true)}
-                  className="mt-6 text-xs font-bold text-blue-600 inline-flex items-center gap-1 hover:text-blue-700 hover:translate-x-0.5 transition-all text-left w-full pt-4 border-t border-slate-100"
+                  onClick={() => document.getElementById('value-card-0')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#659b41] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
                 >
-                  상세 안내 바로가기 <ChevronRight className="h-3 w-3" />
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-4 h-4 text-yellow-300" />
+                    <span className="font-extrabold text-xs">1. 하나님 사랑 복음</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">신 6:4~5 외</span>
+                </button>
+
+                <div className="w-0.5 h-3 bg-slate-300 border-l border-dashed border-slate-400" />
+
+                {/* 2. 예배 */}
+                <button 
+                  onClick={() => document.getElementById('value-card-1')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#8fa0b5] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="w-4 h-4 text-white/80" />
+                    <span className="font-bold text-xs">2. 예배</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">사 43:21 외</span>
+                </button>
+
+                <div className="w-0.5 h-3 bg-slate-300 border-l border-dashed border-slate-400" />
+
+                {/* 3. 가정·교육 */}
+                <button 
+                  onClick={() => document.getElementById('value-card-2')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#8fa0b5] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Home className="w-4 h-4 text-white/80" />
+                    <span className="font-bold text-xs">3. 가정·교육</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">신 6:6~9</span>
+                </button>
+
+                <div className="w-0.5 h-3 bg-slate-300 border-l border-dashed border-slate-400" />
+
+                {/* 4. 교회·제자 */}
+                <button 
+                  onClick={() => document.getElementById('value-card-3')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#8fa0b5] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="w-4 h-4 text-white/80" />
+                    <span className="font-bold text-xs">4. 교회·제자</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">마 16:18</span>
+                </button>
+
+                <div className="w-0.5 h-3 bg-slate-300 border-l border-dashed border-slate-400" />
+
+                {/* 5. 전도/섬김 */}
+                <button 
+                  onClick={() => document.getElementById('value-card-4')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#8fa0b5] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-4 h-4 text-white/80" />
+                    <span className="font-bold text-xs">5. 전도/섬김</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">막 16:15 외</span>
+                </button>
+
+                <div className="w-0.5 h-3 bg-slate-300 border-l border-dashed border-slate-400" />
+
+                {/* 6. 지상명령 선교 */}
+                <button 
+                  onClick={() => document.getElementById('value-card-5')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                  className="w-full bg-[#8fa0b5] text-white p-3 rounded-xl shadow-sm text-center flex items-center justify-between hover:bg-opacity-95 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Map className="w-4 h-4 text-white/80" />
+                    <span className="font-bold text-xs">6. 지상명령 선교</span>
+                  </div>
+                  <span className="text-[8px] bg-white/20 px-2 py-0.5 rounded-full font-mono">마 28:18~20</span>
                 </button>
               </div>
+            </div>
 
-              {/* Card 2 */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold mb-6">
-                    <GraduationCap className="h-6 w-6" />
+            {/* 6-Card Scripture Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+              {coreValues.map((val, idx) => {
+                const IconComponent = val.icon;
+                const isHoveredOrActive = activeValue === idx;
+                
+                return (
+                  <div 
+                    key={idx}
+                    id={`value-card-${idx}`}
+                    className={`bg-white rounded-3xl p-6 md:p-8 border transition-all duration-500 flex flex-col justify-between ${
+                      isHoveredOrActive 
+                        ? `${val.borderCol} shadow-xl -translate-y-2 ring-1 ring-offset-2 ${val.shadowGlow}` 
+                        : 'border-slate-150 shadow-md hover:shadow-lg'
+                    }`}
+                    onMouseEnter={() => setActiveValue(idx)}
+                    onMouseLeave={() => setActiveValue(null)}
+                  >
+                    <div>
+                      {/* Card Top: Number + Icon */}
+                      <div className="flex justify-between items-start mb-5">
+                        <span className={`text-2xl font-black font-sans leading-none tracking-tight opacity-20`}>
+                          {val.number}
+                        </span>
+                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center ${val.bgLight} ${val.textAccent}`}>
+                          <IconComponent className="h-5 w-5" />
+                        </div>
+                      </div>
+
+                      {/* Card Title */}
+                      <h4 className="text-[16px] font-black text-slate-900 tracking-tight mb-2">
+                        {val.title}
+                      </h4>
+
+                      {/* Card Description */}
+                      <p className="text-[12px] text-slate-500 leading-relaxed mb-6 font-medium">
+                        {val.description}
+                      </p>
+
+                      {/* Scripture Quotes */}
+                      <div className="space-y-4 pt-4 border-t border-slate-100">
+                        {val.scriptures.map((scrip, sidx) => (
+                          <div key={sidx} className="text-left bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                            <span className={`text-[9.5px] font-bold tracking-wide ${val.badgeBg} px-2 py-0.5 rounded-md`}>
+                              {scrip.ref}
+                            </span>
+                            <p className="text-[11px] text-slate-600 mt-2 leading-relaxed font-serif italic font-medium">
+                              "{scrip.text}"
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <h4 className="text-md font-extrabold text-slate-900">다음세대 교육</h4>
-                  <h5 className="text-xs font-bold text-emerald-600 mt-1 mb-3">다음세대를 키우는 교육</h5>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    영아유치부부터 늘 말씀 안에 깨어있는 어린이교회, 청소년 및 역동적인 빛나는 청년들을 기도로 뜨겁게 양육합니다.
-                  </p>
-                </div>
-                <a 
-                  href="#nextgen-section"
-                  onClick={(e) => handleNavigation(e, '#nextgen-section')}
-                  className="mt-6 text-xs font-bold text-emerald-600 inline-flex items-center gap-1 hover:text-emerald-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
-                >
-                  다음세대 부서 안내 <ChevronRight className="h-3 w-3" />
-                </a>
-              </div>
-
-              {/* Card 3 */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div>
-                  <div className="h-12 w-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold mb-6">
-                    <Heart className="h-6 w-6" />
-                  </div>
-                  <h4 className="text-md font-extrabold text-slate-900">봉사 & 선교</h4>
-                  <h5 className="text-xs font-bold text-pink-600 mt-1 mb-3">지역 사회 봉사와 섬김</h5>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    예수님의 사랑을 우리 지역 불우이웃 돕기, 반찬 배달 사역, 해외 선교 및 미디어 기성 선교로 아낌없이 흘려보냅니다.
-                  </p>
-                </div>
-                <a 
-                  href="#community-intro"
-                  onClick={(e) => handleNavigation(e, '#community-intro')}
-                  className="mt-6 text-xs font-bold text-pink-600 inline-flex items-center gap-1 hover:text-pink-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
-                >
-                  선교 및 봉사 안내 <ChevronRight className="h-3 w-3" />
-                </a>
-              </div>
-
-              {/* Card 4 */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-150 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div>
-                  <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold mb-6">
-                    <Users className="h-6 w-6" />
-                  </div>
-                  <h4 className="text-md font-extrabold text-slate-900">훈련 & 성장</h4>
-                  <h5 className="text-xs font-bold text-amber-600 mt-1 mb-3">그리스도 예수 무리 양육</h5>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    소그룹 구역 단위 모임, 평일 수요 성경강해, 일대일 양육 동반 교육 등을 통해 신앙의 전인격적 성숙을 도모합니다.
-                  </p>
-                </div>
-                <a 
-                  href="#community-intro"
-                  onClick={(e) => handleNavigation(e, '#community-intro')}
-                  className="mt-6 text-xs font-bold text-amber-600 inline-flex items-center gap-1 hover:text-amber-700 hover:translate-x-0.5 transition-all w-full pt-4 border-t border-slate-100"
-                >
-                  말씀 훈련 소개 <ChevronRight className="h-3 w-3" />
-                </a>
-              </div>
-
+                );
+              })}
             </div>
 
           </div>
