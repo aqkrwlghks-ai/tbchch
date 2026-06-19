@@ -20,6 +20,7 @@ import {
   FileImage
 } from 'lucide-react';
 import { NewsItem } from '../types';
+import { saveFileToDB, getFileFromDB, deleteFilesForPost } from '../utils/fileDb';
 
 interface User {
   name: string;
@@ -31,7 +32,21 @@ interface AttachedFile {
   name: string;
   size: string;
   dataUrl?: string;
+  googleDriveId?: string;
   type?: string;
+}
+
+function parseGoogleDriveLink(url: string): string | null {
+  const matchD = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (matchD && matchD[1]) return matchD[1];
+
+  const matchId = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (matchId && matchId[1]) return matchId[1];
+
+  const matchOpen = url.match(/open\?id=([a-zA-Z0-9_-]+)/);
+  if (matchOpen && matchOpen[1]) return matchOpen[1];
+
+  return null;
 }
 
 interface AnnouncementBoardProps {
@@ -55,6 +70,18 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
   // Preview State
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewFileName, setPreviewFileName] = useState<string>('');
+
+  // Loaded file data URLs state
+  const [fileDataUrls, setFileDataUrls] = useState<Record<string, string>>({});
+
+  // Track which post is being edited
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+
+  const canEditPost = (post: NewsItem | null) => {
+    if (!post || !currentUser) return false;
+    if (currentUser.role === 'admin') return true;
+    return post.writer === currentUser.name;
+  };
 
   // Form fields
   const [formTitle, setFormTitle] = useState('');
@@ -86,10 +113,40 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     }
     
     // Safety guard: filter out any mock posts written by '서유미'
-    const cleanedPosts = rawPosts.filter(p => p.writer !== '서유미');
+    let cleanedPosts = rawPosts.filter(p => p.writer !== '서유미');
+
+    // Migration: Migrate any embedded file dataUrl from localStorage to IndexedDB to free space
+    let needsSave = false;
+    cleanedPosts = cleanedPosts.map(post => {
+      if (post.files && post.files.length > 0) {
+        let postModified = false;
+        const cleanedFiles = (post.files as any).map((file: any) => {
+          if (file.dataUrl) {
+            // Save to IndexedDB asynchronously
+            saveFileToDB(post.id, file.name, file.dataUrl).catch(err => {
+              console.error(`Migration failed for ${post.id} ${file.name}:`, err);
+            });
+            postModified = true;
+            needsSave = true;
+            const { dataUrl, ...rest } = file;
+            return rest;
+          }
+          return file;
+        });
+        if (postModified) {
+          return { ...post, files: cleanedFiles };
+        }
+      }
+      return post;
+    });
     
     setPosts(cleanedPosts);
-    localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleanedPosts));
+    
+    try {
+      localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleanedPosts));
+    } catch (e) {
+      console.error('Failed to save initial posts to localStorage:', e);
+    }
     
     // Clean up old key
     if (savedPostsV1) {
@@ -97,10 +154,38 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     }
   }, []);
 
+  // Fetch file DataURLs from IndexedDB when a post is selected
+  useEffect(() => {
+    if (selectedPost && selectedPost.files) {
+      const loadUrls = async () => {
+        const urls: Record<string, string> = {};
+        for (const file of (selectedPost.files as any)) {
+          try {
+            const dataUrl = await getFileFromDB(selectedPost.id, file.name);
+            if (dataUrl) {
+              urls[file.name] = dataUrl;
+            }
+          } catch (err) {
+            console.error('Failed to get file from IndexedDB:', err);
+          }
+        }
+        setFileDataUrls(urls);
+      };
+      loadUrls();
+    } else {
+      setFileDataUrls({});
+    }
+  }, [selectedPost]);
+
   const savePostsToStorage = (updatedPosts: NewsItem[]) => {
     const cleaned = updatedPosts.filter(p => p.writer !== '서유미');
     setPosts(cleaned);
-    localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleaned));
+    try {
+      localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleaned));
+    } catch (e) {
+      console.error('Failed to save posts to localStorage:', e);
+      alert('저장 용량이 초과되어 로컬 저장소 저장에 실패했습니다. 페이지를 새로고침하여 불필요한 데이터를 정리한 후 다시 시도해 주세요.');
+    }
   };
 
   // Search filter
@@ -168,15 +253,28 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
       String(today.getMonth() + 1).padStart(2, '0') + '.' + 
       String(today.getDate()).padStart(2, '0');
 
+    const postId = `post-${nextNumber}`;
+
+    // Store file data in IndexedDB and strip dataUrl from localStorage list
+    attachedFiles.forEach(file => {
+      if (file.dataUrl) {
+        saveFileToDB(postId, file.name, file.dataUrl).catch(err => {
+          console.error('Failed to save file to IndexedDB:', err);
+        });
+      }
+    });
+
+    const filesWithoutDataUrl = attachedFiles.map(({ name, size, type, googleDriveId }) => ({ name, size, type, googleDriveId }));
+
     const newPost: NewsItem = {
-      id: `post-${nextNumber}`,
+      id: postId,
       title: formTitle,
       date: dateString,
       category: formCategory,
       writer: formWriter || currentUser.name,
       content: formContent,
       views: 0,
-      files: attachedFiles as any,
+      files: filesWithoutDataUrl as any,
       hasImage: attachedFiles.some(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name) || (f.type && f.type.startsWith('image/'))),
       commentsCount: 0,
       isNew: true
@@ -196,23 +294,40 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     alert('새 글이 성공적으로 등록되었습니다.');
   };
 
-  // Edit existing post (Admin only)
+  // Edit existing post (Admin or Author)
   const handleUpdatePost = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser || currentUser.role !== 'admin' || !selectedPost) {
+    if (!currentUser || !editingPostId) {
       alert('수정 권한이 없습니다.');
       return;
     }
 
+    const postToUpdate = posts.find(p => p.id === editingPostId);
+    if (!postToUpdate || !canEditPost(postToUpdate)) {
+      alert('수정 권한이 없습니다.');
+      return;
+    }
+
+    // Store file data in IndexedDB and strip dataUrl from localStorage list
+    attachedFiles.forEach(file => {
+      if (file.dataUrl) {
+        saveFileToDB(editingPostId, file.name, file.dataUrl).catch(err => {
+          console.error('Failed to save file to IndexedDB:', err);
+        });
+      }
+    });
+
+    const filesWithoutDataUrl = attachedFiles.map(({ name, size, type, googleDriveId }) => ({ name, size, type, googleDriveId }));
+
     const updated = posts.map(p => {
-      if (p.id === selectedPost.id) {
+      if (p.id === editingPostId) {
         return {
           ...p,
           title: formTitle,
           content: formContent,
           category: formCategory,
           writer: formWriter,
-          files: attachedFiles as any,
+          files: filesWithoutDataUrl as any,
           hasImage: attachedFiles.some(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name) || (f.type && f.type.startsWith('image/')))
         };
       }
@@ -220,14 +335,20 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     });
 
     savePostsToStorage(updated);
-    setSelectedPost(null);
+    setEditingPostId(null);
     setIsEditing(false);
     alert('글이 수정되었습니다.');
   };
 
-  // Delete post (Admin only)
+  // Delete post (Admin or Author)
   const handleDeletePost = (id: string) => {
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser) {
+      alert('삭제 권한이 없습니다.');
+      return;
+    }
+
+    const postToDelete = posts.find(p => p.id === id);
+    if (!postToDelete || !canEditPost(postToDelete)) {
       alert('삭제 권한이 없습니다.');
       return;
     }
@@ -235,6 +356,9 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     if (window.confirm('정말로 이 글을 삭제하시겠습니까?')) {
       const updated = posts.filter(p => p.id !== id);
       savePostsToStorage(updated);
+      deleteFilesForPost(id).catch(err => {
+        console.error('Failed to delete files from IndexedDB:', err);
+      });
       setSelectedPost(null);
       alert('글이 삭제되었습니다.');
     }
@@ -244,7 +368,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const filesList = Array.from(e.target.files);
-      const promises = filesList.map(file => {
+      const promises = filesList.map((file: File) => {
         return new Promise<AttachedFile>((resolve) => {
           const sizeInKB = Math.round(file.size / 1024);
           const sizeStr = sizeInKB > 1024 
@@ -291,6 +415,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     setFormCategory(post.category);
     setAttachedFiles((post.files as any) || []);
     setIsEditing(true);
+    setEditingPostId(post.id);
   };
 
   const handlePageClick = (page: number) => {
@@ -307,17 +432,56 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
   // Helper to get preview mockup images (if uploaded file is mock or real)
   const getFilePreviewSrc = (file: AttachedFile, index: number) => {
     if (file.dataUrl) return file.dataUrl;
+    if (file.googleDriveId) return `https://docs.google.com/uc?export=download&id=${file.googleDriveId}`;
     
     // If no real dataUrl, provide beautiful Unsplash placeholders based on file names for mockup preview
     const mockupImages = [
       'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1544427920-c49ccfb85579?auto=format&fit=crop&q=80&w=600',
-      'https://images.unsplash.com/photo-1512418490979-9179599339e0?auto=format&fit=crop&q=80&w=600',
+      'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=600',
       'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=600'
     ];
     return mockupImages[index % mockupImages.length];
+  };
+
+  const handleDownload = async (file: AttachedFile, index: number) => {
+    if (file.googleDriveId) {
+      const directUrl = `https://docs.google.com/uc?export=download&id=${file.googleDriveId}`;
+      window.open(directUrl, '_blank');
+      return;
+    }
+    const dataUrl = fileDataUrls[file.name] || file.dataUrl;
+    if (dataUrl) {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // Mockup download
+      const previewSrc = getFilePreviewSrc(file, index);
+      if (previewSrc && previewSrc.startsWith('http')) {
+        try {
+          const response = await fetch(previewSrc);
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = file.name;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        } catch (e) {
+          window.open(previewSrc, '_blank');
+        }
+      } else {
+        alert(`'${file.name}' 파일의 데이터를 찾을 수 없습니다.`);
+      }
+    }
   };
 
   const hasWritePermission = currentUser && currentUser.role === 'admin';
@@ -408,6 +572,32 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
               >
                 <Plus className="h-3.5 w-3.5" /> 파일 추가
               </label>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const url = prompt('구글 드라이브 공유 링크를 입력하세요:');
+                  if (!url) return;
+                  const fileId = parseGoogleDriveLink(url);
+                  if (!fileId) {
+                    alert('올바른 구글 드라이브 링크가 아닙니다. 공유 링크를 다시 확인해 주세요.');
+                    return;
+                  }
+                  const name = prompt('파일의 이름을 확장자 포함하여 입력하세요 (예: 영화설교_자료.jpg):', '영화설교_자료.jpg');
+                  if (!name) return;
+                  
+                  const newDriveFile: AttachedFile = {
+                    name,
+                    size: '구글 드라이브',
+                    googleDriveId: fileId,
+                    type: isImageFile(name) ? 'image/jpeg' : 'application/octet-stream'
+                  };
+                  setAttachedFiles(prev => [...prev, newDriveFile]);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 rounded-xl cursor-pointer hover:bg-purple-100 transition-all shadow-xs ml-2"
+              >
+                <Plus className="h-3.5 w-3.5" /> 구글 드라이브 링크 추가
+              </button>
 
               {attachedFiles.length > 0 && (
                 <div className="mt-3 space-y-1.5">
@@ -507,7 +697,8 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {(selectedPost.files as any).map((file: AttachedFile, idx: number) => {
                   const isImage = isImageFile(file.name);
-                  const previewSrc = getFilePreviewSrc(file, idx);
+                  const dataUrl = fileDataUrls[file.name] || file.dataUrl;
+                  const previewSrc = dataUrl || getFilePreviewSrc(file, idx);
                   
                   return (
                     <div 
@@ -548,7 +739,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
                           <span className="block text-[8px] text-slate-400 font-light mt-0.5">{file.size}</span>
                         </div>
                         <button
-                          onClick={() => alert(`'${file.name}' (${file.size}) 파일 다운로드를 시작합니다.`)}
+                          onClick={() => handleDownload(file, idx)}
                           className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-purple-600 rounded-lg transition-all cursor-pointer"
                           title="다운로드"
                         >
@@ -564,7 +755,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
 
           {/* Bottom Action buttons */}
           <div className="pt-6 flex flex-col sm:flex-row gap-3 sm:justify-between items-center border-t border-slate-100">
-            {hasWritePermission ? (
+            {canEditPost(selectedPost) ? (
               <div className="flex gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => {
