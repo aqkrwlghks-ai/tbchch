@@ -53,18 +53,41 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
 
   // Initialize data (default to empty board as requested)
   useEffect(() => {
-    const savedPosts = localStorage.getItem('tbchch_posts_v2');
-    if (savedPosts) {
-      setPosts(JSON.parse(savedPosts));
-    } else {
-      setPosts([]);
-      localStorage.setItem('tbchch_posts_v2', JSON.stringify([]));
+    const savedPostsV2 = localStorage.getItem('tbchch_posts_v2');
+    const savedPostsV1 = localStorage.getItem('tbchch_posts');
+    
+    let rawPosts: NewsItem[] = [];
+    if (savedPostsV2) {
+      try {
+        rawPosts = JSON.parse(savedPostsV2);
+      } catch {
+        rawPosts = [];
+      }
+    } else if (savedPostsV1) {
+      try {
+        rawPosts = JSON.parse(savedPostsV1);
+      } catch {
+        rawPosts = [];
+      }
+    }
+    
+    // Safety guard: filter out any mock posts written by '서유미'
+    const cleanedPosts = rawPosts.filter(p => p.writer !== '서유미');
+    
+    setPosts(cleanedPosts);
+    localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleanedPosts));
+    
+    // Clean up old key
+    if (savedPostsV1) {
+      localStorage.removeItem('tbchch_posts');
     }
   }, []);
 
   const savePostsToStorage = (updatedPosts: NewsItem[]) => {
-    setPosts(updatedPosts);
-    localStorage.setItem('tbchch_posts_v2', JSON.stringify(updatedPosts));
+    // Safety check during save too
+    const cleaned = updatedPosts.filter(p => p.writer !== '서유미');
+    setPosts(cleaned);
+    localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleaned));
   };
 
   // Search filter
