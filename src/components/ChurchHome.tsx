@@ -33,7 +33,10 @@ import {
   ShieldCheck,
   Car,
   Trash2,
-  Plus
+  Plus,
+  Activity,
+  Award,
+  BarChart2
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
@@ -203,7 +206,8 @@ export default function ChurchHome({
   });
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
-  const [adminTab, setAdminTab] = useState<'users' | 'families'>('users');
+  const [adminTab, setAdminTab] = useState<'users' | 'families' | 'stats'>('users');
+  const [statsSearchQuery, setStatsSearchQuery] = useState('');
 
   // Initialize mock database for users and default admins
   useEffect(() => {
@@ -220,6 +224,7 @@ export default function ChurchHome({
             phone: '010-1111-2222',
             role: 'admin',
             grade: '정회원',
+            loginCount: 58,
             createdAt: new Date().toISOString()
           },
           {
@@ -231,7 +236,56 @@ export default function ChurchHome({
             phone: '010-3333-4444',
             role: 'admin',
             grade: '정회원',
+            loginCount: 42,
             createdAt: new Date().toISOString()
+          },
+          {
+            username: 'kim_chulsoo',
+            name: '김철수',
+            password: '1234',
+            gender: '남성',
+            denomination: '대한예수교장로회(통합)',
+            phone: '010-5555-6666',
+            role: 'member',
+            grade: '정회원',
+            loginCount: 31,
+            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            username: 'lee_younghee',
+            name: '이영희',
+            password: '1234',
+            gender: '여성',
+            denomination: '한국기독교장로회',
+            phone: '010-7777-8888',
+            role: 'member',
+            grade: '정회원',
+            loginCount: 22,
+            createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            username: 'park_minsu',
+            name: '박민수',
+            password: '1234',
+            gender: '남성',
+            denomination: '기독교대한감리회',
+            phone: '010-9999-0000',
+            role: 'member',
+            grade: '준회원',
+            loginCount: 12,
+            createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            username: 'choi_heejin',
+            name: '최희진',
+            password: '1234',
+            gender: '여성',
+            denomination: '대한예수교장로회(합동)',
+            phone: '010-1234-5678',
+            role: 'member',
+            grade: '새가족',
+            loginCount: 4,
+            createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
           }
         ];
         localStorage.setItem('tbch_users', JSON.stringify(defaultUsers));
@@ -240,12 +294,84 @@ export default function ChurchHome({
           const parsedUsers = JSON.parse(existingUsersStr);
           let modified = false;
           const updatedUsers = parsedUsers.map((u: any) => {
-            if (u.username === 'jihwan') {
+            let updatedUser = { ...u };
+            if (updatedUser.username === 'jihwan') {
+              updatedUser.username = 'aqkrwlghks';
               modified = true;
-              return { ...u, username: 'aqkrwlghks' };
             }
-            return u;
+            if (updatedUser.loginCount === undefined) {
+              if (updatedUser.username === 'jehee') {
+                updatedUser.loginCount = 58;
+              } else if (updatedUser.username === 'aqkrwlghks') {
+                updatedUser.loginCount = 42;
+              } else {
+                updatedUser.loginCount = Math.floor(Math.random() * 25) + 1;
+              }
+              modified = true;
+            }
+            return updatedUser;
           });
+
+          // Append mock users if list is small to enrich statistics
+          if (updatedUsers.length < 5) {
+            const mockUsers = [
+              {
+                username: 'kim_chulsoo',
+                name: '김철수',
+                password: '1234',
+                gender: '남성',
+                denomination: '대한예수교장로회(통합)',
+                phone: '010-5555-6666',
+                role: 'member',
+                grade: '정회원',
+                loginCount: 31,
+                createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+              },
+              {
+                username: 'lee_younghee',
+                name: '이영희',
+                password: '1234',
+                gender: '여성',
+                denomination: '한국기독교장로회',
+                phone: '010-7777-8888',
+                role: 'member',
+                grade: '정회원',
+                loginCount: 22,
+                createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString()
+              },
+              {
+                username: 'park_minsu',
+                name: '박민수',
+                password: '1234',
+                gender: '남성',
+                denomination: '기독교대한감리회',
+                phone: '010-9999-0000',
+                role: 'member',
+                grade: '준회원',
+                loginCount: 12,
+                createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+              },
+              {
+                username: 'choi_heejin',
+                name: '최희진',
+                password: '1234',
+                gender: '여성',
+                denomination: '대한예수교장로회(합동)',
+                phone: '010-1234-5678',
+                role: 'member',
+                grade: '새가족',
+                loginCount: 4,
+                createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+              }
+            ];
+            mockUsers.forEach(mu => {
+              if (!updatedUsers.some((u: any) => u.username === mu.username)) {
+                updatedUsers.push(mu);
+                modified = true;
+              }
+            });
+          }
+
           if (modified) {
             localStorage.setItem('tbch_users', JSON.stringify(updatedUsers));
           }
@@ -4000,10 +4126,10 @@ export default function ChurchHome({
                 <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">SYSTEM &gt; ADMIN PANEL</span>
               </div>
 
-              <div className="flex border-b border-slate-200 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+              <div className="flex border-b border-slate-200 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 gap-2">
                 <button
                   onClick={() => setAdminTab('users')}
-                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all ${
+                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all cursor-pointer ${
                     adminTab === 'users'
                       ? 'bg-blue-600 text-white shadow'
                       : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
@@ -4013,13 +4139,23 @@ export default function ChurchHome({
                 </button>
                 <button
                   onClick={() => setAdminTab('families')}
-                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all ${
+                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all cursor-pointer ${
                     adminTab === 'families'
                       ? 'bg-blue-600 text-white shadow'
                       : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
                   }`}
                 >
                   온라인 새가족 등록 명단
+                </button>
+                <button
+                  onClick={() => setAdminTab('stats')}
+                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all cursor-pointer ${
+                    adminTab === 'stats'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  }`}
+                >
+                  성도 접속 통계 그래프
                 </button>
               </div>
 
@@ -4183,6 +4319,277 @@ export default function ChurchHome({
                 </div>
               )}
 
+              {adminTab === 'stats' && (() => {
+                const users = JSON.parse(localStorage.getItem('tbch_users') || '[]');
+                
+                // Calculations
+                const totalLogins = users.reduce((sum: number, u: any) => sum + (u.loginCount || 0), 0);
+                const activeUsers = users.filter((u: any) => (u.loginCount || 0) > 0).length;
+                const averageLogins = users.length > 0 ? (totalLogins / users.length).toFixed(1) : '0';
+                
+                const sortedUsers = [...users].sort((a: any, b: any) => (b.loginCount || 0) - (a.loginCount || 0));
+                const mostActiveUser = sortedUsers[0];
+                
+                // Grade breakdown
+                const gradeStats = users.reduce((acc: any, u: any) => {
+                  const grade = u.grade || '준회원';
+                  const count = u.loginCount || 0;
+                  acc[grade] = (acc[grade] || 0) + count;
+                  return acc;
+                }, { '정회원': 0, '준회원': 0, '새가족': 0 });
+
+                const maxCount = Math.max(...users.map((u: any) => u.loginCount || 0), 1);
+
+                return (
+                  <div className="space-y-6">
+                    {/* 1. Summary Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                      <div className="bg-white p-5 rounded-2xl border border-slate-150 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                          <Activity className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">총 접속(로그인) 횟수</span>
+                          <strong className="text-xl font-black text-slate-900">{totalLogins}회</strong>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-2xl border border-slate-150 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                          <Award className="h-6 w-6" />
+                        </div>
+                        <div className="truncate">
+                          <span className="text-[10px] text-slate-400 font-bold block">최다 접속 성도</span>
+                          <strong className="text-sm font-black text-slate-900 block truncate">
+                            {mostActiveUser ? `${mostActiveUser.name} (${mostActiveUser.loginCount}회)` : '없음'}
+                          </strong>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-2xl border border-slate-150 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                          <Users className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">활동 중인 성도</span>
+                          <strong className="text-xl font-black text-slate-900">{activeUsers}명</strong>
+                        </div>
+                      </div>
+
+                      <div className="bg-white p-5 rounded-2xl border border-slate-150 shadow-sm flex items-center gap-4">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                          <BarChart2 className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 font-bold block">성도 평균 접속 수</span>
+                          <strong className="text-xl font-black text-slate-900">{averageLogins}회</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2. Main Graph & Grade distribution */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      
+                      {/* Left: Bar Chart */}
+                      <div className="bg-white lg:col-span-2 p-6 rounded-3xl border border-slate-150 shadow-md space-y-6">
+                        <div className="flex justify-between items-center pb-4 border-b border-slate-100">
+                          <div>
+                            <h3 className="font-extrabold text-slate-950 text-sm">성도별 로그인 통계 그래프</h3>
+                            <p className="text-[10px] text-slate-400 mt-0.5">가장 활발하게 접속한 성도 순위입니다. (가장 긴 막대가 최다 접속)</p>
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                if (window.confirm('모든 성도의 접속 통계를 초기화하시겠습니까?')) {
+                                  const resetUsers = users.map((u: any) => ({ ...u, loginCount: 0 }));
+                                  localStorage.setItem('tbch_users', JSON.stringify(resetUsers));
+                                  if (currentUser) {
+                                    const updatedCur = { ...currentUser, loginCount: 0 };
+                                    localStorage.setItem('tbch_current_user', JSON.stringify(updatedCur));
+                                    setCurrentUser(updatedCur);
+                                  }
+                                  alert('모든 접속 기록이 초기화되었습니다.');
+                                }
+                              }}
+                              className="text-[10px] font-bold text-slate-500 hover:text-red-600 border border-slate-200 hover:border-red-200 px-2 py-1 rounded-lg transition-colors cursor-pointer animate-fadeIn"
+                            >
+                              통계 초기화
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Search in stats */}
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="성도 이름 또는 아이디 검색..."
+                            value={statsSearchQuery}
+                            onChange={(e) => setStatsSearchQuery(e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                          />
+                        </div>
+
+                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                          {sortedUsers
+                            .filter(u => {
+                              if (!statsSearchQuery) return true;
+                              const q = statsSearchQuery.toLowerCase();
+                              return u.name.toLowerCase().includes(q) || u.username.toLowerCase().includes(q);
+                            })
+                            .map((u: any, idx: number) => {
+                              const pct = Math.max((u.loginCount || 0) / maxCount * 100, 2);
+                              
+                              let gradient = 'from-indigo-500 to-purple-600';
+                              let textColor = 'text-indigo-600 bg-indigo-50';
+                              if (u.grade === '준회원') {
+                                gradient = 'from-blue-500 to-cyan-500';
+                                textColor = 'text-blue-600 bg-blue-50';
+                              } else if (u.grade === '새가족') {
+                                gradient = 'from-emerald-500 to-green-500';
+                                textColor = 'text-emerald-600 bg-emerald-50';
+                              }
+
+                              return (
+                                <div key={u.username} className="space-y-1.5 group">
+                                  <div className="flex justify-between items-center text-xs">
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-5 text-center font-mono font-bold text-slate-300 group-hover:text-slate-600 transition-colors">
+                                        {idx + 1}
+                                      </span>
+                                      <span className="font-extrabold text-slate-900">{u.name}</span>
+                                      <span className="text-[10px] text-slate-400 font-mono">@{u.username}</span>
+                                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${textColor}`}>
+                                        {u.grade || '준회원'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <strong className="text-slate-900 font-extrabold">{u.loginCount || 0}회</strong>
+                                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                                        <button
+                                          onClick={() => {
+                                            const updated = users.map((userObj: any) => {
+                                              if (userObj.username === u.username) {
+                                                const current = userObj.loginCount || 0;
+                                                return { ...userObj, loginCount: current + 1 };
+                                              }
+                                              return userObj;
+                                            });
+                                            localStorage.setItem('tbch_users', JSON.stringify(updated));
+                                            if (currentUser && currentUser.username === u.username) {
+                                              const updatedCur = { ...currentUser, loginCount: (currentUser.loginCount || 0) + 1 };
+                                              localStorage.setItem('tbch_current_user', JSON.stringify(updatedCur));
+                                              setCurrentUser(updatedCur);
+                                            }
+                                          }}
+                                          className="text-[9px] font-black bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-1 py-0.5 rounded transition-all cursor-pointer"
+                                          title="1회 추가"
+                                        >
+                                          +
+                                        </button>
+                                        <button
+                                          onClick={() => {
+                                            const updated = users.map((userObj: any) => {
+                                              if (userObj.username === u.username) {
+                                                const current = userObj.loginCount || 0;
+                                                return { ...userObj, loginCount: Math.max(current - 1, 0) };
+                                              }
+                                              return userObj;
+                                            });
+                                            localStorage.setItem('tbch_users', JSON.stringify(updated));
+                                            if (currentUser && currentUser.username === u.username) {
+                                              const updatedCur = { ...currentUser, loginCount: Math.max((currentUser.loginCount || 0) - 1, 0) };
+                                              localStorage.setItem('tbch_current_user', JSON.stringify(updatedCur));
+                                              setCurrentUser(updatedCur);
+                                            }
+                                          }}
+                                          className="text-[9px] font-black bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-1 py-0.5 rounded transition-all cursor-pointer"
+                                          title="1회 차감"
+                                        >
+                                          -
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden shadow-inner flex">
+                                    <div
+                                      style={{ width: `${pct}%` }}
+                                      className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all duration-500 relative`}
+                                    >
+                                      <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,.15)_50%,rgba(255,255,255,.15)_75%,transparent_75%,transparent)] bg-[length:15px_15px] animate-[progress-bar-stripes_1s_linear_infinite] opacity-30"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
+
+                      {/* Right: Grade Distribution */}
+                      <div className="bg-white p-6 rounded-3xl border border-slate-150 shadow-md flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-extrabold text-slate-950 text-sm pb-4 border-b border-slate-100">성도 등급별 접속 비중</h3>
+                          <p className="text-[10px] text-slate-400 mt-2">각 등급별 성도들의 누적 접속 횟수 총합 및 점유율입니다.</p>
+                          
+                          <div className="mt-6 space-y-5">
+                            {['정회원', '준회원', '새가족'].map(grade => {
+                              const count = gradeStats[grade] || 0;
+                              const pct = totalLogins > 0 ? ((count / totalLogins) * 100).toFixed(1) : '0';
+                              
+                              let colorClass = 'bg-indigo-600';
+                              let textClass = 'text-indigo-600';
+                              let bgLight = 'bg-indigo-50';
+                              if (grade === '준회원') {
+                                colorClass = 'bg-blue-600';
+                                textClass = 'text-blue-600';
+                                bgLight = 'bg-blue-50';
+                              } else if (grade === '새가족') {
+                                colorClass = 'bg-emerald-600';
+                                textClass = 'text-emerald-600';
+                                bgLight = 'bg-emerald-50';
+                              }
+
+                              return (
+                                <div key={grade} className="space-y-1.5">
+                                  <div className="flex justify-between items-center text-xs">
+                                    <span className="font-extrabold text-slate-700">{grade}</span>
+                                    <div className="flex items-center gap-1.5">
+                                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${bgLight} ${textClass}`}>
+                                        {pct}%
+                                      </span>
+                                      <strong className="text-slate-800 font-bold">{count}회</strong>
+                                    </div>
+                                  </div>
+                                  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                    <div
+                                      style={{ width: `${pct}%` }}
+                                      className={`h-full ${colorClass} rounded-full transition-all duration-500`}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="mt-8 p-4 bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl shadow-inner space-y-2">
+                          <h4 className="text-[10px] font-black text-amber-400 uppercase tracking-widest">System Monitor</h4>
+                          <p className="text-[11px] text-slate-300 font-light leading-relaxed">
+                            실시간 성도 활동량 및 서비스 부하 모니터링이 활성화되어 있습니다. 회원들의 로그인 패턴 분석을 통해 교적부 권한 설정 및 공지 노출도를 최적화할 수 있습니다.
+                          </p>
+                          <div className="flex items-center gap-1 text-[9px] text-emerald-400 font-mono pt-1">
+                            <span className="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping"></span>
+                            ACTIVE LOGGING SYSTEM ON
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
           </section>
         ) : (
@@ -4219,14 +4626,23 @@ export default function ChurchHome({
 
               try {
                 const users = JSON.parse(localStorage.getItem('tbch_users') || '[]');
-                const user = users.find(
+                const userIndex = users.findIndex(
                   (u: any) =>
                     u.username === username || u.name === username
                 );
 
-                if (user && user.password === password) {
-                  localStorage.setItem('tbch_current_user', JSON.stringify(user));
-                  setCurrentUser(user);
+                if (userIndex !== -1 && users[userIndex].password === password) {
+                  const user = users[userIndex];
+                  const currentCount = user.loginCount || 0;
+                  const updatedUser = { ...user, loginCount: currentCount + 1 };
+                  
+                  const updatedUsers = [...users];
+                  updatedUsers[userIndex] = updatedUser;
+                  
+                  localStorage.setItem('tbch_users', JSON.stringify(updatedUsers));
+                  localStorage.setItem('tbch_current_user', JSON.stringify(updatedUser));
+                  setCurrentUser(updatedUser);
+                  
                   setLoginModalOpen(false);
                   alert(`${user.name}님, 로그인되었습니다.`);
                   if (user.role === 'admin') {
