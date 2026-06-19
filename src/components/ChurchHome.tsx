@@ -172,7 +172,8 @@ export default function ChurchHome({
   // Initialize mock database for users and default admins
   useEffect(() => {
     try {
-      if (!localStorage.getItem('tbch_users')) {
+      const existingUsersStr = localStorage.getItem('tbch_users');
+      if (!existingUsersStr) {
         const defaultUsers = [
           {
             username: 'jehee',
@@ -198,6 +199,23 @@ export default function ChurchHome({
           }
         ];
         localStorage.setItem('tbch_users', JSON.stringify(defaultUsers));
+      } else {
+        try {
+          const parsedUsers = JSON.parse(existingUsersStr);
+          let modified = false;
+          const updatedUsers = parsedUsers.map((u: any) => {
+            if (u.username === 'jihwan') {
+              modified = true;
+              return { ...u, username: 'aqkrwlghks' };
+            }
+            return u;
+          });
+          if (modified) {
+            localStorage.setItem('tbch_users', JSON.stringify(updatedUsers));
+          }
+        } catch (e) {
+          console.error('Error migrating tbch_users:', e);
+        }
       }
 
       if (!localStorage.getItem('tbch_new_families')) {
