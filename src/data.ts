@@ -52,7 +52,7 @@ export const gnbMenuData: MenuItem[] = [
     subMenu: [
       { name: '알림 및 공지사항', link: '#announcement', id: 'announcement' },
       { name: '갤러리(교회활동)', link: '#activity-gallery', id: 'activity-gallery' },
-      { name: '서식 자료실', link: '#form-archive', id: 'form-archive' }
+      { name: '주보', link: '#weekly-bulletin', id: 'weekly-bulletin' }
     ]
   },
   {

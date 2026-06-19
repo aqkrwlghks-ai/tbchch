@@ -52,9 +52,42 @@ function parseGoogleDriveLink(url: string): string | null {
 interface AnnouncementBoardProps {
   currentUser: User | null;
   onOpenLogin: () => void;
+  boardType?: 'news' | 'bulletin';
 }
 
-export default function AnnouncementBoard({ currentUser, onOpenLogin }: AnnouncementBoardProps) {
+const defaultBulletins: NewsItem[] = [
+  {
+    id: 'bulletin-1002',
+    title: '금주의 주보 (2026년 6월 둘째 주)',
+    date: '2026.06.07',
+    category: '주보',
+    writer: '미디어부',
+    content: '은혜 가득한 예배 주보 및 구역 성경 공부 가이드북을 다운로드하셔서 가정에서도 묵상과 연합의 은혜를 확장하시기 바랍니다.',
+    files: [
+      { name: '주보_2026-06-07.pdf', size: '1.2 MB' }
+    ] as any,
+    hasImage: false,
+    commentsCount: 0,
+    isNew: false
+  },
+  {
+    id: 'bulletin-1001',
+    title: '금주의 주보 (2026년 5월 다섯째 주)',
+    date: '2026.05.31',
+    category: '주보',
+    writer: '미디어부',
+    content: '5월 다섯째 주 예배 주보입니다.',
+    files: [
+      { name: '주보_2026-05-31.pdf', size: '1.2 MB' }
+    ] as any,
+    hasImage: false,
+    commentsCount: 0,
+    isNew: false
+  }
+];
+
+export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType = 'news' }: AnnouncementBoardProps) {
+  const storageKey = boardType === 'bulletin' ? 'tbchch_bulletins' : 'tbchch_posts_v2';
   // 1. Board List State
   const [posts, setPosts] = useState<NewsItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,6 +110,14 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
   // Track which post is being edited
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (boardType === 'bulletin') {
+      setFormCategory('주보');
+    } else {
+      setFormCategory('공지사항');
+    }
+  }, [boardType]);
+
   const canEditPost = (post: NewsItem | null) => {
     if (!post || !currentUser) return false;
     if (currentUser.role === 'admin') return true;
@@ -92,23 +133,21 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
 
   const itemsPerPage = 15;
 
-  // Initialize data (default to empty board, filter out '서유미' to clear cache)
+  // Initialize data (default to empty board/default bulletins, filter out '서유미' to clear cache)
   useEffect(() => {
-    const savedPostsV2 = localStorage.getItem('tbchch_posts_v2');
-    const savedPostsV1 = localStorage.getItem('tbchch_posts');
+    const savedPosts = localStorage.getItem(storageKey);
     
     let rawPosts: NewsItem[] = [];
-    if (savedPostsV2) {
+    if (savedPosts) {
       try {
-        rawPosts = JSON.parse(savedPostsV2);
+        rawPosts = JSON.parse(savedPosts);
       } catch {
         rawPosts = [];
       }
-    } else if (savedPostsV1) {
-      try {
-        rawPosts = JSON.parse(savedPostsV1);
-      } catch {
-        rawPosts = [];
+    } else {
+      // If empty and it is bulletin board, initialize with default bulletins
+      if (boardType === 'bulletin') {
+        rawPosts = defaultBulletins;
       }
     }
     
@@ -143,16 +182,19 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     setPosts(cleanedPosts);
     
     try {
-      localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleanedPosts));
+      localStorage.setItem(storageKey, JSON.stringify(cleanedPosts));
     } catch (e) {
       console.error('Failed to save initial posts to localStorage:', e);
     }
     
-    // Clean up old key
-    if (savedPostsV1) {
-      localStorage.removeItem('tbchch_posts');
+    // Clean up old key if news board
+    if (boardType === 'news') {
+      const savedPostsV1 = localStorage.getItem('tbchch_posts');
+      if (savedPostsV1) {
+        localStorage.removeItem('tbchch_posts');
+      }
     }
-  }, []);
+  }, [boardType, storageKey]);
 
   // Fetch file DataURLs from IndexedDB when a post is selected
   useEffect(() => {
@@ -181,7 +223,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
     const cleaned = updatedPosts.filter(p => p.writer !== '서유미');
     setPosts(cleaned);
     try {
-      localStorage.setItem('tbchch_posts_v2', JSON.stringify(cleaned));
+      localStorage.setItem(storageKey, JSON.stringify(cleaned));
     } catch (e) {
       console.error('Failed to save posts to localStorage:', e);
       alert('저장 용량이 초과되어 로컬 저장소 저장에 실패했습니다. 페이지를 새로고침하여 불필요한 데이터를 정리한 후 다시 시도해 주세요.');
@@ -494,7 +536,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
         <div className="bg-white p-6 md:p-10 rounded-[35px] border border-slate-100 shadow-xl space-y-6 animate-scaleUp">
           <div className="flex justify-between items-center pb-4 border-b border-slate-100">
             <h3 className="text-xl font-extrabold text-slate-800">
-              {isEditing ? '게시글 수정하기' : '새로운 교회 소식 등록'}
+              {isEditing ? (boardType === 'bulletin' ? '주보 수정하기' : '게시글 수정하기') : (boardType === 'bulletin' ? '새로운 주보 등록' : '새로운 교회 소식 등록')}
             </h3>
             <button 
               onClick={() => { setIsWriting(false); setIsEditing(false); }}
@@ -507,18 +549,30 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
           <form onSubmit={isEditing ? handleUpdatePost : handleCreatePost} className="space-y-4">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">구분</label>
-                <select
-                  value={formCategory}
-                  onChange={(e) => setFormCategory(e.target.value)}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-400"
-                >
-                  <option value="공지사항">공지사항</option>
-                  <option value="교회동정">교회동정</option>
-                  <option value="새가족소식">새가족소식</option>
-                </select>
-              </div>
+              {boardType !== 'bulletin' ? (
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">구분</label>
+                  <select
+                    value={formCategory}
+                    onChange={(e) => setFormCategory(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-purple-400"
+                  >
+                    <option value="공지사항">공지사항</option>
+                    <option value="교회동정">교회동정</option>
+                    <option value="새가족소식">새가족소식</option>
+                  </select>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">구분</label>
+                  <input
+                    type="text"
+                    value="주보"
+                    disabled
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-400 bg-slate-50 focus:outline-none font-bold"
+                  />
+                </div>
+              )}
               
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">작성자</label>
@@ -795,8 +849,12 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
           {/* TITLE & HEADER CONTROLS */}
           <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center pb-4 border-b border-slate-100">
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">교회소식</h2>
-              <p className="text-xs text-slate-400 font-light mt-1 font-mono">Home &gt; 교회소식 &gt; 알림 및 공지사항</p>
+              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                {boardType === 'bulletin' ? '주보' : '교회소식'}
+              </h2>
+              <p className="text-xs text-slate-400 font-light mt-1 font-mono">
+                {boardType === 'bulletin' ? 'Home > 교회소식 > 주보' : 'Home > 교회소식 > 알림 및 공지사항'}
+              </p>
             </div>
             
             {/* Search Bar */}
@@ -856,13 +914,13 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
                   setFormTitle('');
                   setFormWriter(currentUser?.name || '');
                   setFormContent('');
-                  setFormCategory('공지사항');
+                  setFormCategory(boardType === 'bulletin' ? '주보' : '공지사항');
                   setAttachedFiles([]);
                   setIsWriting(true);
                 }}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
               >
-                <Plus className="h-3.5 w-3.5" /> 글쓰기
+                <Plus className="h-3.5 w-3.5" /> {boardType === 'bulletin' ? '주보 올리기' : '글쓰기'}
               </button>
             )}
           </div>
@@ -873,7 +931,9 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
               <thead>
                 <tr className="border-t-2 border-b border-fuchsia-600 text-fuchsia-700 text-xs font-black bg-fuchsia-50/20">
                   <th className="py-3 px-4 text-center w-[8%] font-extrabold">번호</th>
-                  <th className="py-3 px-4 text-left w-[58%] font-extrabold">제목</th>
+                  <th className="py-3 px-4 text-left w-[58%] font-extrabold">
+                    {boardType === 'bulletin' ? '주보 제목' : '제목'}
+                  </th>
                   <th className="py-3 px-4 text-center w-[12%] font-extrabold">작성자</th>
                   <th className="py-3 px-4 text-center w-[14%] font-extrabold">등록일</th>
                   <th className="py-3 px-4 text-center w-[8%] font-extrabold">조회수</th>
@@ -950,7 +1010,7 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
                 ) : (
                   <tr>
                     <td colSpan={5} className="py-16 text-center text-slate-400 font-light leading-relaxed">
-                      등록된 게시글이 없습니다.
+                      {boardType === 'bulletin' ? '등록된 주보가 없습니다.' : '등록된 게시글이 없습니다.'}
                     </td>
                   </tr>
                 )}
@@ -1028,13 +1088,13 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
                     setFormTitle('');
                     setFormWriter(currentUser?.name || '');
                     setFormContent('');
-                    setFormCategory('공지사항');
+                    setFormCategory(boardType === 'bulletin' ? '주보' : '공지사항');
                     setAttachedFiles([]);
                     setIsWriting(true);
                   }}
                   className="bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                 >
-                  <Plus className="h-3.5 w-3.5" /> 글쓰기
+                  <Plus className="h-3.5 w-3.5" /> {boardType === 'bulletin' ? '주보 올리기' : '글쓰기'}
                 </button>
               ) : (
                 <div className="w-20" />

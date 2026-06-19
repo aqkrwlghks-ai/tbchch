@@ -394,7 +394,7 @@ export default function ChurchHome({
     | 'sermon-sunday' | 'sermon-wednesday' | 'sermon-friday' | 'praise-wednesday' | 'praise-friday'
     | 'meditation-life' | 'mission-group' | 'home-worship'
     | 'kids-school' | 'youth-adults'
-    | 'announcement' | 'activity-gallery' | 'form-archive'
+    | 'announcement' | 'activity-gallery' | 'weekly-bulletin'
     | 'member-business' | 'car-transportation' | 'safety-guide' | 'admin';
 
   const [currentPage, setCurrentPage] = useState<PageType>('home');
@@ -531,8 +531,10 @@ export default function ChurchHome({
         return { page: 'activity-gallery' };
       case 'activity-gallery':
         return { page: 'activity-gallery' };
+      case 'weekly-bulletin':
+        return { page: 'weekly-bulletin' };
       case 'form-archive':
-        return { page: 'form-archive' };
+        return { page: 'weekly-bulletin' };
         
       case 'member-business':
         return { page: 'member-business' };
@@ -726,9 +728,9 @@ export default function ChurchHome({
         title = '갤러리 (교회활동)';
         description = '성도들의 아름다운 만남과 나눔, 교회의 교제 현장을 사진첩으로 공유합니다.';
         break;
-      case 'form-archive':
-        title = '서식 자료실';
-        description = '온라인 신앙 신청 서식 원본 및 주보 다운로드를 신속히 지원합니다.';
+      case 'weekly-bulletin':
+        title = '주보';
+        description = '빛나는교회 매주 신선한 주보 및 소식을 전해드립니다.';
         break;
       case 'member-business':
         title = '교우 기업 소식';
@@ -2651,7 +2653,7 @@ export default function ChurchHome({
                 {/* Button 1 */}
                 <button
                   onClick={() => {
-                    navigateToPage('form-archive');
+                    navigateToPage('weekly-bulletin');
                   }}
                   className="w-full flex items-center justify-between p-4 bg-white hover:bg-blue-50 border border-slate-200 rounded-2xl text-left group shadow-sm transition-all"
                 >
@@ -2660,8 +2662,8 @@ export default function ChurchHome({
                       <FileText className="h-5 w-5" />
                     </div>
                     <div>
-                      <strong className="text-xs md:text-sm font-extrabold text-slate-900 block leading-tight">교회 소책자 및 서식자료실</strong>
-                      <span className="text-[11px] text-slate-400 mt-0.5 block">교인증명, 세례희망 신청원 양식 구비</span>
+                      <strong className="text-xs md:text-sm font-extrabold text-slate-900 block leading-tight">교회 주보</strong>
+                      <span className="text-[11px] text-slate-400 mt-0.5 block">빛나는교회 매주 주보 및 성경 공부 가이드북</span>
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
@@ -3199,44 +3201,15 @@ export default function ChurchHome({
         </section>
       )}
 
-      {/* 9.3.3 서식 자료실 */}
-      {currentPage === 'form-archive' && (
-        renderPermissionLock('정회원') || (
-          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
-          <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
-            <div>
-              <h3 className="text-xl font-black text-slate-900">교회 서식 자료 및 주보실</h3>
-              <p className="text-xs text-slate-400 mt-1">빛나는교회 성도님들의 다양한 신앙 행정 절차 신청서 및 최근 주보 파일을 다운로드받으실 수 있습니다.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {[
-                { title: '교적부 새신자 등록 원서', desc: '새가족 가입 후 교인 명부 등재용 신청서입니다.', file: '빛나는교회_교적원서.pdf' },
-                { title: '수례/입교 희망 신청원', desc: '세례 및 입교 문답을 위한 공식 서식 원지입니다.', file: '세례희망신청원.pdf' },
-                { title: '유아 세례 신청서', desc: '만 2세 미만 자녀의 유아세례 문답 신청원입니다.', file: '유아세례신청원.pdf' },
-                { title: '차량 등록 및 운행 증명원', desc: '성전 전용 주차권 및 차량 운행 신청원 양식.', file: '차량등록원서.pdf' },
-                { title: '기부금(헌금) 증명서 신청서', desc: '연말정산 헌금 영수증 발급용 행정 청원원.', file: '기부금증명신청서.pdf' },
-                { title: '구역 연합 묵상지 순서교재', desc: '이번 달 가정/구역예배 순서지가 내장된 인쇄 파일.', file: '구역예배순서지_6월호.pdf' },
-              ].map((item, idx) => (
-                <div key={idx} className="bg-slate-50 p-6 rounded-3xl border border-slate-150 hover:border-blue-200 transition-all flex flex-col justify-between space-y-5">
-                  <div className="space-y-2.5">
-                    <FileText className="h-6 w-6 text-blue-600" />
-                    <h4 className="text-xs md:text-sm font-black text-slate-900 leading-snug">{item.title}</h4>
-                    <p className="text-[11px] text-slate-500 leading-relaxed font-light">{item.desc}</p>
-                  </div>
-                  <button
-                    onClick={() => alert(`서식 파일 다운로드 시작:\n[${item.file}] 파일을 다운로드 하였습니다.`)}
-                    className="w-full bg-white hover:bg-slate-900 hover:text-white border border-slate-200 font-extrabold text-[10.5px] py-2.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-1 text-slate-800"
-                  >
-                    <Download className="h-3.5 w-3.5 text-blue-600" />
-                    서식 원본 받기 (PDF)
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* 9.3.3 주보 */}
+      {currentPage === 'weekly-bulletin' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+          <AnnouncementBoard 
+            currentUser={currentUser}
+            onOpenLogin={() => setLoginModalOpen(true)}
+            boardType="bulletin"
+          />
         </section>
-        )
       )}
 
       {/* 9.4.1 교우 기업 소식 */}
@@ -3557,7 +3530,7 @@ export default function ChurchHome({
               </div>
 
               <p className="text-center text-[10.5px] text-slate-400 font-mono">
-                구료세례등록 등 기타 행정원문은 주일 사무처 혹은 GNB 갤러리/서식실에서 가능합니다.
+                구료세례등록 등 기타 행정원문은 주일 사무처 혹은 GNB 갤러리/주보 게시판에서 가능합니다.
               </p>
             </div>
 
