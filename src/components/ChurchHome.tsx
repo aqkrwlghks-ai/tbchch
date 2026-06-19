@@ -2941,7 +2941,10 @@ export default function ChurchHome({
       {/* 9.3.1 알림 및 공지사항 (교회소식) */}
       {currentPage === 'announcement' && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 animate-fadeIn">
-          <AnnouncementBoard />
+          <AnnouncementBoard 
+            currentUser={currentUser} 
+            onOpenLogin={() => setLoginModalOpen(true)} 
+          />
         </section>
       )}
 
