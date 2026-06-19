@@ -44,6 +44,7 @@ import crossBg from '../cross_bg.png';
 import prayerHandsBg from '../prayer_hands_bg.png';
 import skyBg from '../sky_bg.png';
 import pastorPortrait from '../pastor_portrait.png';
+import AnnouncementBoard from './AnnouncementBoard';
 
 interface ChurchHomeProps {
   activeSloganId: string;
@@ -2939,43 +2940,8 @@ export default function ChurchHome({
 
       {/* 9.3.1 알림 및 공지사항 (교회소식) */}
       {currentPage === 'announcement' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-8 animate-fadeIn">
-          <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-6">
-            <div className="flex justify-between items-center border-b border-slate-150 pb-4">
-              <h3 className="text-xl font-black text-slate-900">빛나는교회 알림 소식 게시판</h3>
-              <span className="text-xs text-slate-400 font-mono font-medium">총 {churchNews.length}건</span>
-            </div>
-
-            <div className="divide-y divide-slate-150 space-y-4">
-              {churchNews.map((news) => (
-                <button
-                  key={news.id}
-                  onClick={() => setSelectedNews(news)}
-                  className="w-full text-left py-5 px-3 hover:bg-slate-50/70 rounded-2xl transition-all duration-150 block group"
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-full ${
-                          news.category === '공지사항' 
-                            ? 'bg-red-50 text-red-700 border border-red-200' 
-                            : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                        }`}>
-                          {news.category}
-                        </span>
-                        <span className="text-[11.5px] text-slate-400 font-mono font-medium">{news.date}</span>
-                      </div>
-                      <h4 className="text-sm md:text-base font-black text-slate-900 group-hover:text-blue-700 transition-colors">
-                        {news.title}
-                      </h4>
-                      <p className="text-xs md:text-sm text-slate-500 leading-relaxed font-light">{news.content}</p>
-                    </div>
-                    <ChevronRight className="h-4.5 w-4.5 text-slate-300 group-hover:text-slate-600 transition-colors shrink-0 mt-1" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 animate-fadeIn">
+          <AnnouncementBoard />
         </section>
       )}
 

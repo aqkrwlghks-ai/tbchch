@@ -51,9 +51,14 @@ export interface NewsItem {
   id: string;
   title: string;
   date: string;
-  category: '공지사항' | '교회동정' | '새가족소식';
+  category: string;
   writer: string;
   content: string;
+  views?: number;
+  files?: Array<{ name: string; size: string }>;
+  hasImage?: boolean;
+  commentsCount?: number;
+  isNew?: boolean;
 }
 
 // Gallery/Activity item
