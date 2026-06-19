@@ -31,7 +31,9 @@ import {
   Smile,
   ShoppingBag,
   ShieldCheck,
-  Car
+  Car,
+  Trash2,
+  Plus
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
@@ -45,6 +47,19 @@ import prayerHandsBg from '../prayer_hands_bg.png';
 import skyBg from '../sky_bg.png';
 import pastorPortrait from '../pastor_portrait.png';
 import AnnouncementBoard from './AnnouncementBoard';
+
+function parseYoutubeId(url: string): string | null {
+  const matchV = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (matchV && matchV[1]) return matchV[1];
+
+  const matchShort = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if (matchShort && matchShort[1]) return matchShort[1];
+
+  const matchEmbed = url.match(/\/embed\/([a-zA-Z0-9_-]+)/);
+  if (matchEmbed && matchEmbed[1]) return matchEmbed[1];
+
+  return null;
+}
 
 interface ChurchHomeProps {
   activeSloganId: string;
@@ -147,6 +162,26 @@ export default function ChurchHome({
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [activeVideo, setActiveVideo] = useState<SermonItem | null>(null);
+  
+  // Custom sermons list state
+  const [sermons, setSermons] = useState<any[]>(() => {
+    try {
+      const saved = localStorage.getItem('tbchch_sermons');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return sermonData;
+  });
+
+  // Sermon form states
+  const [sermonFormType, setSermonFormType] = useState('주일설교');
+  const [sermonFormDate, setSermonFormDate] = useState('');
+  const [sermonFormTitle, setSermonFormTitle] = useState('');
+  const [sermonFormPreacher, setSermonFormPreacher] = useState('');
+  const [sermonFormPassage, setSermonFormPassage] = useState('');
+  const [sermonFormUrl, setSermonFormUrl] = useState('');
+
   const [bulletinModalOpen, setBulletinModalOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   
@@ -367,20 +402,78 @@ export default function ChurchHome({
   const getFilteredSermons = () => {
     switch (currentPage) {
       case 'sermon-sunday':
-        return sermonData.filter(s => s.type === '주일설교');
+        return sermons.filter(s => s.type === '주일설교');
       case 'sermon-wednesday':
-        return sermonData.filter(s => s.type === '수요설교');
+        return sermons.filter(s => s.type === '수요설교');
       case 'sermon-friday':
-        return sermonData.filter(s => s.type === '금요설교');
+        return sermons.filter(s => s.type === '금요설교');
       case 'praise-wednesday':
-        return sermonData.filter(s => s.type === '수요찬양');
+        return sermons.filter(s => s.type === '수요찬양');
       case 'praise-friday':
-        return sermonData.filter(s => s.type === '금요찬양');
+        return sermons.filter(s => s.type === '금요찬양');
       default:
-        return sermonData;
+        return sermons;
     }
   };
   const filteredSermons = getFilteredSermons();
+
+  const handleCreateSermon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser || currentUser.role !== 'admin') {
+      alert('등록 권한이 없습니다.');
+      return;
+    }
+    if (!sermonFormTitle.trim() || !sermonFormUrl.trim()) {
+      alert('제목과 유튜브 주소를 입력하세요.');
+      return;
+    }
+
+    const videoId = parseYoutubeId(sermonFormUrl);
+    if (!videoId) {
+      alert('올바른 유튜브 주소가 아닙니다. 링크를 확인해 주세요.');
+      return;
+    }
+
+    const dateVal = sermonFormDate.trim() || new Date().toISOString().split('T')[0];
+    const newSermon = {
+      id: `sermon-${Date.now()}`,
+      title: sermonFormTitle,
+      preacher: sermonFormPreacher.trim() || '담임목사',
+      date: dateVal,
+      passage: sermonFormPassage.trim() || '성경구절 없음',
+      youtubeId: videoId,
+      thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+      type: sermonFormType
+    };
+
+    const updated = [newSermon, ...sermons];
+    setSermons(updated);
+    localStorage.setItem('tbchch_sermons', JSON.stringify(updated));
+
+    // Clear form
+    setSermonFormTitle('');
+    setSermonFormPassage('');
+    setSermonFormUrl('');
+    setSermonFormPreacher('');
+    
+    alert('새로운 설교/찬양 영상이 성공적으로 등록되었습니다.');
+  };
+
+  const handleDeleteSermon = (id: string) => {
+    if (!currentUser || currentUser.role !== 'admin') {
+      alert('삭제 권한이 없습니다.');
+      return;
+    }
+    if (window.confirm('이 설교/찬양 영상을 목록에서 삭제하시겠습니까?')) {
+      const updated = sermons.filter(s => s.id !== id);
+      setSermons(updated);
+      localStorage.setItem('tbchch_sermons', JSON.stringify(updated));
+      if (activeVideo && activeVideo.id === id) {
+        setActiveVideo(null);
+      }
+      alert('삭제되었습니다.');
+    }
+  };
 
   const getNavigationTarget = (link: string): { page: PageType; hash?: string } => {
     if (!link.startsWith('#')) {
@@ -1982,7 +2075,7 @@ export default function ChurchHome({
                   ) : (
                     <>
                       <img 
-                        src={filteredSermons[0]?.thumbnail || sermonData[0].thumbnail} 
+                        src={filteredSermons[0]?.thumbnail || sermons[0]?.thumbnail || sermonData[0].thumbnail} 
                         alt="Sermon backdrop"
                         className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-1000"
                       />
@@ -2005,12 +2098,12 @@ export default function ChurchHome({
                         {/* Video Title and bible info */}
                         <div className="text-left py-1 text-white">
                           <span className="text-xs text-blue-300 font-bold block">
-                            {(filteredSermons[0] || sermonData[0]).date} • {(filteredSermons[0] || sermonData[0]).preacher} {(filteredSermons[0] || sermonData[0]).type.includes('찬양') ? '찬양대' : '목사'}
+                            {(filteredSermons[0] || sermons[0] || sermonData[0]).date} • {(filteredSermons[0] || sermons[0] || sermonData[0]).preacher} {(filteredSermons[0] || sermons[0] || sermonData[0]).type.includes('찬양') ? '찬양대' : '목사'}
                           </span>
                           <h3 className="text-lg md:text-xl font-bold mt-1 leading-tight group-hover:text-amber-300 transition-colors">
-                            {(filteredSermons[0] || sermonData[0]).title}
+                            {(filteredSermons[0] || sermons[0] || sermonData[0]).title}
                           </h3>
-                          <p className="text-xs text-slate-300 mt-1 font-serif">성경본문: {(filteredSermons[0] || sermonData[0]).passage}</p>
+                          <p className="text-xs text-slate-300 mt-1 font-serif">성경본문: {(filteredSermons[0] || sermons[0] || sermonData[0]).passage}</p>
                         </div>
 
                       </div>
@@ -2024,10 +2117,10 @@ export default function ChurchHome({
                   <div className="text-left">
                     <span className="text-[10px] text-slate-400 font-extrabold">now playing info</span>
                     <p className="text-sm font-extrabold text-slate-800">
-                      {activeVideo ? activeVideo.title : (filteredSermons[0]?.title || sermonData[0].title)}
+                      {activeVideo ? activeVideo.title : (filteredSermons[0]?.title || sermons[0]?.title || sermonData[0].title)}
                     </p>
                     <p className="text-[11px] text-slate-500 font-serif mt-0.5">
-                      성경구절: {activeVideo ? activeVideo.passage : (filteredSermons[0]?.passage || sermonData[0].passage)}
+                      성경구절: {activeVideo ? activeVideo.passage : (filteredSermons[0]?.passage || sermons[0]?.passage || sermonData[0].passage)}
                     </p>
                   </div>
                   {activeVideo && (
@@ -2050,19 +2143,19 @@ export default function ChurchHome({
                 
                 <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
                   {filteredSermons.map((sermon) => {
-                    const isCurrentActive = activeVideo?.id === sermon.id || (!activeVideo && sermon.id === filteredSermons[0].id);
+                    const isCurrentActive = activeVideo?.id === sermon.id || (!activeVideo && filteredSermons[0] && sermon.id === filteredSermons[0].id);
                     return (
-                      <button
+                      <div
                         key={sermon.id}
                         onClick={() => setActiveVideo(sermon)}
-                        className={`w-full rounded-2xl p-4 border text-left transition-all ${
+                        className={`w-full rounded-2xl p-4 border text-left transition-all cursor-pointer relative group/sermonitem ${
                           isCurrentActive 
                             ? 'border-blue-600 bg-white shadow-md ring-2 ring-blue-100' 
                             : 'border-slate-200 hover:border-slate-300 bg-white'
                         }`}
                       >
                         <span className="text-[10px] text-blue-600 font-bold block">{sermon.date} {sermon.type}</span>
-                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 line-clamp-1 group-hover:text-blue-700 transition-colors">
+                        <h4 className="text-xs md:text-sm font-extrabold text-slate-900 mt-1 pr-8 line-clamp-1 group-hover:text-blue-700 transition-colors">
                           {sermon.title}
                         </h4>
                         <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-100 text-[11px] text-slate-400">
@@ -2071,7 +2164,20 @@ export default function ChurchHome({
                             {sermon.preacher}
                           </span>
                         </div>
-                      </button>
+                        {currentUser && currentUser.role === 'admin' && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteSermon(sermon.id);
+                            }}
+                            className="absolute right-4 top-4 text-slate-400 hover:text-red-600 transition-all p-1 hover:bg-slate-50 rounded-lg cursor-pointer"
+                            title="동영상 삭제"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -2098,6 +2204,88 @@ export default function ChurchHome({
 
               </div>
 
+            </div>
+          )}
+
+          {currentUser && currentUser.role === 'admin' && (
+            <div className="mt-12 bg-white border border-slate-200 rounded-[30px] p-6 md:p-8 shadow-xl max-w-4xl mx-auto">
+              <h3 className="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                <Plus className="h-5 w-5 text-blue-600" /> 새 예배/찬양 동영상 등록 (관리자용)
+              </h3>
+              <form onSubmit={handleCreateSermon} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">구분</label>
+                  <select
+                    value={sermonFormType}
+                    onChange={(e: any) => setSermonFormType(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  >
+                    <option value="주일설교">주일설교</option>
+                    <option value="수요설교">수요설교</option>
+                    <option value="금요설교">금요설교</option>
+                    <option value="수요찬양">수요찬양</option>
+                    <option value="금요찬양">금요찬양</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">날짜</label>
+                  <input
+                    type="text"
+                    placeholder="YYYY-MM-DD (예: 2026-06-19)"
+                    value={sermonFormDate}
+                    onChange={(e: any) => setSermonFormDate(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">제목</label>
+                  <input
+                    type="text"
+                    placeholder="설교/찬양 제목을 입력하세요"
+                    value={sermonFormTitle}
+                    onChange={(e: any) => setSermonFormTitle(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">설교자/담당</label>
+                  <input
+                    type="text"
+                    placeholder="예: 담임목사, 빛나는찬양대"
+                    value={sermonFormPreacher}
+                    onChange={(e: any) => setSermonFormPreacher(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">본문 말씀 (구절)</label>
+                  <input
+                    type="text"
+                    placeholder="예: 사도행전 1:8, 시편 100:1-3"
+                    value={sermonFormPassage}
+                    onChange={(e: any) => setSermonFormPassage(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">유튜브 공유 링크 또는 동영상 주소</label>
+                  <input
+                    type="text"
+                    placeholder="예: https://www.youtube.com/watch?v=... 또는 https://youtu.be/..."
+                    value={sermonFormUrl}
+                    onChange={(e: any) => setSermonFormUrl(e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                  />
+                </div>
+                <div className="md:col-span-2 flex justify-end gap-2 pt-2">
+                  <button
+                    type="submit"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-6 py-2.5 rounded-xl shadow-xs transition-all cursor-pointer"
+                  >
+                    동영상 등록
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 
