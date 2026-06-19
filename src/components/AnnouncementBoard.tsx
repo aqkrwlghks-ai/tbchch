@@ -53,18 +53,18 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin }: Announce
 
   // Initialize data (default to empty board as requested)
   useEffect(() => {
-    const savedPosts = localStorage.getItem('tbchch_posts');
+    const savedPosts = localStorage.getItem('tbchch_posts_v2');
     if (savedPosts) {
       setPosts(JSON.parse(savedPosts));
     } else {
       setPosts([]);
-      localStorage.setItem('tbchch_posts', JSON.stringify([]));
+      localStorage.setItem('tbchch_posts_v2', JSON.stringify([]));
     }
   }, []);
 
   const savePostsToStorage = (updatedPosts: NewsItem[]) => {
     setPosts(updatedPosts);
-    localStorage.setItem('tbchch_posts', JSON.stringify(updatedPosts));
+    localStorage.setItem('tbchch_posts_v2', JSON.stringify(updatedPosts));
   };
 
   // Search filter
