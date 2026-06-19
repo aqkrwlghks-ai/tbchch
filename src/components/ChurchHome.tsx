@@ -156,6 +156,67 @@ export default function ChurchHome({
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
   const [activeValue, setActiveValue] = useState<number | null>(null);
 
+  // User Authentication States
+  const [currentUser, setCurrentUser] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem('tbch_current_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [adminTab, setAdminTab] = useState<'users' | 'families'>('users');
+
+  // Initialize mock database for users and default admins
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('tbch_users')) {
+        const defaultUsers = [
+          {
+            username: 'jehee',
+            name: '김제희',
+            password: '1234',
+            gender: '남성',
+            denomination: '대한예수교장로회(합동)',
+            phone: '010-1111-2222',
+            role: 'admin',
+            grade: '정회원',
+            createdAt: new Date().toISOString()
+          },
+          {
+            username: 'jihwan',
+            name: '박지환',
+            password: '1234',
+            gender: '남성',
+            denomination: '대한예수교장로회(합동)',
+            phone: '010-3333-4444',
+            role: 'admin',
+            grade: '정회원',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem('tbch_users', JSON.stringify(defaultUsers));
+      }
+
+      if (!localStorage.getItem('tbch_new_families')) {
+        const dummyFamilies = [
+          {
+            id: 1,
+            name: '이영희',
+            phone: '010-9999-8888',
+            note: '양재동 거주, 스스로 등록 신청',
+            registeredAt: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem('tbch_new_families', JSON.stringify(dummyFamilies));
+      }
+    } catch (e) {
+      console.error('Failed to initialize mock localStorage database:', e);
+    }
+  }, []);
+
   const coreValues = [
     {
       title: '하나님 사랑 복음',
@@ -280,7 +341,7 @@ export default function ChurchHome({
     | 'meditation-life' | 'mission-group' | 'home-worship'
     | 'kids-school' | 'youth-adults'
     | 'announcement' | 'activity-gallery' | 'form-archive'
-    | 'member-business' | 'car-transportation' | 'safety-guide';
+    | 'member-business' | 'car-transportation' | 'safety-guide' | 'admin';
 
   const [currentPage, setCurrentPage] = useState<PageType>('home');
 
@@ -410,6 +471,78 @@ export default function ChurchHome({
     e.preventDefault();
     const { page, hash } = getNavigationTarget(link);
     navigateToPage(page, hash);
+  };
+
+  const renderPermissionLock = (requiredGrade: '정회원' | '로그인') => {
+    const isNotLoggedIn = !currentUser;
+    const isInsufficientGrade = currentUser && requiredGrade === '정회원' && currentUser.grade !== '정회원' && currentUser.role !== 'admin';
+
+    if (isNotLoggedIn) {
+      return (
+        <div className="relative overflow-hidden bg-slate-50 py-20 min-h-[60vh] flex items-center justify-center animate-fadeIn">
+          <div className="bg-white rounded-3xl p-8 md:p-12 border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6">
+            <div className="h-16 w-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">로그인이 필요합니다</h3>
+              <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
+                이 페이지는 빛나는교회 등록 성도 전용 공간입니다.<br />
+                로그인 하신 후 더 많은 서비스를 안전하게 이용해 보세요.
+              </p>
+            </div>
+            <div className="pt-2 flex flex-col gap-2">
+              <button
+                onClick={() => setLoginModalOpen(true)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                성도 로그인하기
+              </button>
+              <button
+                onClick={() => setSignupModalOpen(true)}
+                className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs py-3 rounded-xl transition-all"
+              >
+                신규 회원가입 신청
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (isInsufficientGrade) {
+      return (
+        <div className="relative overflow-hidden bg-slate-50 py-20 min-h-[60vh] flex items-center justify-center animate-fadeIn">
+          <div className="bg-white rounded-3xl p-8 md:p-12 border border-slate-150 shadow-xl max-w-md w-full text-center space-y-6">
+            <div className="h-16 w-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">정회원 등급 권한이 필요합니다</h3>
+              <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
+                현재 성도님의 등급은 <strong className="text-blue-600">{currentUser.grade}</strong>입니다.<br />
+                이 페이지는 <strong className="text-indigo-900">정회원</strong> 등급 이상만 열람이 가능합니다.<br />
+                사무처 또는 관리자(김제희, 박지환)에게 등급 승인을 요청하세요.
+              </p>
+            </div>
+            <div className="pt-2">
+              <button
+                onClick={() => navigateToPage('home')}
+                className="w-full bg-slate-900 hover:bg-slate-950 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                홈페이지 메인으로 가기
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   // Subpage Hero Banner
@@ -670,7 +803,7 @@ export default function ChurchHome({
             </nav>
 
             {/* Right Action Widgets (YouTube Direct Live Link Required) */}
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-3 animate-fadeIn">
               {/* YouTube Direct Anchor Link - [필수 사항] */}
               <a 
                 href="https://www.youtube.com/@TheBrighteningchurch"
@@ -693,6 +826,59 @@ export default function ChurchHome({
                 <FileText className="h-3.5 w-3.5 text-blue-600" />
                 <span>금주의 주보</span>
               </button>
+
+              {/* Authentication Widgets */}
+              <div className="flex items-center gap-2 border-l border-slate-200 pl-3 ml-1">
+                {currentUser ? (
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex flex-col text-right">
+                      <span className="text-[11.5px] font-black text-slate-900 leading-none">
+                        {currentUser.name} {currentUser.role === 'admin' ? '관리자' : currentUser.grade}님
+                      </span>
+                      <span className="text-[9px] text-slate-400 font-medium tracking-tight mt-0.5">환영합니다</span>
+                    </div>
+                    {currentUser.role === 'admin' && (
+                      <button
+                        onClick={() => navigateToPage('admin' as any)}
+                        className={`text-[10px] font-extrabold px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
+                          currentPage === 'admin'
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-white border-blue-200 text-blue-700 hover:bg-blue-50'
+                        }`}
+                      >
+                        관리자 모드
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem('tbch_current_user');
+                        setCurrentUser(null);
+                        navigateToPage('home');
+                        alert('로그아웃 완료: 평안한 하루 되십시오.');
+                      }}
+                      className="text-[10px] bg-slate-100 hover:bg-slate-200 border border-slate-200/50 text-slate-600 font-bold px-3 py-1.5 rounded-full transition-all cursor-pointer"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setLoginModalOpen(true)}
+                      className="text-xs text-slate-700 hover:text-blue-700 font-bold px-3 py-2 rounded-lg hover:bg-slate-50 transition-all cursor-pointer"
+                    >
+                      로그인
+                    </button>
+                    <span className="text-slate-300 text-xs">|</span>
+                    <button
+                      onClick={() => setSignupModalOpen(true)}
+                      className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-extrabold px-3.5 py-2 rounded-lg shadow-sm hover:scale-102 active:scale-98 transition-all cursor-pointer"
+                    >
+                      회원가입
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Mobile Menu Toggle Button */}
@@ -712,6 +898,69 @@ export default function ChurchHome({
         {/* Mobile Sidebar overlay dropdowns */}
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-slate-100 bg-white py-3 px-4 shadow-inner space-y-2 animate-fadeIn max-h-[80vh] overflow-y-auto">
+            {/* Mobile User Authentication Section */}
+            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-2 mb-2 text-left">
+              {currentUser ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-black text-slate-900">
+                      {currentUser.name} {currentUser.role === 'admin' ? '관리자' : currentUser.grade}님
+                    </span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">빛나는교회에 오신 것을 환영합니다</span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {currentUser.role === 'admin' && (
+                      <button
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          navigateToPage('admin' as any);
+                        }}
+                        className="text-[10.5px] bg-blue-600 text-white font-extrabold px-2.5 py-1.5 rounded-md shadow-sm cursor-pointer"
+                      >
+                        관리자
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem('tbch_current_user');
+                        setCurrentUser(null);
+                        setMobileMenuOpen(false);
+                        navigateToPage('home');
+                        alert('로그아웃 완료: 평안한 하루 되십시오.');
+                      }}
+                      className="text-[10.5px] bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-md cursor-pointer"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-500">서비스 이용을 위해 로그인해주세요.</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setLoginModalOpen(true);
+                      }}
+                      className="text-xs bg-slate-200 text-slate-800 font-bold px-3 py-2 rounded-lg cursor-pointer"
+                    >
+                      로그인
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setSignupModalOpen(true);
+                      }}
+                      className="text-xs bg-blue-600 text-white font-extrabold px-3 py-2 rounded-lg cursor-pointer"
+                    >
+                      회원가입
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Quick Youtube Action in mobile prominent placement */}
             <div className="p-2">
               <a 
@@ -942,7 +1191,7 @@ export default function ChurchHome({
         </>
       )}
 
-      {currentPage !== 'home' && currentPage !== 'greeting' && currentPage !== 'worship' && renderSubHero()}
+      {currentPage !== 'home' && currentPage !== 'greeting' && currentPage !== 'worship' && currentPage !== 'admin' && renderSubHero()}
 
       {/* 5. WELCOME SECTION (Pastor's Remodeled Greeting + 4 core grids) */}
       {currentPage === 'home' && (
@@ -2483,7 +2732,8 @@ export default function ChurchHome({
 
       {/* 9.1.3 가정 및 구역 예배 */}
       {currentPage === 'home-worship' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
+        renderPermissionLock('정회원') || (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-16 animate-fadeIn">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             <div className="lg:col-span-8 space-y-8">
               <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-6">
@@ -2585,6 +2835,7 @@ export default function ChurchHome({
             </div>
           </div>
         </section>
+        )
       )}
 
       {/* 9.2.1 교회학교 (어린이) */}
@@ -2798,7 +3049,8 @@ export default function ChurchHome({
 
       {/* 9.3.3 서식 자료실 */}
       {currentPage === 'form-archive' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+        renderPermissionLock('정회원') || (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
           <div className="bg-white p-8 md:p-10 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
             <div>
               <h3 className="text-xl font-black text-slate-900">교회 서식 자료 및 주보실</h3>
@@ -2832,11 +3084,13 @@ export default function ChurchHome({
             </div>
           </div>
         </section>
+        )
       )}
 
       {/* 9.4.1 교우 기업 소식 */}
       {currentPage === 'member-business' && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
+        renderPermissionLock('로그인') || (
+          <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-10 animate-fadeIn">
           <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-xl space-y-8">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-6">
               <div className="max-w-3xl space-y-4">
@@ -2881,6 +3135,7 @@ export default function ChurchHome({
             </div>
           </div>
         </section>
+        )
       )}
 
       {/* 9.4.2 셔틀 및 차량운행 정보 */}
@@ -3179,8 +3434,29 @@ export default function ChurchHome({
 
             <form onSubmit={(e) => {
               e.preventDefault();
-              alert('새가족 등록 완료:\n빛나는 교회 온라인 새가족 가등록을 진심으로 축복하고 완료했습니다!\n인도자부서에서 곧 친절하게 웰컴 안내 전화를 드리겠습니다.');
-              setNewFamilyFormOpen(false);
+              const target = e.target as any;
+              const name = target.familyName.value.trim();
+              const phone = target.familyPhone.value.trim();
+              const note = target.familyNote.value.trim();
+
+              try {
+                const families = JSON.parse(localStorage.getItem('tbch_new_families') || '[]');
+                const newRecord = {
+                  id: Date.now(),
+                  name,
+                  phone,
+                  note,
+                  registeredAt: new Date().toISOString()
+                };
+                families.push(newRecord);
+                localStorage.setItem('tbch_new_families', JSON.stringify(families));
+                
+                alert('새가족 등록 완료:\n빛나는 교회 온라인 새가족 등록이 완료되었습니다!\n확인 후 인도자 부서에서 곧 친절하게 웰컴 안내 전화를 드리겠습니다.');
+                setNewFamilyFormOpen(false);
+              } catch (err) {
+                console.error(err);
+                alert('새가족 등록 중 오류가 발생했습니다.');
+              }
             }} className="p-6 space-y-4">
               
               <div className="text-xs text-slate-500 leading-normal bg-slate-50 p-3.5 rounded-xl border border-slate-100">
@@ -3191,15 +3467,15 @@ export default function ChurchHome({
               <div className="space-y-3">
                 <div>
                   <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">지체(성도) 이름</label>
-                  <input required placeholder="홍길동" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50" />
+                  <input required name="familyName" placeholder="홍길동" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" />
                 </div>
                 <div>
                   <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">연락처 전화번호</label>
-                  <input required placeholder="010-1234-5678" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50" />
+                  <input required name="familyPhone" placeholder="010-1234-5678" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" />
                 </div>
                 <div>
                   <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">비고 (거주 동명 혹은 인도 성도 존스)</label>
-                  <input placeholder="인도자 성함 혹은 요청사항 기재" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50" />
+                  <input name="familyNote" placeholder="인도자 성함 혹은 요청사항 기재" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" />
                 </div>
               </div>
 
@@ -3580,6 +3856,424 @@ export default function ChurchHome({
                 닫기
               </button>
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 18. ADMINISTRATOR PANEL */}
+      {currentPage === ('admin' as any) && (
+        currentUser && currentUser.role === 'admin' ? (
+          <section className="relative overflow-hidden bg-[#f8fafc] py-12 md:py-16 min-h-screen animate-fadeIn" id="admin-panel-page">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="flex justify-between items-end border-b border-slate-200 pb-3 mb-10">
+                <h2 className="text-xl md:text-2xl font-black text-slate-900 font-sans flex items-center gap-2">
+                  <ShieldCheck className="h-6 w-6 text-blue-700" />
+                  관리자 시스템 설정 모드
+                </h2>
+                <span className="text-[11px] md:text-xs text-slate-400 font-medium font-sans">SYSTEM &gt; ADMIN PANEL</span>
+              </div>
+
+              <div className="flex border-b border-slate-200 mb-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                <button
+                  onClick={() => setAdminTab('users')}
+                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all ${
+                    adminTab === 'users'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  }`}
+                >
+                  성도 등급 및 권한 설정
+                </button>
+                <button
+                  onClick={() => setAdminTab('families')}
+                  className={`flex-1 py-3 text-center text-xs font-black rounded-xl transition-all ${
+                    adminTab === 'families'
+                      ? 'bg-blue-600 text-white shadow'
+                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                  }`}
+                >
+                  온라인 새가족 등록 명단
+                </button>
+              </div>
+
+              {adminTab === 'users' && (
+                <div className="bg-white rounded-3xl border border-slate-150 shadow-md overflow-hidden">
+                  <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <div>
+                      <h3 className="font-extrabold text-slate-950 text-sm">성도 명단 및 등급 통제</h3>
+                      <p className="text-[11px] text-slate-400 mt-0.5">회원가입한 성도들의 등급(정회원/준회원/새가족) 및 관리자 권한을 관리합니다.</p>
+                    </div>
+                    <span className="bg-blue-50 text-blue-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-blue-100">
+                      실시간 동기화 데이터
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs md:text-sm">
+                      <thead>
+                        <tr className="bg-slate-100/50 text-[11px] font-black uppercase text-slate-500 tracking-wider border-b border-slate-150">
+                          <th className="px-6 py-4">아이디 (ID)</th>
+                          <th className="px-6 py-4">이름</th>
+                          <th className="px-6 py-4">성별</th>
+                          <th className="px-6 py-4">소속 교단</th>
+                          <th className="px-6 py-4">연락처</th>
+                          <th className="px-6 py-4">가입일</th>
+                          <th className="px-6 py-4">등급 설정</th>
+                          <th className="px-6 py-4">권한</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {(() => {
+                          const users = JSON.parse(localStorage.getItem('tbch_users') || '[]');
+                          return users.map((user: any, idxVal: number) => (
+                            <tr key={idxVal} className="hover:bg-slate-50/50 transition-colors">
+                              <td className="px-6 py-4 font-mono font-bold text-slate-600">{user.username}</td>
+                              <td className="px-6 py-4 font-extrabold text-slate-950">{user.name}</td>
+                              <td className="px-6 py-4 text-slate-500">{user.gender}</td>
+                              <td className="px-6 py-4 text-slate-500">{user.denomination}</td>
+                              <td className="px-6 py-4 text-slate-600 font-mono">{user.phone}</td>
+                              <td className="px-6 py-4 text-slate-400 font-mono text-[10px]">
+                                {user.createdAt ? new Date(user.createdAt).toLocaleDateString('ko-KR') : '-'}
+                              </td>
+                              <td className="px-6 py-3">
+                                <select
+                                  value={user.grade}
+                                  onChange={(e) => {
+                                    const newGrade = e.target.value;
+                                    const updatedUsers = [...users];
+                                    updatedUsers[idxVal].grade = newGrade;
+                                    localStorage.setItem('tbch_users', JSON.stringify(updatedUsers));
+                                    
+                                    if (currentUser && currentUser.username === user.username) {
+                                      const updatedUserObj = { ...currentUser, grade: newGrade };
+                                      localStorage.setItem('tbch_current_user', JSON.stringify(updatedUserObj));
+                                      setCurrentUser(updatedUserObj);
+                                    }
+                                    
+                                    alert(`${user.name} 성도님의 등급이 [${newGrade}](으)로 변경되었습니다.`);
+                                  }}
+                                  className="border border-slate-300 rounded px-2 py-1 bg-white text-xs font-bold text-slate-700 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                                >
+                                  <option value="정회원">정회원</option>
+                                  <option value="준회원">준회원</option>
+                                  <option value="새가족">새가족</option>
+                                </select>
+                              </td>
+                              <td className="px-6 py-3">
+                                <select
+                                  value={user.role}
+                                  onChange={(e) => {
+                                    const newRole = e.target.value;
+                                    const updatedUsers = [...users];
+                                    updatedUsers[idxVal].role = newRole;
+                                    localStorage.setItem('tbch_users', JSON.stringify(updatedUsers));
+
+                                    if (currentUser && currentUser.username === user.username) {
+                                      const updatedUserObj = { ...currentUser, role: newRole };
+                                      localStorage.setItem('tbch_current_user', JSON.stringify(updatedUserObj));
+                                      setCurrentUser(updatedUserObj);
+                                    }
+
+                                    alert(`${user.name} 성도님의 시스템 권한이 [${newRole}](으)로 변경되었습니다.`);
+                                  }}
+                                  className="border border-slate-300 rounded px-2 py-1 bg-white text-xs font-bold text-slate-700 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                                >
+                                  <option value="member">일반성도</option>
+                                  <option value="admin">관리자</option>
+                                </select>
+                              </td>
+                            </tr>
+                          ));
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {adminTab === 'families' && (
+                <div className="bg-white rounded-3xl border border-slate-150 shadow-md overflow-hidden">
+                  <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <div>
+                      <h3 className="font-extrabold text-slate-950 text-sm">온라인 새가족 접수 내역</h3>
+                      <p className="text-[11px] text-slate-400 mt-0.5">성도들이 홈페이지에서 등록 신청한 실시간 새가족 가등록 명단입니다.</p>
+                    </div>
+                    <span className="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-3 py-1 rounded-full border border-emerald-100">
+                      신청자 관리 폴더
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs md:text-sm">
+                      <thead>
+                        <tr className="bg-slate-100/50 text-[11px] font-black uppercase text-slate-500 tracking-wider border-b border-slate-150">
+                          <th className="px-6 py-4">신청자 성함</th>
+                          <th className="px-6 py-4">연락처 전화번호</th>
+                          <th className="px-6 py-4">거주지 / 인도자 비고</th>
+                          <th className="px-6 py-4">신청 일시</th>
+                          <th className="px-6 py-4 text-center">동작</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {(() => {
+                          const families = JSON.parse(localStorage.getItem('tbch_new_families') || '[]');
+                          if (families.length === 0) {
+                            return (
+                              <tr>
+                                <td colSpan={5} className="px-6 py-12 text-center text-slate-400 font-medium">
+                                  접수된 새가족 신청자가 없습니다.
+                                </td>
+                              </tr>
+                            );
+                          }
+                          return families.map((fam: any, idxVal: number) => (
+                            <tr key={fam.id} className="hover:bg-slate-50/50 transition-colors">
+                              <td className="px-6 py-4 font-extrabold text-slate-950">{fam.name}</td>
+                              <td className="px-6 py-4 font-mono text-slate-600">{fam.phone}</td>
+                              <td className="px-6 py-4 text-slate-500">{fam.note || '-'}</td>
+                              <td className="px-6 py-4 text-slate-400 font-mono text-[10px]">
+                                {fam.registeredAt ? new Date(fam.registeredAt).toLocaleString('ko-KR') : '-'}
+                              </td>
+                              <td className="px-6 py-3 text-center">
+                                <button
+                                  onClick={() => {
+                                    if (confirm(`${fam.name} 새가족 신청 내역을 완료 처리하고 삭제하시겠습니까?`)) {
+                                      const updated = families.filter((f: any) => f.id !== fam.id);
+                                      localStorage.setItem('tbch_new_families', JSON.stringify(updated));
+                                      navigateToPage('admin' as any);
+                                      alert('삭제 및 처리 완료되었습니다.');
+                                    }
+                                  }}
+                                  className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-[10.5px] font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                                >
+                                  처리/삭제
+                                </button>
+                              </td>
+                            </tr>
+                          ));
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </section>
+        ) : (
+          <div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <p className="text-slate-500 text-sm font-bold">비정상적인 접근입니다. 관리자로 로그인해주세요.</p>
+          </div>
+        )
+      )}
+
+      {/* 19. LOGIN MODAL */}
+      {loginModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp">
+            
+            <div className="bg-gradient-to-r from-blue-900 to-indigo-950 text-white p-5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <User className="h-5 w-5 text-amber-400" />
+                <h3 className="font-extrabold text-md">성도 로그인</h3>
+              </div>
+              <button 
+                onClick={() => setLoginModalOpen(false)}
+                className="text-white/80 hover:text-white rounded-full p-1 cursor-pointer"
+                title="닫기"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const target = e.target as any;
+              const username = target.username.value.trim();
+              const password = target.password.value;
+
+              try {
+                const users = JSON.parse(localStorage.getItem('tbch_users') || '[]');
+                const user = users.find(
+                  (u: any) =>
+                    u.username === username || u.name === username
+                );
+
+                if (user && user.password === password) {
+                  localStorage.setItem('tbch_current_user', JSON.stringify(user));
+                  setCurrentUser(user);
+                  setLoginModalOpen(false);
+                  alert(`${user.name}님, 로그인되었습니다.`);
+                  if (user.role === 'admin') {
+                    navigateToPage('admin' as any);
+                  }
+                } else {
+                  alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+                }
+              } catch (err) {
+                console.error(err);
+                alert('로그인 처리 중 오류가 발생했습니다.');
+              }
+            }} className="p-6 space-y-4">
+              
+              <div className="space-y-3 bg-white">
+                <div>
+                  <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight text-left">아이디 (ID 또는 성함)</label>
+                  <input required name="username" placeholder="아이디 또는 이름 입력" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                </div>
+                <div>
+                  <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight text-left">비밀번호</label>
+                  <input required name="password" type="password" placeholder="••••" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-all cursor-pointer"
+                >
+                  로그인하기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginModalOpen(false);
+                    setSignupModalOpen(true);
+                  }}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-lg transition-all cursor-pointer"
+                >
+                  아직 계정이 없으신가요? 회원가입
+                </button>
+              </div>
+
+              <div className="text-[10px] text-center text-slate-400 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                기본 관리자 계정: <strong>jehee</strong> (김제희) 또는 <strong>jihwan</strong> (박지환) / 비밀번호: <strong>1234</strong>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* 20. SIGNUP MODAL */}
+      {signupModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-100 animate-scaleUp">
+            
+            <div className="bg-gradient-to-r from-blue-900 to-indigo-950 text-white p-5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-amber-400 animate-pulse" />
+                <h3 className="font-extrabold text-md">빛나는교회 성도 회원가입</h3>
+              </div>
+              <button 
+                onClick={() => setSignupModalOpen(false)}
+                className="text-white/80 hover:text-white rounded-full p-1 cursor-pointer"
+                title="닫기"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const target = e.target as any;
+              const username = target.username.value.trim();
+              const password = target.password.value;
+              const name = target.name.value.trim();
+              const gender = target.gender.value;
+              const denomination = target.denomination.value.trim();
+              const phone = target.phone.value.trim();
+
+              try {
+                const users = JSON.parse(localStorage.getItem('tbch_users') || '[]');
+                
+                if (users.some((u: any) => u.username === username)) {
+                  alert('이미 사용 중인 아이디입니다.');
+                  return;
+                }
+
+                const newUser = {
+                  username,
+                  password,
+                  name,
+                  gender,
+                  denomination,
+                  phone,
+                  role: 'member',
+                  grade: '준회원',
+                  createdAt: new Date().toISOString()
+                };
+
+                users.push(newUser);
+                localStorage.setItem('tbch_users', JSON.stringify(users));
+                
+                alert('회원가입이 완료되었습니다!\n가입 승인 등급은 준회원입니다. 로그인 후 서비스를 이용하세요.');
+                setSignupModalOpen(false);
+                setLoginModalOpen(true);
+              } catch (err) {
+                console.error(err);
+                alert('회원가입 처리 중 오류가 발생했습니다.');
+              }
+            }} className="p-6 space-y-3.5 max-h-[85vh] overflow-y-auto">
+              
+              <div className="space-y-3 bg-white text-left">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">아이디 (Login ID)</label>
+                    <input required name="username" placeholder="jehee12" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                  </div>
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">비밀번호</label>
+                    <input required name="password" type="password" placeholder="••••" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">성함 (이름)</label>
+                    <input required name="name" placeholder="홍길동" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                  </div>
+                  <div>
+                    <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">성별</label>
+                    <select required name="gender" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 cursor-pointer">
+                      <option value="남성">남성</option>
+                      <option value="여성">여성</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">기존 교단 (또는 신급)</label>
+                  <input required name="denomination" placeholder="예: 대한예수교장로회(합동), 기감 등" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                </div>
+
+                <div>
+                  <label className="block text-[11.5px] font-bold text-slate-700 tracking-tight">연락처 전화번호</label>
+                  <input required name="phone" placeholder="010-1234-5678" className="w-full mt-1 px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800" />
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md transition-all cursor-pointer"
+                >
+                  가입 신청 완료
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSignupModalOpen(false);
+                    setLoginModalOpen(true);
+                  }}
+                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-lg transition-all cursor-pointer"
+                >
+                  이미 아이디가 있으신가요? 로그인
+                </button>
+              </div>
+
+            </form>
 
           </div>
         </div>
