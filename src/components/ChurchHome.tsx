@@ -186,7 +186,7 @@ export default function ChurchHome({
             createdAt: new Date().toISOString()
           },
           {
-            username: 'jihwan',
+            username: 'aqkrwlghks',
             name: '박지환',
             password: '1234',
             gender: '남성',
@@ -802,33 +802,10 @@ export default function ChurchHome({
               ))}
             </nav>
 
-            {/* Right Action Widgets (YouTube Direct Live Link Required) */}
+            {/* Right Action Widgets (Authentication Only) */}
             <div className="hidden lg:flex items-center gap-3 animate-fadeIn">
-              {/* YouTube Direct Anchor Link - [필수 사항] */}
-              <a 
-                href="https://www.youtube.com/@TheBrighteningchurch"
-                target="_blank"
-                referrerPolicy="no-referrer"
-                className="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs px-4 py-2.5 rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all"
-                title="공식 유튜브 채널에서 실시간 예배와 설교 다시보기를 바로 재생합니다."
-                id="youtube-live-btn"
-              >
-                <Youtube className="h-4.5 w-4.5 animate-pulse fill-white" />
-                <span>유튜브 실시간 LIVE</span>
-                <span className="flex h-1.5 w-1.5 rounded-full bg-white"></span>
-              </a>
-
-              {/* Weekly Bulletin Download Modal shortcut */}
-              <button
-                onClick={() => setBulletinModalOpen(true)}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-1 shadow-inner border border-slate-200/55"
-              >
-                <FileText className="h-3.5 w-3.5 text-blue-600" />
-                <span>금주의 주보</span>
-              </button>
-
               {/* Authentication Widgets */}
-              <div className="flex items-center gap-2 border-l border-slate-200 pl-3 ml-1">
+              <div className="flex items-center gap-2 pl-1">
                 {currentUser ? (
                   <div className="flex items-center gap-2.5">
                     <div className="flex flex-col text-right">
@@ -4147,7 +4124,7 @@ export default function ChurchHome({
               </div>
 
               <div className="text-[10px] text-center text-slate-400 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                기본 관리자 계정: <strong>jehee</strong> (김제희) 또는 <strong>jihwan</strong> (박지환) / 비밀번호: <strong>1234</strong>
+                기본 관리자 계정: <strong>jehee</strong> (김제희) 또는 <strong>aqkrwlghks</strong> (박지환) / 비밀번호: <strong>1234</strong>
               </div>
 
             </form>
