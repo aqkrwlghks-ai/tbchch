@@ -52,7 +52,8 @@ export const gnbMenuData: MenuItem[] = [
     subMenu: [
       { name: '알림 및 공지사항', link: '#announcement', id: 'announcement' },
       { name: '갤러리(교회활동)', link: '#activity-gallery', id: 'activity-gallery' },
-      { name: '주보', link: '#weekly-bulletin', id: 'weekly-bulletin' }
+      { name: '주보', link: '#weekly-bulletin', id: 'weekly-bulletin' },
+      { name: '공식 인스타그램', link: 'https://www.instagram.com/kimjehee1234/', id: 'instagram' }
     ]
   },
   {

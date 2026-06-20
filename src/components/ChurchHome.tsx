@@ -36,7 +36,8 @@ import {
   Plus,
   Activity,
   Award,
-  BarChart2
+  BarChart2,
+  Instagram
 } from 'lucide-react';
 import { gnbMenuData, bannerSlogans, worshipSchedules, sermonData, churchNews, galleryPhotos, polishedPastorMessage } from '../data';
 import { MenuItem, SermonItem, NewsItem } from '../types';
@@ -1347,7 +1348,7 @@ export default function ChurchHome({
 
       {/* 4. OVERLAPPING QUICK LINK CARDS (Yeoju Church Benchmarked Centerpiece) */}
       <div className="relative z-20 max-w-6xl mx-auto px-4 -mt-10 sm:-mt-12 md:-mt-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* CARD 1: 금주의 주보 */}
           <button 
@@ -1400,6 +1401,25 @@ export default function ChurchHome({
             <div className="mt-4">
               <h3 className="text-md font-extrabold text-slate-900 group-hover:text-red-600 transition-colors">유튜브 방송국</h3>
               <p className="text-xs text-slate-500 mt-1">주일 대예배 실시간 스트리밍 시청 및 지난 아카이브 보기.</p>
+            </div>
+          </a>
+
+          {/* CARD 4: 공식 인스타그램 */}
+          <a
+            href="https://www.instagram.com/kimjehee1234/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white rounded-2xl p-6 shadow-xl transition-all hover:scale-[1.02] flex flex-col justify-between group min-h-[160px] text-left border-0"
+          >
+            <div className="flex justify-between items-start w-full">
+              <div className="rounded-xl bg-white/10 text-white p-3.5 group-hover:bg-white group-hover:text-pink-600 transition-all">
+                <Instagram className="h-6 w-6" />
+              </div>
+              <span className="bg-white/20 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full">INSTAGRAM</span>
+            </div>
+            <div className="mt-4">
+              <h3 className="text-md font-extrabold text-white group-hover:text-amber-200 transition-colors">공식 인스타그램</h3>
+              <p className="text-xs text-purple-100 mt-1">빛나는교회 일상 소식 및 사진 피드 구경하기.</p>
             </div>
           </a>
 
@@ -3543,6 +3563,15 @@ export default function ChurchHome({
                   title="유튜브 바로가기"
                 >
                   <Youtube className="h-4.5 w-4.5" />
+                </a>
+                <a 
+                  href="https://www.instagram.com/kimjehee1234/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-400 hover:text-white bg-slate-800 p-2 rounded-full transition-colors"
+                  title="인스타그램 바로가기"
+                >
+                  <Instagram className="h-4.5 w-4.5" />
                 </a>
               </div>
             </div>
