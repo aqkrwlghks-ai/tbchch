@@ -3617,15 +3617,26 @@ export default function ChurchHome({
                 <div className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center p-3 text-center transition-opacity group-hover:bg-slate-950/70 z-10">
                   <span className="text-[10px] text-blue-400 font-extrabold uppercase font-sans">Gps Navigation Mock</span>
                   <p className="text-xs text-white font-bold mt-1">빛나는교회 네비게이션 약도</p>
-                  <button 
-                    onClick={() => {
-                      navigator.clipboard.writeText('충청남도 계룡시 번영9길 14');
-                      alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 클립보드에 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 충청남도 계룡시 번영9길 14');
-                    }}
-                    className="mt-2.5 bg-blue-600 hover:bg-blue-750 text-white font-mono font-bold text-[10px] px-3 py-1 rounded transition-transform hover:scale-105 active:scale-95"
-                  >
-                    주소 복사하기
-                  </button>
+                  <div className="flex gap-2 mt-2.5">
+                    <a 
+                      href="https://map.naver.com/p/entry/place/17619321?c=17.76,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606232139&locale=ko&svcName=map_pcv5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-bold text-[10px] px-3 py-1.5 rounded transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                    >
+                      <Map className="h-3 w-3" />
+                      네이버 지도 보기
+                    </a>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText('충청남도 계룡시 번영9길 14');
+                        alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 클립보드에 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 충청남도 계룡시 번영9길 14');
+                      }}
+                      className="bg-blue-600 hover:bg-blue-750 text-white font-mono font-bold text-[10px] px-3 py-1.5 rounded transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
+                    >
+                      주소 복사하기
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
