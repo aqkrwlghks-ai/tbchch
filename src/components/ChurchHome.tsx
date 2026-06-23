@@ -80,10 +80,10 @@ const bgSliderImages = [
 ];
 
 // 구글 앱스 스크립트 웹앱 배포 URL (여기에 발급받으신 웹앱 URL을 입력하시면 구글 드라이브와 자동 연동됩니다)
-const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbyplnfEvCxHfD-eNk6GMsIe0OeQeIEL1TM0P6CUIjMZrY7_HqmJsEoCQxNhqx_jbREC/exec';
+const GOOGLE_DRIVE_API_URL = 'https://script.google.com/macros/s/AKfycbypPVuWrA3K8sprIfckAulsonUdVO8XxMlt2bi4NTto-25J6nimW6gQbjpLfCtHKWd41Q/exec';
 
 // 오늘의 묵상글 연동 링크 (여기에 연동하고자 하시는 묵상글 링크를 입력하세요)
-const TODAY_MEDITATION_LINK = 'https://script.google.com/macros/s/AKfycbyplnfEvCxHfD-eNk6GMsIe0OeQeIEL1TM0P6CUIjMZrY7_HqmJsEoCQxNhqx_jbREC/exec';
+const TODAY_MEDITATION_LINK = 'https://script.google.com/macros/s/AKfycbypPVuWrA3K8sprIfckAulsonUdVO8XxMlt2bi4NTto-25J6nimW6gQbjpLfCtHKWd41Q/exec';
 
 const getLocalCategories = () => {
   return [
@@ -3280,6 +3280,7 @@ export default function ChurchHome({
           <AnnouncementBoard 
             currentUser={currentUser} 
             onOpenLogin={() => setLoginModalOpen(true)} 
+            googleDriveApiUrl={GOOGLE_DRIVE_API_URL}
           />
         </section>
       )}
@@ -3354,6 +3355,7 @@ export default function ChurchHome({
             currentUser={currentUser}
             onOpenLogin={() => setLoginModalOpen(true)}
             boardType="bulletin"
+            googleDriveApiUrl={GOOGLE_DRIVE_API_URL}
           />
         </section>
       )}

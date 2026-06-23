@@ -53,6 +53,7 @@ interface AnnouncementBoardProps {
   currentUser: User | null;
   onOpenLogin: () => void;
   boardType?: 'news' | 'bulletin';
+  googleDriveApiUrl?: string;
 }
 
 const defaultBulletins: NewsItem[] = [
@@ -86,10 +87,11 @@ const defaultBulletins: NewsItem[] = [
   }
 ];
 
-export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType = 'news' }: AnnouncementBoardProps) {
+export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType = 'news', googleDriveApiUrl }: AnnouncementBoardProps) {
   const storageKey = boardType === 'bulletin' ? 'tbchch_bulletins' : 'tbchch_posts_v2';
   // 1. Board List State
   const [posts, setPosts] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchCategory, setSearchCategory] = useState('title');
   const [searchQuery, setSearchQuery] = useState('');
@@ -194,7 +196,32 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType 
         localStorage.removeItem('tbchch_posts');
       }
     }
-  }, [boardType, storageKey]);
+
+    // --- FETCH FROM GOOGLE SPREADSHEET (GAS WEB APP) ---
+    if (googleDriveApiUrl) {
+      setLoading(true);
+      fetch(`${googleDriveApiUrl}?action=getPosts&type=${boardType}`)
+        .then(res => res.json())
+        .then(serverPosts => {
+          if (Array.isArray(serverPosts)) {
+            const isValidPosts = serverPosts.length === 0 || (serverPosts[0] && 'title' in serverPosts[0]);
+            if (isValidPosts) {
+              const cleanedServerPosts = serverPosts.filter(p => p.writer !== '서유미');
+              setPosts(cleanedServerPosts);
+              localStorage.setItem(storageKey, JSON.stringify(cleanedServerPosts));
+            } else {
+              console.warn('Received invalid posts data format from Google Sheets API, skipping sync.');
+            }
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch posts from Google Sheets:', err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [boardType, storageKey, googleDriveApiUrl]);
 
   // Fetch file DataURLs from IndexedDB when a post is selected
   useEffect(() => {
@@ -227,6 +254,32 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType 
     } catch (e) {
       console.error('Failed to save posts to localStorage:', e);
       alert('저장 용량이 초과되어 로컬 저장소 저장에 실패했습니다. 페이지를 새로고침하여 불필요한 데이터를 정리한 후 다시 시도해 주세요.');
+    }
+
+    // --- POST TO GOOGLE SPREADSHEET (GAS WEB APP) ---
+    if (googleDriveApiUrl) {
+      fetch(googleDriveApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: JSON.stringify({
+          action: 'savePosts',
+          type: boardType,
+          posts: cleaned
+        })
+      })
+      .then(res => res.json())
+      .then(resData => {
+        if (resData && resData.success) {
+          console.log('Successfully synced posts to Google Sheets.');
+        } else {
+          console.error('Failed to sync posts response:', resData);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to sync posts to Google Sheets:', err);
+      });
     }
   };
 
@@ -1007,6 +1060,15 @@ export default function AnnouncementBoard({ currentUser, onOpenLogin, boardType 
                       </tr>
                     );
                   })
+                ) : loading ? (
+                  <tr>
+                    <td colSpan={5} className="py-16 text-center text-slate-400 font-light leading-relaxed">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-xs text-slate-400">목록을 불러오는 중...</p>
+                      </div>
+                    </td>
+                  </tr>
                 ) : (
                   <tr>
                     <td colSpan={5} className="py-16 text-center text-slate-400 font-light leading-relaxed">
