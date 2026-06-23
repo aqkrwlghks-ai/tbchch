@@ -3606,38 +3606,42 @@ export default function ChurchHome({
               </ul>
             </div>
 
-            <div className="md:col-span-4 space-y-4">
+            <div className="md:col-span-4 space-y-3">
               <h4 className="text-white font-extrabold text-xs uppercase tracking-widest border-l-2 border-blue-600 pl-2">
                 교회 오는길 (약도 보기)
               </h4>
               
-              {/* Interactive map card mockup that acts beautifully mock GPS location */}
-              <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 h-32 md:h-36 relative shadow-inner group">
-                <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1524661135339-9140b00785e8?auto=format&fit=crop&q=80&w=600')" }}></div>
-                <div className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center p-3 text-center transition-opacity group-hover:bg-slate-950/70 z-10">
-                  <span className="text-[10px] text-blue-400 font-extrabold uppercase font-sans">Gps Navigation Mock</span>
-                  <p className="text-xs text-white font-bold mt-1">빛나는교회 네비게이션 약도</p>
-                  <div className="flex gap-2 mt-2.5">
-                    <a 
-                      href="https://map.naver.com/p/entry/place/17619321?c=17.76,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606232139&locale=ko&svcName=map_pcv5"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-bold text-[10px] px-3 py-1.5 rounded transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
-                    >
-                      <Map className="h-3 w-3" />
-                      네이버 지도 보기
-                    </a>
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText('충청남도 계룡시 번영9길 14');
-                        alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 클립보드에 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 충청남도 계룡시 번영9길 14');
-                      }}
-                      className="bg-blue-600 hover:bg-blue-750 text-white font-mono font-bold text-[10px] px-3 py-1.5 rounded transition-transform hover:scale-105 active:scale-95 flex items-center gap-1"
-                    >
-                      주소 복사하기
-                    </button>
-                  </div>
-                </div>
+              {/* Real interactive map iframe */}
+              <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 h-32 md:h-36 relative shadow-inner">
+                <iframe
+                  title="빛나는교회 구글 지도"
+                  src="https://maps.google.com/maps?q=충청남도%20계룡시%20번영9길%2014&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
+                  allowFullScreen
+                  loading="lazy"
+                ></iframe>
+              </div>
+
+              <div className="flex gap-2">
+                <a 
+                  href="https://map.naver.com/p/entry/place/17619321?c=17.76,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606232139&locale=ko&svcName=map_pcv5"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-emerald-650 hover:bg-emerald-750 text-white font-bold text-[10px] py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 flex-1 shadow-sm"
+                >
+                  <Map className="h-3.5 w-3.5" />
+                  네이버 지도 보기
+                </a>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText('충청남도 계룡시 번영9길 14');
+                    alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 클립보드에 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 충청남도 계룡시 번영9길 14');
+                  }}
+                  className="bg-blue-650 hover:bg-blue-750 text-white font-bold text-[10px] py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 flex-1 shadow-sm"
+                >
+                  <FileText className="h-3.5 w-3.5" />
+                  주소 복사하기
+                </button>
               </div>
             </div>
 
