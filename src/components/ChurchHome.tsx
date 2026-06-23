@@ -188,6 +188,7 @@ export default function ChurchHome({
 
   const [bulletinModalOpen, setBulletinModalOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showMapChurchPhoto, setShowMapChurchPhoto] = useState(false);
   
   // Custom dialogs/forms
   const [newFamilyFormOpen, setNewFamilyFormOpen] = useState(false);
@@ -3607,19 +3608,48 @@ export default function ChurchHome({
             </div>
 
             <div className="md:col-span-4 space-y-3">
-              <h4 className="text-white font-extrabold text-xs uppercase tracking-widest border-l-2 border-blue-600 pl-2">
-                교회 오는길 (약도 보기)
-              </h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-white font-extrabold text-xs uppercase tracking-widest border-l-2 border-blue-600 pl-2">
+                  교회 오는길 (약도 보기)
+                </h4>
+                <div className="flex bg-slate-800 rounded-lg p-0.5 text-[9px] font-bold text-slate-400">
+                  <button 
+                    onClick={() => setShowMapChurchPhoto(false)}
+                    className={`px-2 py-0.5 rounded transition-all ${!showMapChurchPhoto ? 'bg-blue-600 text-white shadow-sm' : 'hover:text-white'}`}
+                  >
+                    지도
+                  </button>
+                  <button 
+                    onClick={() => setShowMapChurchPhoto(true)}
+                    className={`px-2 py-0.5 rounded transition-all ${showMapChurchPhoto ? 'bg-blue-600 text-white shadow-sm' : 'hover:text-white'}`}
+                  >
+                    교회 전경
+                  </button>
+                </div>
+              </div>
               
-              {/* Real interactive map iframe */}
+              {/* Real interactive map iframe / Church Image */}
               <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 h-32 md:h-36 relative shadow-inner">
-                <iframe
-                  title="빛나는교회 구글 지도"
-                  src="https://maps.google.com/maps?q=충청남도%20계룡시%20번영9길%2014&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                  className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
-                  allowFullScreen
-                  loading="lazy"
-                ></iframe>
+                {!showMapChurchPhoto ? (
+                  <iframe
+                    title="빛나는교회 구글 지도"
+                    src="https://maps.google.com/maps?q=충청남도%20계룡시%20번영9길%2014&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                    className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
+                    allowFullScreen
+                    loading="lazy"
+                  ></iframe>
+                ) : (
+                  <div className="relative w-full h-full group">
+                    <img 
+                      src={mainChurchImg} 
+                      alt="빛나는교회 전경" 
+                      className="w-full h-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105" 
+                    />
+                    <div className="absolute inset-0 bg-slate-900/35 flex items-end justify-between p-3.5">
+                      <span className="text-[10px] text-white font-black bg-slate-900/75 px-2 py-1 rounded shadow-md border border-slate-700">빛나는교회 성전 전경</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
