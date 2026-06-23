@@ -3585,15 +3585,23 @@ export default function ChurchHome({
               <ul className="space-y-3 pt-1 text-slate-400">
                 <li className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-                  <span>서울특별시 구로구 개봉동 주 소성전 (빛나는 가을길 12번길)</span>
+                  <span>소재지 주소: 충청남도 계룡시 번영9길 14</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-blue-500 shrink-0" />
-                  <span>사무실 전화번호: 02-1234-5678 (주중 09:00 - 18:00)</span>
+                  <div className="flex flex-col sm:flex-row sm:gap-4">
+                    <span>TEL: 042-841-0470</span>
+                    <span className="hidden sm:inline text-slate-600">|</span>
+                    <span>FAX: 042-840-6780</span>
+                  </div>
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-blue-500 shrink-0" />
-                  <span>대표 이메일: info@tbchch.com</span>
+                  <span>E-MAIL: eshallom@empas.com</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-blue-500 shrink-0" />
+                  <span>담임목사: 김제희</span>
                 </li>
               </ul>
             </div>
@@ -3610,7 +3618,10 @@ export default function ChurchHome({
                   <span className="text-[10px] text-blue-400 font-extrabold uppercase font-sans">Gps Navigation Mock</span>
                   <p className="text-xs text-white font-bold mt-1">빛나는교회 네비게이션 약도</p>
                   <button 
-                    onClick={() => alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 서울특별시 구로구 개봉동 123-45')}
+                    onClick={() => {
+                      navigator.clipboard.writeText('충청남도 계룡시 번영9길 14');
+                      alert('네이버/카카오 지도 연동:\n"빛나는교회" 주소를 클립보드에 복사했습니다. 네비게이션 앱에 붙여넣으십시오.\n주소: 충청남도 계룡시 번영9길 14');
+                    }}
                     className="mt-2.5 bg-blue-600 hover:bg-blue-750 text-white font-mono font-bold text-[10px] px-3 py-1 rounded transition-transform hover:scale-105 active:scale-95"
                   >
                     주소 복사하기
@@ -3623,8 +3634,8 @@ export default function ChurchHome({
 
           <div className="pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 gap-4">
             <div className="text-center md:text-left space-y-1">
-              <p>© 2026 빛나는 교회 (The Brightening Church). All rights reserved.</p>
-              <p className="text-[10px] text-slate-600">본 온라인 리뉴얼 홈페이지 시안은 10년 차 수석 에이전시 기획 제안서가 내장되어 실시간 프리폴링 시안을 제공합니다.</p>
+              <p>COPYRIGHT © 빛나는교회. ALL RIGHTS RESERVED.</p>
+              <p className="text-[10px] text-slate-600">기독교대한성결교회 빛나는교회</p>
             </div>
             <div className="flex gap-4">
               <button onClick={onOpenPlanning} className="hover:text-white py-1 transition-colors">기획 분석 가이드</button>
